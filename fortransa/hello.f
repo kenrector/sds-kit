@@ -1,0 +1,3 @@
+      PRINT 13
+   13 FORMAT(12H0HELLO WORLD)
+      END

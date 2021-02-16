@@ -1,0 +1,225 @@
+_FIN                                                                            
+_JOB                                                                            
+*      SEMI-AUTOMATIC TYPEWRITER TEST - W BUFFER/CHANNEL A                      
+*                                                                               
+*      J.M. FLETCHER                                                            
+*                                                                               
+*      CATALOG NUMBER                                                           
+*                                                                               
+TYPE   EQU     900                                                              
+       RORG    0200                                                             
+DX     EQU     1*(TYPE=9300)                                                    
+IX     EQU     2*(TYPE=900)+1*(TYPE=9300)                                       
+       PROC    1                                                                
+A9300  NAME                                                                     
+$INST  FORM    24                                                               
+P      PROC    1                                                                
+$BRTW  NAME    02014000                                                         
+$CLR   NAME    04037711                                                         
+       INST    P(0)                                                             
+       END                                                                      
+P      PROC    1                                                                
+$BPT   NAME    022400                                                           
+$SWTC  FORM    18,6                                                             
+       SWTC    P(0),1*/(6-P(1))                                                 
+       END                                                                      
+P      PROC    1                                                                
+$LSH   NAME    060                                                              
+$SHFT  FORM    9,15                                                             
+       SHFT    P(0),P(1)++04000                                                 
+       END                                                                      
+P      PROC    1                                                                
+$MIN   NAME    071                                                              
+$MIW   NAME    030                                                              
+$WIM   NAME    032                                                              
+$IOIN  FORM    3,6,15                                                           
+       IOIN    P(2),P(0),P(1)                                                   
+       END                                                                      
+       END                                                                      
+P      PROC    1                                                                
+DIS    NAME    0200000                                                          
+TOP    NAME    0214000                                                          
+TYP1   NAME    0202041                                                          
+TYP2   NAME    0202241                                                          
+TYP3   NAME    0202441                                                          
+TYP4   NAME    0202641                                                          
+RKB1   NAME    0202001                                                          
+RKB4   NAME    0202601                                                          
+READ   FORM    24                                                               
+       READ    P(0)                                                             
+       END                                                                      
+       DO      TYPE=9300                                                        
+       A9300                                                                    
+INIT   DIR                         DISABLE INTERRUPT                            
+       LDA     RCVR                SET-UP RECOVERY                              
+       STA     1                                                                
+       CLR                                                                      
+       HLT                         ALLOW TYPEWRITER ID INSERT TO B-REG          
+       STB     DVCE                STORE ID                                     
+       BRM     MODE                CHECK ON/OFF-LINE MODE                       
+       BRU     $+4                                                              
+TEST   TOP                         TERMINATE OUTPUT                             
+       BRTW                        BUFFER READY                                 
+       BRU     $-1                 NO                                           
+       BPT     1                                                                
+       BRU     EKOL                INITIATE LINE ECHO TEST                      
+       BPT     2                                                                
+       BRU     EKO4                INITIATE 4 CHARACTER ECHO TEST               
+       BPT     3                                                                
+       BRU     CHAR                INITIATE ALL CHARACTER PRINT-OUT             
+       BRU     TEST+3              LOOP                                         
+MODE   HLT                         MODE TEST SUBROUTINE                         
+       SKN     DVCE                IS TTY TEH TEST SPECIMEN?                    
+       BRR     MODE                NO-CONTINUE PROGRAM                          
+CORR   SKS     010001              YES- IS IT ON-LINE?                          
+       BRU     $+2                 NO-PROCEED TO HALT                           
+       BRR     MODE                YES-CONTINUE PROGRAM                         
+       HLT                                                                      
+       NOP                         DISPLAY IN C-REG                             
+       BRU     CORR                TEST AGAIN                                   
+EKOL   RKB1                        SELECT KEYBOARD - 1 CHAR/WORD                
+       BRM     MODE                CHECK MODE                                   
+       WIM     TERM                STORE TERMINATING CHARACTER                  
+       DIS                         YES - DISCONNECT                             
+       BRTW                        BUFFER READY                                 
+       BRU     $-1                 NO                                           
+       TYP1                        SELECT PRINTER - 1 CHAR/WORD                 
+       MIW     CRET                EXECUTE CARRIAGE RETURN                      
+       TOP                         TERMINATE OUTPUT                             
+       CLR                                                                      
+       STB     WCOUNT              CLEAR WORD COUNT                             
+       LDA     =0177653            USE TO SET INDEX REG FOR OUTPUT TABLE        
+       STA     FILL                    MAXIMUM OF 86 ENTRIES                    
+       BRTW                                                                     
+       BRU     $-1                 NO                                           
+       RKB1                        SELECT KEYBOARD - 1 CHAR/WORD                
+NEXT   LDX     =0177774,DX                                                      
+       BRM     MODE                CHECK MODE                                   
+       WIM     HOLD                STORE SINGLE CHARACTER                       
+       LDB     HOLD                                                             
+       LSH     18                  LEFT JUSTIFY                                 
+       LDA     TEMP                                                             
+       LSH     6                   ASSEMBLE MOST RECENT CHARACTER               
+       STA     TEMP                RE-STORE PARTIAL WORD                        
+       LDB     =077                LOAD MASK                                    
+       LDA     TERM                LOAD TERMINATING CHARACTER                   
+       SKM     HOLD                IS LAST INPUT TERMINATING CHARACTER?         
+       BRU     CHEK                NO                                           
+FULL   BRX     COMP,DX             YES-HAS A 4 CHAR WORD BEEN ASSEMBLED?        
+       STX     TYPIX,DX                                                         
+       LDA     =040000000          YES                                          
+       STA     FLAG                SET END FLAG                                 
+STOR   MIN     WCOUNT              INCREMENT WORD COUNT                         
+       LDX     FILL,DX             SET INDEX FOR OUTPUT TABLE ENTRY             
+       LDA     TEMP                LOAD MOST RECENTLY ASSEMBLED WORD            
+       STA     POUT+85,IX          STORE IN OUTPUT TABLE                        
+       MIN     FILL                INCREMENT INDEX                              
+       SKN     FLAG                END FLAG SET?                                
+       BRU     NEXT                NO-ASSEMBLE NEXT WORD                        
+       CLR                         YES                                          
+       STA     FLAG                CLEAR END FLAG                               
+       DIS                         YES - DISCONNECT                             
+       BRTW                        BUF                                          
+       BRU     $-1                 NO                                           
+LINRPT LDA     =0                                                               
+       SUB     WCOUNT              INDEX SETTING DETERMINED BY NUMBER           
+       ADD     =0200000            SET INCREMENT FOR 9300                       
+       STA     TEMP                     OF ENTRIES IN OUTPUT TABLE              
+       LDX     TEMP,DX                                                          
+       LDA     WCOUNT              SET UP MIW FOR INDEXING THRU OUTPUT          
+       ADD     FIXMIW                   TABLE OF KNOWN LENGTH                   
+       STA     $+8                                                              
+       LDA     =1                  SET PRINT COUNT                              
+       LDB     =0177               LOAD MASK                                    
+       SKM     WCOUNT              TOTAL OF 4 OR LESS CHARACTERS ?              
+       BRU     $+2                 NO - SET-UP NORMAL PRINT                     
+       BRU     LAST+1              YES - SET-UP SPECIAL PRINT                   
+PRNT   EXU     TPFORM+3            SELECT PRINTER - 4 CHAR/WORD                 
+       BRM     MODE                CHECK MODE                                   
+       DATA    0                   RESERVED FOR MIW                             
+       BPT     4                   BREAKPOINT 4 SET?                            
+       HLT                         YES                                          
+       BPT     1                   NO-BREAKPOINT 1 SET?                         
+       BRU     $+4                 YES                                          
+       BPT     3                   NO-BREAKPOINT 3 SET?                         
+       BRU     $+10                YES                                          
+       BRU     TEST                NO-RETURN TO TEST SELECT LOOP                
+       ADD     =1                  INCREMENT PRINT COUNT                        
+       LDB     =0177               LOAD MASK                                    
+       SKM     WCOUNT              ONLY 1 WORD REMAINING ?                      
+       BRU     $+2                 NO                                           
+       BRU     LAST                YES                                          
+       BRX     PRNT+1,DX           ALL ENTRIES NOT TYPED-TYPE NEXT WORD         
+       BRM     TOUT                                                             
+       BRU     LINRPT              ALL ENTRIES TYPED-REPEAT                     
+       BRX     PRNT+1,DX           TYPE NEXT WORD                               
+       BRM     TOUT                                                             
+       BRU     SCHIX               REPEAT                                       
+LAST   BRM     TOUT                PROCESS LAST ENTRY                           
+       LDX     TYPIX,DX                                                         
+       EXU     TPFORM+3,IX         SELECT PRINTER - 1,2,3, CHAR/WORD            
+       LDX     =0177777,DX                                                      
+       BRU     PRNT+1                                                           
+CHEK   BRX     NEXT+1,DX           WORD INCOMPLETE - FETCH NEXT CHAR            
+       BRU     STOR                STORE IN OUTPUT TABLE                        
+COMP   STX     TYPIX,DX                                                         
+       LDA     TEMP                LEFT JUSTIFY FINAL WORD                      
+       LSH     6                                                                
+       BRX     $-1,DX                                                           
+       STA     TEMP                                                             
+       BRU     FULL+2                                                           
+EKO4   RKB4                        SELECT KEYBOARD - 4 CHAR/WORD                
+       BRM     MODE                CHECK MODE                                   
+       WIM     POUT                STORE 4 CHAR INPUT                           
+       DIS                         YES - DISCONNECT                             
+       BRTW                                                                     
+       BRU     $-1                                                              
+       LDX     =0,DX               CLEAR INDEX REG                              
+       LDA     FIXMIW              SET UP MIW                                   
+       BRU     LINRPT+7                                                         
+CHAR   LDX     =0177760,DX                                                      
+       LDA     CARTAB+16,IX        TRANSFER CHARACTER TABLE TO                  
+       STA     POUT+16,IX               OUTPUT TABLE                            
+       BRX     CHAR+1,DX                                                        
+SCHIX  LDX     =0177760,DX         SET INDEX FOR ALL CHAR TYPE-POUT             
+       LDA     =16                 SET-UP MIW                                   
+       BRU     LINRPT+6                                                         
+TOUT   HLT                                                                      
+       TOP                                                                      
+       BRTW                                                                     
+       BRU     $-1                                                              
+       BRR     TOUT                                                             
+TPFORM TYP1                        PRINTER EOM TABLE                            
+       TYP2                                                                     
+       TYP3                                                                     
+       TYP4                                                                     
+TYPIX  DATA    0                                                                
+RCVR   BRU     INIT                                                             
+DVCE   DATA    0                   PERIPHERAL ID                                
+TERM   DATA    0                   TERMINATING CHARACTER                        
+CRET   DATA    052000000           CARRIAGE RETURN                              
+WCOUNT DATA    0                   WORD COUNT                                   
+FILL   DATA    0                                                                
+HOLD   DATA    0                                                                
+TEMP   DATA    0                                                                
+FLAG   DATA    0                                                                
+POUT   RES     86                  OUTPUT TABLE                                 
+FIXMIW MIW     POUT,IX             PRINTOUT COMMAND TO BE ALTERED               
+CARTAB DATA    052535455           ALL CHARACTERS TABLE                         
+       DATA    056576061                                                        
+       DATA    062636465                                                        
+       DATA    066677071                                                        
+       DATA    072737475                                                        
+       DATA    076770001                                                        
+       DATA    002030405                                                        
+       DATA    006071011                                                        
+       DATA    012131415                                                        
+       DATA    016172021                                                        
+       DATA    022232425                                                        
+       DATA    026273031                                                        
+       DATA    032333435                                                        
+       DATA    036374041                                                        
+       DATA    042434445                                                        
+       DATA    046475051                                                        
+       END     INIT                                                             
+*EOF*

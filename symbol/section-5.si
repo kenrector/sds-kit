@@ -1,0 +1,1115 @@
+* S2
+S9300   EQU     0
+X0      EQU     S9300
+X2      EQU     2-S9300
+CAB     OPD     016400000
+CBA     OPD     016500000
+CAX     OPD     016600000
+CXA     OPD     015700000
+CBX     OPD     017000000
+CNA     OPD     017100000
+SKE     OPD     017200000
+SKR     OPD     017300000
+MUL     OPD     017400000
+DIV     OPD     017500000
+ADM     OPD     017500000
+XMA     OPD     017700000
+$LSYM   HLT     SM1
+$MLOC   RES     1
+$SCNX   RES     1
+$LOP     RES     1
+$LITM   RES     1
+$SCIX   RES     1
+CHR1    TEXT    4,CHR1
+CHR2    TEXT    4,CHR2
+LREF    RES     1
+CNCT    TEXT    4,CNCT
+TEMP    RES     2
+LLT     HLT     TPL         LOCATION OF LITERAL TABLE PACKET
+LLTR    HLT     LTR1        LOCATION OF LTR1
+SCNO    HLT     SOT         SCAN STORAGE LIMIT
+B1      RES     0
+B1      DATA    020000000
+A0      DATA    070000000
+A4     DATA    07000
+A5      DATA    0700
+B9      DATA    040000
+C0      DAtA    077000000
+C2      DATA    07700
+C02     DATA    077007700
+P69     DATA    69
+P47     DATA    47
+P9      DATA    011
+P5      DATA    5
+RRM     DATA    0202
+XADR    HLT     -1,X2
+$SM1    RES     1
+SM2     TEXT    4,SM2
+SM3     TEXT    4,SM3
+KEY1    TEXT    4,XEY1
+KEY2    TEXT    4,KEY2
+LKI     TEXT    4,LK1
+LKM     TEXT    4,LKM
+LKP     TEXT    4,LKP
+LKS     TEXT    4,LKS
+LKT     TEXT    4,LKT
+SIGN    RES     1
+DPSIGN  RES     1
+BEXP    RES     1
+$SCALE  RES     1
+DEXP    RES     1
+FFLG    RES     1
+MULT1   RES     1
+MULT2   RES     1
+AP      HLT     PCON        PRODUCT CONNECTER
+KF1     FORM    7,17
+KF2     FORM    13,11
+K1      KF1     10-0100,0
+K2      KF2     100-010000,0
+K3      DATA    5000
+        KF1     010-0100,0
+        KF2     0100-010000,0
+        DATA    010000/2
+B23     RES     0
+ONE     RES     0
+FIVES   DATA    1
+        DATA    5
+        DATA    25
+        DATA    125
+        DATA    625
+        DATA    3125
+        DATA    15625
+        DATA    78125
+        DATA    390625
+        DATA    1953125
+M2      RES     0
+LOM     DATA    077777776
+FEM     DATA    0777
+FMM     DATA    077777000
+MK12    DATA    07777
+MK6     DATA    0770077
+MK3     DATA    07070707
+XYZ     OPD     06000000
+ITM     OPD     04000000        ITEM
+CON     OPD     02000000        CONNECTER
+STM     OPD     05400000        SYMBOL,LABEL,ITEM
+DTM     OPD     04600000        DECIMAL,SYMBOL,ITEM
+OTM     OPD     04700000        OCTAL,DECIMAL,SYMBOL,ITEM
+$CTT    RES     0
+        OTM     SCO
+        OTM     SCD             1 01
+        OTM     SCD             2 02
+        OTM     SCD             3 03
+        OTM     SCD             4 04
+        OTM     SCD             5 05
+        OTM     SCD             6 06
+        OTM     SCD             7 07
+        OTM     SCD             8 10
+        OTM     SCD             9 11
+Z       HLT     0
+C3      HLT     077
+        ITM     SCA             ' 14
+B0      DATA    040000000
+B22     HLT     2
+P24     HLT     24
+        CON     SCON            + 20
+        STM     SCS             A 21
+        STM     SCS             B 22
+        STM     SCS             C 23
+        STM     SCS             D 24
+        STM     SCS             E 25
+        STM     SCS             F 26
+        STM     SCS             G 27
+        STM     SCS             H 30
+        STM     SCS             I 31
+ECHR    HLT     '='
+MCHR    HLT     '-'
+        CON     RCON            ) 34
+A7      HLT     7
+P3      HLT     3
+B17     HLT     0100
+        CON     DCON            - 40
+        STM     SCS             J 41
+        STM     SCS             K 42
+        STM     SCS             L 43
+        STM     SCS             M 44
+        STM     SCS             N 45
+        STM     SCS             O 45
+        STM     SCS             P 47
+        STM     SCS             Q 50
+        STM     SCS             R 51
+PLUS    HLT     '+'
+        ITM     SCL             $ 53
+        XYZ     SCL             * 54
+PCHR    HLT     '.'
+QCHR    HLT     014
+RCHR    HLT     ')'
+        CON     BCON              60
+        CON     QCON            / 61
+        STM     SCS             S 62
+        STM     SCS             T 63
+        STM     SCS             L 64
+        STM     SCS             V 65
+        STM     SCS             W 66
+        STM     SCS             X 67
+        STM     SCS             Y 70
+        STM     SCS             Z 71
+        HLT     0
+        CON     CCON            , 73
+        ITM     SCX             ( 74
+HB      HLT     'B'
+HE      HLT     'E'
+X2W     HLT     0,X2
+$SCNL   HLT     0
+        LDA     CHR
+        SKE     ECHR            TEST FOR =
+        BRU     SCR1            NOT LITERAL
+        BRM     GET             SKIP =
+        BRM     SCAN
+        BRM     SCNM
+        BRR     SCNL            EXIT SCNL
+$SCNM   HLT     0
+SCKS    STA     LTR1
+        SKN     PASS
+        BRR     SCNM            EXIT
+        LDA     LLTR
+        STB     LTR2            STORE LITERAL
+        LDB     LLT
+        BRM     SRCH            SEARCH FOR LITERAL
+        BRU     SCK2            NOT IN TABLE
+        LDA     2,X2            LOCATION OF LITERAL
+SCK3    LDB     Z
+        SKA     B8
+        LDB     RELM
+        ETR     ADDR
+        STA     VALU
+        STB     MODE
+        BRR     SCNM            EXIT SCNM
+SCK2    LDA     LADD
+        STA     LTR3
+        MIN     LADD            INCREMENT LITERAL LOCATION
+        BRM     MOVE            INSERT LITERAL IN TABLE
+        LDA     LTR3            LOCATION OF LITERAL
+        BRU     SCK3
+SCR1    BRM     SCNR            GET EXPRESSION OR REFERENCE
+        BRR     SCNL
+SCNR    HLT     0
+        BRM     SCAN            GET EXPRESSION
+        LDA     VERR            UNDEFINED FLAG
+        SKG     Z
+        BRU     SCR2            ALL SYMBOL DEFINED
+        LDA     CHR1
+        SKE     Z               TEST FOR NO CONNECTERS
+        BRU     SCR2            UNDEFINED ITEM
+        LDA     Z               REFERENCE
+        SKN     PASS
+        BRR     SCNR
+        STA     VERR            RESET UNDEFINED FLAG
+        MIN     XERR            SET EXTERNALFLAG
+        LDA     LSYM
+        LDB     LRT
+        BRM     SRCH            SEARCH  FOR REFERENCE
+        BRU     SCR3            NOT INTABLE
+SCR4    ETR     ADDR
+        STA     VALU
+        STB     MODE
+        LDA     LOC
+        LDB     REFM
+        SKA     B8
+        LDB     RRM
+        STA     2,X2
+        LDA     1,X2
+        ETR     =077770000
+        STB     1,X2
+        ADM     1,X2
+        LDA     VALU
+        LDB     MODE
+        BRR     SCNR            EXIT
+SCR3    STA     SM3             NO PREVIOUS REF
+        BRM     MOVE            INSERT REFERENCE
+        CLR
+        BRU     SCR4
+SCR2    LDA     VALU            NO REF OR LIT
+        BRR     SCNR            EXIT
+$SCAN   HLT     0
+        CLR
+        STA     *LOP            0 TO BASE CONECTER
+        STA     VALU            0 TO VALUE
+        STA     MODE            0 TO MODE
+        STA     CHR1            RESET
+        LDX     CHR,X0
+        LDB     CTT,X2
+        BRM     SKB
+        HLT     IC
+        BRU     SCN1            NOT CONECTER
+        BRU     SCN8
+SCN3    MIN     LOP             INCR OP
+        MIN     LITM            INCR ITEM
+        LDA     MODE
+        STA     *LOP            STORE OP
+        LDA     VALU
+        STA     *LITM           STORE ITEM
+SCN1    LDA     CHR
+        CAX
+        BRM     SCI             GET NEXT ITEM
+        STA     VALU
+        STB     MODE
+        LDX     CHR,X0
+SCN8    BRM     SCC             GET NEXT CONECTER
+        STA     MODE
+SCN7    LDB     A4              HIERARCHY MASK
+        SKG     *LOP            MODE IS IN A
+        BRU     SCN2            LEVEL NOT GREATER
+        SKM     *LOP
+        BRU     SCN3            LEVEL GREATER
+SCN2    LDA     *LOP            LAST CONECTER
+        SKM     Z               TEST FOR TERMINATER
+        BRU     SCN4            DO OPERATION
+        LDA     MODE
+        ETR     C3              MASK MODE
+        CAB                     MODE TO B
+        LDA     SCNX
+        SKE     LSXT            TEST P LEVEL
+        BRU     SCN11           NOT 0
+        LDA     RCHR
+        SKE     TERM            ERROR IF )
+        BRU     SCN12
+        BRU     SCN13
+SCN11   LDA     RCHR
+        SKE     TERM
+SCN13   MIN     PERR            SET P ERROR
+SCN14   LDA     VALU
+        BRR     SCAN            EXIT SCAN
+SCN12   BRM     GNF             SKIP TO NEXT FIELD
+        BRU     SCN14
+SCN4    LDB     A4
+        SKM     =05000
+        ETR     A5
+        ETR     =01700
+        RSH     6
+        CAX                     OP NUMBER TO X
+        LDB     *LOP
+        ROV
+        LDA     *LITM
+        BRU     *SCN5,X2        BRANCH TO OP CODE
+SCN5    BRU     CLS             LOSICALSUM
+        BRU     CLD             LOGICAL DIFFERENCE
+        BRU     CLP             LOGICAL PRODUCT
+        BRU     CAS             ARITHMETIC SUM
+        BRU     CAD             ARITHMETIC DIFFERENCE
+        BRU     CAP             ARITHMETIC PRODUCT
+        BRU     CXQ             EXCLUSIVE QUOTIENT
+        BRU     CEQ             INCLUSIE QUOTIENT
+        BRU     CDS
+        BRU     CBS
+SCN6    LDA     M1
+        ADM     LOP             DECR OP
+        ADM     LITM            DECR ITEM
+        LDA     MODE
+        BRU     SCN7            TEST PREVIOUS OP
+SCI     HLT     0
+SCI2    LDB     IC
+        BRM     SKB
+        HLT     CTT,X2
+        BRU     SCI1
+        MIN     EERR            SET EFLAG
+        BRM     GET             SKIP CHAR
+        CLR
+        BRR     SCI             EXIT
+SCI1    BRU     *CTT,X2
+SCS     EQU     $
+SCO     EQU     $
+SCD     EQU     $
+SCIT    LDB     A7
+        STB     CNTR            MAX CHARACTER COUNT
+        STA     CHR2            SAVE LEAD CHAR
+        SKE     Z
+        BRU     SCIT7
+        BRM     GET             SKIP 0
+        LDB     SC
+        BRM     SKB
+        HLT     CTT,X2
+        BRU     SCIT7           VALID SYMBOL CHARACTER
+        CLR
+        BRR     SCI             EXIT WITH ZERO
+SCIT7   LDB     Z
+        BRU     SCIT1
+SCIT3   LDB     SM2
+        XMA     SM1
+        LCY     6
+        MRG     SM1             INSERT NEW CHARACTER
+SCIT1   STA     SM1
+        STB     SM2
+        LDB     SC
+        BRM     TCHR            TEST FOR ALPHANUMERIC
+        BRU     SCIT2           END OF SYMBOLIC ITEM
+        SKR     CNTR            TEST FOR MAX SIZE
+        BRU     SCIT3
+SCIT2   LDA     SM1
+        MRG     SM2
+        SKA     DLY1            TEST ZONE BITS
+        BRU     SCIT4           SYMBOL
+        LDX     Z,X0
+        LDB     CHR2
+        BRM     SKB
+        HLT     OCTF
+        BRU     SCIT21
+        LDX     P3,X0
+        SKA     =010101010
+        MIN     EERR
+SCIT21  LDA     SM2             HIGH ORDER HALF
+        BRM     CNVRT           CONVERT
+        MUL     K3,X2           TIMES BASE TO THE 4TH
+        STB     SM2             PARTIAL RESULT
+        SKE     Z
+        MIN     TERR            SET TRUNCATION ERROR
+        LDA     SM1             LOW ORDER HALF
+        BRM     CNVRT   CONVERT
+        ROV
+        ADD     SM2
+        OVT
+        MIN     TERR            SET TRUNCATION ERROR
+        LDB     Z               0 TO MODE
+        BRR     SCI             EXIT
+SCIT4   LDA     SM1
+        LDB     SM2
+        BRU     SCIT5
+SCIT6   LCY     6               ADDUST
+        MRG     BCHR            INSERT BLANK
+SCIT5   SKR     CNTR            TEST FOR SYMBOL ADJUSTED
+        BRU     SCIT6
+        ETR     =077770000
+        STA     SM2
+        STB     SM1
+        LDA     LSYM            LOCATION OF SYMBOL
+        LDB     LST             LOCATION OF SYMBOL TABLE
+        BRM     SRCH            SEARCH
+        MIN     VERR            NOT FOUND
+        XAB
+        SKA     B17
+        MIN     DERR
+        ETR     C3              SAVE MODE
+        XAB
+        BRM     SKB
+        HLT     RELM
+        ETR     ADDR
+        BRR     SCI             EXIT
+SCL     LDA     CHR
+        SKE     SCHR            TEST FOR *
+        BRU     SCL1            $ IS ALWAYS LOCATION COUNTER
+        BRM     GET
+        CAX
+        LDB     CC
+        BRM     SKB
+        HLT     CTT,X2
+        BRU     SCL2
+        MIN     IFLG
+        BRU     SCI2
+SCL1    BRM     GET
+SCL2    LDA     LOC
+        LDB     Z
+        SKA     B8
+        LDB     RELM
+        ETR     ADDR
+        BRR     SCI             EXIT
+SCA     LDA     Z
+        BRU     SCA2
+SCA1    LDA     VALU
+        SKA     C0
+        MIN     TERR
+        SKA     C0
+        BRU     SCA3
+        LSH     6
+        MRG     CHR             INSERT NEW CHAR
+SCA2    STA     VALU
+        BRM     GET             GET CHAR
+        LDB     Z
+        SkE     QCHR            TEST FOR QUOTE
+        BRU     SCA1
+SCA3    BRM     GET
+        LDB     Z
+        LDA     VALU
+        BRR     SCI             EXIT
+SCX     LDA     SCNO
+        SKG     SCNX
+        BRU     SCX1            TOO MANY LEYELS
+        LDA     SCAN
+        STA    *SCNX           SAVE EXIT
+        LDA     SCI
+        STA    *SCIX
+        MIN     SCIX
+        MIN     SCNX            INCR
+        MIN     LOP
+        MIN     LITM
+        BRM     GET             SKIP (
+        BRM     SCAN            GET SUB-EXPRESSION
+        LDA     M1
+        ADM     SCNX            DECR
+        ADM     LOP
+        ADM     LITM
+        ADM     SCIX
+        LDA    *SCIX
+        STA     SCI
+        LDA    *SCNX
+        STA     SCAN             RESTORE EXIT
+        LDA     VALU
+        BRR     SCI             EXIT
+SCX1    MIN     PERR            SET P FLAG
+SCX2    BRM     GET
+        SKE     RCHR
+        BRU     SCX2            SKIP SUB+EXPRESSIDN
+        BRM     GET             SKIP )
+        CLR
+        BRR     SCI             EXIT
+SCC     HLT     0
+        LDB     CC
+        BRM     SKB
+        HLT     CTT,X2
+        BRU     SCC1
+        STA     TERM
+        MIN     EERR            SET E FLAG
+        BRM     GET             SKIP CHAR
+        LDA     MODE
+        BRR     SCC EXIT
+SCC1    CXA
+        SKE     SCHR            CONECTER IS AP IF *
+        BRU     SCC7
+        STA     CHR1
+        BRM     GET
+        SKE     ='+'
+        BRU     SCC5
+        LDB     =05000
+        BRU     SCC8
+SCC5    LDB     AP
+        STB     CNCT
+        SKE     ='/'
+        BRU     SCC6
+        LDB     =05100
+        BRU     SCC8
+SCC7    LDB     CTT,X2
+        STB     CNCT SAVE CONECTER
+        BRM     SKB
+        HLT     A4
+        BRU     SCC2            NOT TERMTNATER
+        STX     TERM,X0         SAVE TERMINATER
+SCC4   BRM     GET             POSITION AT NEXT CHAR
+SCC3    LDA     CNCT
+        ETR     C2              EXTRACT CONNECTER
+        MRG     MODE
+        BRR     SCC             EXIT
+SCC2    STA     CHR1            SAVE CHAR
+        BRM     GET             GET NEXT CHAR
+        LDB     CNCT
+SCC6    SKE     CHR1
+        BRU     SCC3
+        LSH     6               USE ALTERNATE CONNECTER
+SCC8    STB     CNCT
+        BRU     SCC4
+CLS     MRG     VALU            V = L++V
+CLS1    STA     VALU
+        LDA     MODE
+        MRG     *LOP            ERROR IF EITHER ARE REL
+CLS2    SKA     RELM
+        MIN     RERR
+        OVT
+        MIN     TERR            SET TRUNCATION ERROR
+        LDA     MODE
+        EOR     RELM
+        XAB
+        SKA     RELM
+        STB     MODE
+        BRU     SCN6
+CLD     EOR     VALU            V=L--V
+        BRU     CLS1
+CLP     ETR     VALU            V=L**V
+        BRU     CLS1
+CAS     ADM     VALU            V=L+V
+        LDA     MODE
+        ETR     *LOP            ERROR IF BOTH ARE REL
+        BRU     CLS2
+CAD     SUB     VALU
+        STA     VALU            V=L-V
+        LDA     *LOP
+        EOR     M1               COMPLEMENT OF UMODE
+        ETR     MODE            ERROR IF V REL AND U NOT
+        BRU     CLS2            ERROR IF V IS REL
+CAP     MUL     VALU
+        LSH     23              V=L*Y
+CAP1    LDB     *LOP            RESTORE B
+        BRU     CLS1
+CEQ     ADD     M1
+        ADD     VALU            L+V-1
+CXQ     RSH     23
+        DIV     VALU            L/V OR (L+Y-1)/V
+        BRU     CAP1
+CDS     LDA     VALU
+        SKG     M1
+        CNA
+        SKG     P9
+        BRU     $+2
+        MIN     TERR
+        CAX
+        LDB     Z
+        ROV
+        LDA     FIVES,X2
+        LSH     0,X2
+        OVT
+        MIN     TERR
+        XMA     VALU
+        SKG     M1
+        BRU     CDS1
+        LDA     *LITM
+        BRU     CAP
+CDS1    LDA     *LITM
+        BRU     CXQ
+CBS     LDA     VALU
+        SKN     VALU
+        BRU     CBS1
+        CNA
+        CAX
+        LDB     Z
+        LDA     *LITM
+        RSH     0,X2
+        BRM     SKB
+        HLT     M1
+        SKG     *LITM
+        BRU     CAP1
+        ADD     ONE
+        BRU     CAP1
+CBS1    CAX
+        LDB     Z
+        LDA     *LITM
+        LSH     0,X2
+        BRU     CAP1
+$SYM    HLT     0
+        LDB     Z
+SYM2    STA     SM1
+        STB     SM2
+        LDB     SC
+        BRM     TCHR            TEST FOR SYMBOL CHAR
+        BRU     SYM1            END SYMBOL
+        LDB     SM2
+        XMA     SM1
+        BRM     SKB
+        HLT     C2
+        BRU     SYM3
+        LCY     6
+        MRG     SM1
+        BRU     SYM2
+SYM1    LDB     SM2
+        LDA     SM1
+SYM4    BRM     SKB
+        HLT     C2
+        BRU     SYM3
+        LCY     6
+        MRG     BCHR
+        BRU     SYM4
+SYM3    RCY     12
+        STA     SM1
+        STB     SM2
+        BRR     SYM             EXIT
+$SRCH   HLT     0
+        STA     LKI             SAVE ITEM LOC
+        STB     LKT             SAVE PACKET LOC
+        CAX                     LOC OF ITEM
+        LDA     0,X2
+        STA     KEY1
+        LDA     1,X2
+        CBX
+        ETR     3,X2
+        STA     KEY2            STORE KEY
+        LDA     0,X2            T = END OF TABLE
+        STA     LKS             S=T
+        LDA     1,X2            F = LOC OF 1ST ITEM
+        LDB     3,X2
+        STB     LKM             MASK FOR 2ND KEY WORD
+        LDB     2,X2            I = INITIAL INCR
+        BRU     LK1
+LK3     RSH     1
+        LDA     0,X2            K(X)
+        SKG     KEY1            COMPARE WITH K(L)
+        BRU     LK2             K(L) GREATER OR EQUAL
+LK7     CBA
+        ADD     LKS
+LK1     CAX
+        LDA     Z
+        BRM     SKB
+        HLT     M2
+        BRU     LK3
+        CLR                     NOT FOUND
+        LDX     LKS,X0
+        BRU     LK5
+LK2     SKE     KEY1
+        BRU     LK4             KEYS NOT EQUAL
+        LDA     1,X2            2ND WORD OF KEY
+        ETR     LKM             MASK OUT MODE
+        SKE     KEY2            TEST FOR EQUAL KEYS
+        BRU     LK6             KEYS NOT EQUAL
+        MIN     SRCH            TAPE FOUND EX1T
+        LDB     1,X2            MODE
+        LDA     2,X2            VALUE
+LK5     BRR     SRCH            EXIT
+LK6     SKG     KEY2            COMPARE 2ND WORDS
+LK4     STX     LKS,X0          K(L) GREATER, S = X
+        BRU LK7
+$NSRT   HLT 0
+        BRM     SRCH            SEARCH FOR ITEM
+        BRU     NS3             NOT FOUND
+        MIN     LKI
+        LDA     *LKI
+        MIN     LKI
+        LDB     *LKI
+        SKE     1,X2
+        BRU     NS1             1ST WORD NOT EQUAL
+        XAB
+        SKE     2,X2
+        BRU     NS1             2ND WORDS NOT EQUAL
+        BRR     NSRT            EXIT
+NS1     LDA     DUPM
+        MRG     1,X2            SET DUP FLAG
+        STA     1,X2
+        MIN     DERR            SET DUP ERROR
+        BRR     NSRT EXIT
+NS3     BRM     MOVE            MOVE ITEM TO TABLE
+        BRR     NSRT EXIT
+OFLO    MIN     OERR
+        BRR     MOVE
+MOVE    HLT     0
+        LDA     P3
+        ADM     LIMT            -(M-3) TO M
+        SKN     LIMT
+        BRU     OFLO
+        STX     LKP,X0          SAVE P
+        LDX     LKT,X0          PACKET LOCATION
+        LDA     X2W             CONSTRUCTION INDIRECT WORD
+        MRG     LKP             P,X2
+        SKN     5,X2            TYPE (UP OR DOWN)
+        BRU     MOV1            MOVE UP
+        STA     LKM             P,X2 (TO)
+        ADD     P3              P+3,X2 (FORM)
+        STA     LKS             P+3,X2 IFORM)
+        LDA     0,X2 B
+        SUB     LKP             NO, OF WORDS TO MOYE
+        ADD     =0177777
+        CAX
+        BRU     MOV2
+MOV3    LDA     *LKS
+        STA     *LKM            MOVE ONE WORD DOWN
+MOV2    BRX     MOV3,X0
+MV1     LDX     =00200000-3,X0
+        LDA     LKS
+        SUB     P3
+        STA     LKP             LOCATIONOF INSERTED ITEM
+MOV4    LDA     *LKI
+        STA     *LKS            INSERT NEW ITEM
+        MIN     LKI
+        BRX     MOV4,X0
+        LDX     LKT,X0          PACKET LOCATION
+        LDA     P3
+        ADM     4,X2            N+3 TO N
+        LDA     2,X2            M
+        SKG     4,X2            M:N
+        BRU     MOV5            M=N
+        SKN     5,X2            TYPE
+        BRU     MOV8            UP TABLE
+        LDA     0,X2
+MV2     SUB     P3
+        STA     0,X2            B-3 TO B
+        BRU     MV3
+MOV8    LDA     P3
+        ADM     1,X2            F+3 TO F
+MV3     LDX     LKP,X0          LOCATION OF INSERTED ITEM
+        BRR     MOVE            EXIT
+MOV5     LDB     Z
+        ADD     4,X2            M+N TO M
+        STA     2,X2
+        STB     4,X2            0 TO N
+        LDA     0,X2            B
+        SKN     5,X2
+        ADD     P3              B + 3 TO B
+        STA     1,X2            B TO F
+        BRU     MV2
+MOV1    ADD     B22
+        ETR     XADR            CONSTRUCT INDIRECT WORD
+        STA     LKS             P+2,X2 (FROM)
+        ADD     P3
+        STA     LKM             P+5,X2 (TO)
+        LDA     0,X2            B
+        ADD     2,X2            B+M
+        ADD     4,X2            B+M+N
+        SUB     LKP             B+M+N-P
+        SKG     Z               NO OF WORDS TO MOVE
+        BRU     MOV6            0 WORDS
+        MRG     =040000*/S9300
+        CAX
+MOV7    LDA     *LKS
+        STA     *LKM            MOVE ONE WORD UP 3
+        EAX     -2,X2
+        BRX     MOV7,X0
+MOV6    LDA     LKM             P+5,X2
+        ADD     B23             P+6,X2
+        STA     LKS
+        BRU     MV1
+CNVRT   HLT     0
+        STA     VALU
+        ETR     C02             MASK 1ST AND 3RD CHARACTERS
+        MUL     K1,X2           T1MES BASE - 64
+        ADD     VALU
+        STA     VALU
+        ETR     =077770000
+        MUL     K2,X2           TIMES BASE SQUARED - 4096
+        ADD     VALU            RESULT
+        BRR     CNVRT           EXIT
+SSIGN   HLT     0
+        LDA     CHR
+        STA     TERM
+        LDB     Z
+        STB     SIGN            + TO SIGN
+        SKE     MCHR            TEST FOR -
+        BRU     SSIGN1
+        LDB     M1
+        STB     SIGN            - TO SIGN
+        BRU     SSIGN2
+SSIGN1  SKE     PLUS            TEST FOR +
+        BRU     SSIGN3
+SSIGN2  BRM     GET             SKIP + OR -
+SSIGN3  BRR     SSIGN           EXIT
+DPMT    HLT     0
+        STB     WORD            LOW
+        MUL     P5              10*HOW TO B
+        LDA     WORD                LOW
+        STB     WORD
+        RCY     1               MUL CLEARS B23
+        MUL     =10
+        ROV
+        ADD     WORD            10*HIGH + CARRY
+        OVT
+        MIN     TERR            SET TRUNCATION ERROR
+        BRR     DPMT            EXIT
+DPA     HLT     0
+        STA     TEMP
+        LDA     WRD2
+        ETR     M2
+        RSH     1
+        ETR     =037777777
+        STB     TEMP+1
+        ADD     TEMP+1
+        RSH     23
+        ETR     ONE
+        ROV
+        ADD     TEMP
+        ADD     WRD1
+        OVT
+        MIN     TERR            SET TRUNCATION ERROR
+        BRR     DPA             EXIT
+DPNM    HLT     0
+        LDA     WRD1
+        LDB     WRD2
+        STB     WORD            X2
+        MUL     MULT1
+        XMA     WRD1            X1 TO A, SAVE H
+        STB     WRD2            SAVE L
+        MUL     MULT2
+        RSH     23
+        ETR     ONE
+        BRM     DPA             AB + HL TO AB
+        STA     WRD1            SAVE H
+        STB     WRD2            SAVEL
+        LDA     WORD            X2
+        RSH     1
+        ETR     =037777777
+        MUL     MULT1
+        RSH     23
+        ETR     ONE
+        BRM     DPA             AB + HL TO AB
+        STA     WRD1
+        STB     WRD2
+        BRR     DPNM            EXIT
+$DPW HLT 0
+        LDA     SCALE
+        STA     BEXP            SCALING (IF NOT SPECIFIED
+        LDB     Z
+        STB     WRD1            CLEAR HOW
+        STB     WRD2            CLEAR LOW
+        LDB     M1
+        STB     FFLG            RESET FLOATING FLAG
+        STB     DEXP            -1 TO DECIMAL EXPONNET
+        BRM     SSIGN           SET SIGN
+        LDB     SIGN
+        STB     DPSIGN          SET DP SIGN
+DPW3    SKE     PCHR            TEST FOR .
+        BRU     DPW4
+        MIN     FFLG            SET FLOAT FLAG
+        BRU     DPW2
+DPW1    ADD     CHR             2*CHR TO A
+        XMA     WRD2            2*CHR TO L
+        ABC                     L TO B
+        XMA     WRD1            H TO A, 0 TO H
+        BRM     DPMT            10*AB TO AB
+        BRM     DPA             10*AB+CHR TO AB
+        STA     WRD1            SAVE H
+        STB     WRD2            SAVE L
+        SKN     DEXP            SKIP UNLESS PERIOED SEEN
+DPW2    MIN     DEXP            INCR DECIMAL EXPONENT
+        LDB     DC
+        BRM     TCHR            TEST FOR DECIMAL DIGIT
+        BRU     DPW3
+        BRU     DPW1
+DPW4    CAX
+        LDB     DC
+        BRM     SKB
+        HLT     CTT,X2
+        BRU     DPW1
+        LDA     Z
+        SKN     DEXP            TEST FOR PERIOD
+        SUB     DEXP            DECIMAL EXPONENT
+        STA     DEXP
+        LDA     CHR
+DECK2   SKE     HE
+        BRU     DECK3
+        BRM     GET
+        BRM     DECW
+DECK6   ADM     DEXP
+        LDA     CHR
+DECK3   SKE     HB
+        BRU     DECK4
+        BRM     GET
+        BRM     DECW
+        CNA
+DECK8   STA     BEXP
+        LDA     M1
+        STA     FFLG
+        LDA     CHR
+        BRU     DECK2
+DECK4   SKE     ='*'
+        BRU     DECK5
+        BRM     GET
+        SKE     '+'
+        BRU     DECK7
+        BRM     GET
+        BRM     SCI
+        ADM     DEXP
+        BRU     DECK2-1
+DECK7   SKE     ='/'
+        BRU     DECK5
+        BRM     GET
+        BRM     SCI
+        ADD     BEXP
+        BRU     DECK8
+DECK5   LDA     WRD1
+        LDB     WRD2
+        LDX     Z,X0
+        NOD     46              NORMALIIE
+        STA     WRD1
+        STB     WRD2
+        CXA
+        LCY     9
+        RSH     9
+        SKG     =-46
+        LDA     =-46
+        SKN     DEXP
+        ADD     P24
+        ADM     BEXP            MODIFY B1NARY EXPONENT
+        SKN     DEXP            TEST SIGN OF DECIMAL EXPONENT
+        BRU     DPW5A
+        CLR
+        SUB     DEXP
+        BRU     DPW9
+DPW91   LDA     =-46
+        ADM     BEXP
+        LDA     DEXP
+DPW9    LDB     Z
+        STB     DEXP            0 TO D
+        SKG     P9              TEST RANGE
+        BRU     DPW6
+        SUB     P9
+        STA     DEXP            D-9 TO D
+        LDA     P9
+DPW6    CAX
+        CNA
+        ADM     BEXP            MODIFY BINARY EXPONENT
+        LDB     FIVES,X2        POWER OF 5
+        LDA     Z
+        LDX     Z,X0
+        NOD     46              NORMALIZE POWER OF F1VE
+        STA     WORD
+        CXA
+        LCY     9
+        RSH     9
+        CNA
+        ADM     BEXP            BINARY EXPONENT
+        LDA     B1
+        LDB     Z
+        DIV     WORD
+        STA     MULT1           1ST WORD OF RECIPRICAL
+        BAC
+        DIV     WORD
+        ADD     ONE
+        STA     MULT2           2ND WORD OF RECIPRICAL
+        BRM     DPNM            DATA TIMES POWER OF 5
+        LDA     DEXP
+        SKE     Z               TEST FOR DECIMAL SCALING DONE
+        BRU     DPW91
+DPW10   LDA     WRD1
+        SKN     FFLG            TEST FOR FLOATING PO1NT
+        BRU     DPF
+        ROV
+        LDX     BEXP,X0
+        SKN     BEXP
+        BRU     DPW12
+        XMA     BEXP
+        CNA
+        XMA     BEXP
+        LDX     BEXP,X0
+        RSH     0,X2
+        BRU     DPW13
+DPW12   LSH     0,X2
+        OVT
+        MIN     TERR            SET TRUNCATION ERROR
+DPW13   STA     WRD1
+DPW14   STB     WRD2
+        BRM     DPSS            COMPLEMENT IF NEG
+        BRU     DPW20
+DPW5A   LDA     =22
+        ADM     BEXP
+DPW5    LDB     Z
+        LDA     DEXP
+        STB     DEXP            0 TO B
+        SKG     P9              TEST RANGE
+        BRU     DPW11
+        SUB     P9
+        STA     DEXP
+        LDA     P9
+DPW11   CAX
+        ADM     BEXP            MODIFY BINARY EXPONENT
+        LDB     FIVES,X2        PWER OF 5
+        LDA     Z
+        LDX     P47,X0
+        NOD     46
+        STA     MULT1           NORMALIZED POWER OF 5
+        CXA
+        ADM     BEXP            MODIFY B
+        STB     MULT2           CLEAR LOW ORDER WORD
+        BRM     DPNM            DATA TIMES POWER OF 5
+        LDA     DEXP
+        SKG     Z
+        BRU     DPW10           FINISHED
+        BRU     DPW5
+DPF     BRM     DPSS            COMPLEMENT IF NEG
+        LDX     P47,X0
+        NOD     47
+        STA     WRD1
+        CXA
+        SKA     FMM
+        LDA     Z
+        SKE     Z
+        ADD     BEXP            MODIFY BINARY EXPONENT
+        STA     BEXP
+        LSH     15
+        RSH     15
+        SKE     BEXP
+        MIN     TERR            SET TRUNCATION ERROR
+        LCY     15
+        CAB
+        RCY     15
+        STB     WRD2
+DPW20   LDA     CHR
+        STA     TERM            SET TERMINATIR
+        BRM     GET             SKIP ,
+        BRM     GNF
+        LDB     WRD2
+        LDA     WRD1
+        BRR     DPW             EXIT
+DPSS HLT 0
+        SKN     DPSIGN          TEST DP SIGN
+        BRR     DPSS            EXIT
+        XAB
+        EOR     M1
+        SUB     M1
+        XAB
+        ADD     M1
+        BRM     SKB
+        HLT     M1
+        SUB     M1
+        EOR     M1
+        STA     WRD1
+        STB     WRD2
+        BRR     DPSS            EXIT
+$OCTW   HLT     0
+        BRM     SSIGN           SET SIGN
+        SKG     A7
+        BRU     OCT1
+        MIN     EERR            NOT OCTAL CHAR
+        BRR     OCTW            EXIT
+OCT1    STA     VALU
+        LDB     OC
+        BRM     TCHR            TEST FOR OCTAL CHAR
+        BRU     OCT2
+        RSH     3
+        LDA     VALU
+        SKA     A0
+        MIN     TERR
+        LSH     3               INSERT NEW CHAR
+        BRU     OCT1            TRY NEXT CHAR
+OCT2    STA     TERM
+        BRM     GET
+        BRM     GNF
+        LDA     VALU
+        EOR     B0
+        SKN     SIGN            TEST FOR PRECEDING MINUS
+        EOR     B0              NO PRECEDING MUNUS
+        STA     VALU            RESULT
+        BRR     OCTW            EXIT
+$DECW   HLT     0
+        BRM     SSIGN           SET SIGN
+        SKG     P9
+        BRU     DEC1
+        LDA     Z
+        BRU     DEC3
+DEC1    STA     VALU
+        LDB     DC
+        BRM     TCHR
+        BRU     DEC2
+        LDA     VALU
+        LDB     Z
+        ROV
+        LSH     2
+        ADD     VALU
+        LSH     1
+        ADD     CHR
+        OVT
+        MIN     TERR            SET TRUNCATION ERROR
+        BRU     DEC1
+DEC2    LDA     VALU
+DEC3    CNA
+        SKN     SIGN            TEST FOR PRECEDING M1NUS
+        CNA
+        STA     VALU            RESULT
+        BRR     DECW            EXIT
+GNF     HLT     0
+GNF1    LDA     TERM
+        SKE     CCHR            TEST FOR COMMA
+        SKN     M1              ALWAYS SKIP
+        BRR     GNF             EXIT
+        SKE     BCHR            TEST FOR BLANK
+        SKN     M1              ALWAYS SKIP
+        BRR     GNF             EXIT IF BLANK
+        MIN     EERR            ILLEGAL CHARACTER
+        LDA     CHR
+        STA     TERM
+        BRM     GET             SKIP CHARACTER
+        BRU     GNF1
+$MAXL   HLT     0
+        LDA     MLOC            OLD MAX
+        SKG     LOC
+        LDA     LOC
+        STA     MLOC            NEW MAX
+        BRR     MAXL
+BCON    EQU     0               BLANK CONNECTER CODE
+CCON    EQU     0100            , CONNECTER CODE
+RCON    EQU     020             ) CONNECTER CODE
+SCON    EQU     03310           + ++ CONNECTER CODES
+DCON    EQU     03411           - -- CONNECTER CDDES
+PCON    EQU     04522           * ** CONNECTER CODES
+QCON    EQU     04647           / // CONNECTER CODES
+        END

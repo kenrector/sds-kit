@@ -1,0 +1,56 @@
+
+                             1                                                                                  
+                             2                                                                                  
+                             3  *      930 MAG TAPE EXAMPLE                                                     
+                             4  *      MODIFIED FOR THE 940,   BRI INSTEAD OF BRU*                              
+                             5  *                                                                               
+            01100000         6  BRI    OPD    01100000                                                          
+                             7  *                                                                               
+                             8  *                                                                               
+     00200                   9         AORG    0200                                                             
+     00200  0 00 00000      10  GWMT   PZE                                                                      
+     00201  0 46 00001      11         CLA                                                                      
+     00202  0 35 00237      12         STA     COUNT                                                            
+     00203  0 40 10411      13         SKS     10411                TAPE READY TEST                             
+     00204  0 01 00206      14         BRU     $+2                                                              
+     00205  0 01 00203      15         BRU     $-2                                                              
+     00206  0 76 00200      16         LDA     GWMT                                                             
+     00207  0 35 00213      17         STA     FAST                 SET FAST'S RETURN                           
+     00210  0 61 00213      18         MIN     FAST                                                             
+     00211  0 02 42651      19         WTD     *0,1,4                                                           
+     00212  0 01 00214      20         BRU     FAST+1                                                           
+                            21  *                                                                               
+     00213  0 00 00000      22  FAST   PZE                                                                      
+     00214  0 71 00237      23         LDX     COUNT                                                            
+     00215  0 76 00236      24         LDA     OKAY                                                             
+     00216  0 75 00240      25         LDB     MASK                                                             
+     00217  0 70 00237      26         SKM     COUNT                                                            
+     00220  0 01 00222      27         BRU     $+2                                                              
+     00221  0 11 00213      28         BRI     FAST                 FINISHED ALL                                
+                            29  *                                                                               
+     00222  0 02 50000      30         ALC     0                    ALERT INTERLACE IN CHAN W                   
+     00223  2 23 00230      31         EXU     A,2                  IOXX EOM                                    
+     00224  2 13 00231      32         POT     A+1,2                                                            
+     00225  0 61 00237      33         MIN     COUNT                                                            
+     00226  0 61 00237      34         MIN     COUNT                                                            
+     00227  0 11 00213      35         BRI     FAST                 RETURN                                      
+                            36  *                                                                               
+     00230  0 02 15600      37  A      EOM     015600               IOSP, ZERO WORD COUNT INTERRUPT             
+     00231  27521220        38         DATA    6202000              100 WORDS, LOC 02000                        
+     00232  0 02 15600      39         EOM     015600               IOSP, ZERO WORD COUNT INTERRUPT             
+     00233  14402500        40         DATA    014402500            200 WORDS, LOC 02500                        
+     00234  0 02 15000      41         EOM     015000               IORD, ZERO WORD COUNT INTERRUPT             
+     00235  06203000        42         DATA    06203000             100 WORDS, LOC 03000                        
+     00236  00000006        43  OKAY   DATA    6                                                                
+     00237  00000000        44  COUNT  DATA    0                                                                
+     00240  77777777        45  MASK   DATA    077777777                                                        
+     00241  0 43 00213      46  INT    BRM     FAST                                                             
+                            47  *                                                                               
+     00242  0 76 00241      48  MAIN   LDA     INT                                                              
+     00243  0 35 00031      49         STA     031                                                              
+     00244  0 02 20002      50         EIR                                                                      
+     00245  0 43 00200      51         BRM     GWMT                                                             
+     00246  0 20 00000      52         NOP                                                                      
+     00247  0 20 00000      53         NOP                                                                      
+     00250  0 01 00246      54         BRU     $-2                                                              
+            00000242        55         END     MAIN                                                             

@@ -1,0 +1,39 @@
+SDS 940 simulator V4.0-0 Current        git commit id: 9c60c904
+sim> do fortransa/fortran_run  fortransa/hello.bo
+/Users/admin/sds/sds-kit/fortransa/fortran_run-15> att cr rundeck
+CR: 455 card Deck Loaded from rundeck
+/Users/admin/sds/sds-kit/fortransa/fortran_run-16> boot cr
+SIGINT will be delivered to your debugger when the ^F character is entered
+
+LOAD MAIN PROGRAM.
+
+HALT instruction, P: 02754 (NOP 1003,2)
+sim> c
+
+  
+NAME      ENTRY ORIGIN   LAST SIZE/10 COMMON   BASE 
+
+=    13   03221
+$$$$$$$$  03216  03206  03227      18         03230
+203SYS    03231  03230  03242      11
+211SYS    03244  03243  03316      44
+223SYS    03320  03317  03333      13
+235SYS    03335  03334  03452      79
+
+
+*PROGRAM  03216  03206  03452     165
+
+
+HALT instruction, P: 00005 (EOM 12006)
+sim> dep p 1
+sim> c
+LOADING COMPLETE   
+HALT instruction, P: 00377 (NOP 10000,2)
+sim> c
+
+
+*STOP*
+   
+
+HALT instruction, P: 03241 (BRU 1)
+sim> 

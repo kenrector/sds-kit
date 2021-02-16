@@ -1,0 +1,59 @@
+*       A:XL
+$LLO 	RES     0
+S9300   EQU     0
+X0      EQU     S9300
+X2      EQU     2-S9300
+$PRNT   PzE     0
+PRN1    SKS     012060      SKIP IF BUFFERED PRINIER
+        BRU     PRN1
+        EOM     010460      STEP ONE LINE BEFORE PRINTING
+PRST    BRM     LINEP       PRINT VARIABLE LENGTH LINE
+        BETW
+        BRU     PERRP
+PRN2    LDX     =00200000-8,X0
+        LDA     =060606060
+SBLK    STA     CBUF,X2     STORE BLANKS IN 1ST 32 POSNS
+        BRX     SBLK,X0
+        EAX     LBUF,X0
+        STX     EDW,X0
+        LDA     =8
+        STA     EDCT
+        BRR     PRNT        *EX1T*
+*
+*
+PERRP   HLT
+* REPLACE PREVIOUS LINE WITH RESTART PROCEDURE
+*              PRINT ONE VARIABLE LENGTH LINE
+LINEP   PZE                 ENTRY
+        SKS     011060      SKIP IF NO PRINTER FAULT
+        HLT                 **HALT-PRINTER FAULT**
+        LDA     EDCT        NUMBER OF WORDS TO PRINT
+        ADD     DPTWi       PLUS ORIGIN OF PRINT BUFFER
+        STA     DPTW        INDEXED INDIRECT ADDRESS
+        LDA     =00200000
+        SUB     EDCT
+        STA     EDCT
+        LDX     EDCT,X0
+        EOM     02660
+        MIW     *DPTW
+        BRX     $-1,X0
+        TOP
+        BRTW
+        BRU     $-1
+        BRR     LINEP
+*
+DPTWI   PZE     LBUF,X2
+DPTW    PZE     LBUF,X2
+*
+*               HOME PAPER SUOROUTI6E
+$HOME   PZE     0
+        SKS     012060      SKIP IF BUFFERED PRINTER READY
+        BRU     $-1
+        EOM     011460      RESTORE PAGE OR 'HOME' PAPER
+        EOM     02660       START BUFFERED PRINTER NR 1
+        EOM     014000
+        BRTW
+        BRU     $-1
+        BRR     HOME        EXIT
+        END
+        

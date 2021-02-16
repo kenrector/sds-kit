@@ -1,0 +1,98 @@
+
+                             1                                                                                  
+     03000                   2          AORG    03000                                                           
+            00000000         3  S9300   EQU     0                                                               
+            00000000         4  X0      EQU     S9300                                                           
+            00000002         5  X2      EQU     2-S9300                                                         
+            00000000         6  CH      EQU     0                                                               
+            00000001         7  U       EQU     1                                                               
+     03000  0 75 03121       8  START   LDB     =-1             COMPUTE MAXIMUM MEMORY ADDR                     
+     03001  0 76 03122       9          LDA     =040000*/S9300+2047                                             
+     03002  0 54 03123      10  LOOP1   SUB     =04000                                                          
+     03003  0 35 03113      11          STA     BIAS                                                            
+     03004  0 35 43113      12          STA     *BIAS                                                           
+     03005  0 70 43113      13          SKM     *BIAS                                                           
+     03006  0 01 03002      14          BRU     LOOP1                                                           
+     03007  0 54 03124      15          SUB     =4095           SUBTRACT 07777                                  
+     03010  0 35 03113      16          STA     BIAS            BIAS=MEMORY SIIE+4K                             
+     03011  0 40 21000      17  BPT     BRTW                                                                    
+     03012  0 01 03011      18          BRU     BPT                                                             
+     03013  0 40 20400      19          BPT     1                                                               
+     03014  0 01 03017      20          BRU     CARDS                                                           
+     03015  0 02 02604      21          RPT     CH,U,4                                                          
+     03016  0 01 03022      22          BRU     READ                                                            
+     03017  0 40 12006      23  CARDS   CRT     CH,U                                                            
+     03020  0 01 03017      24          BRU     CARDS                                                           
+     03021  0 02 03606      25          RCB     CH,U,4                                                          
+     03022  0 32 03114      26  READ    WIM     CW              CONTROL WORD                                    
+     03023  0 76 03114      27          LDA     CW                                                              
+     03024  0 02 20001      28          ROV                                                                     
+     03025  0 67 00003      29          LSH     3               END RECORD TURNSONOYERFLO1                      
+     03026  0 66 00022      30          RSH     18                                                              
+     03027  0 35 03116      31          STA     COUNT           WORD COUNT                                      
+     03030  0 40 21000      32          BRTW                    CHECK FOR CARD FEED ERROR                       
+     03031  0 01 03033      33          BRU     $+2             NO                                              
+     03032  0 01 03111      34          BRU     ERROR           YES                                             
+     03033  0 32 03115      35          WIM     LOC             RECORD ORIGIN                                   
+     03034  0 76 03115      36          LDA     LOC                                                             
+     03035  0 72 03125      37          SKA     =01700000       IS RECORD RELOCATABLE                           
+     03036  0 55 03113      38          ADD     BIAS            YES                                             
+     03037  0 40 20001      39          OVT                     NO, CHECK FOR END RECORD                        
+     03040  0 76 03112      40          LDA     BRUX            YES                                             
+     03041  0 35 03117      41          STA     T1              T1,T2 NOW POINT EITHER TO RECORD                
+     03042  0 35 03120      42          STA     T2              ORIGIN OR TO EX1T                               
+     03043  0 76 03115      43          LDA     LOC                                                             
+     03044  0 66 00023      44          RSH     19              (A)=1 IF REL WORD PRESENT                       
+     03045  0 55 03126      45          ADD     =00200001       COMPUTE XREG CONSTANT CORRESPONDING             
+     03046  0 54 03116      46          SUB     COUNT           TO NUMBER OF DATA WORDS TO READ                 
+     03047  0 35 03116      47          STA     COUNT                                                           
+     03050  0 76 03114      48          LDA     CW              BEGIN CHECKSUM                                  
+     03051  0 17 03115      49          EOR     LOC                                                             
+     03052  0 71 03116      50          LDX     COUNT,X0                                                        
+     03053  0 01 03057      51          BRU     BRX1                                                            
+     03054  0 32 43117      52  LOOP2   WIM     *T1             READ RECORD                                     
+     03055  0 17 43117      53          EOR     *T1                                                             
+     03056  0 61 03117      54          MIN     T1                                                              
+     03057  0 41 03054      55  BRX1    BRX     LOOP2,X0                                                        
+     03060  0 32 03114      56          WIM     REL             READ IN REL WORD IF ANY                         
+     03061  0 17 03114      57          EOR     REL                                                             
+     03062  0 40 20400      58          BPT     1                                                               
+     03063  0 02 12006      59          SRC     CH,U                                                            
+     03064  0 40 20010      60          BETW                    CHECK FOR BUFFER ERROR                          
+     03065  0 01 03111      61          BRU     ERROR                                                           
+     03066  0 35 03115      62          STA     CS              FOLD CHECKSLUM                                  
+     03067  0 66 00014      63          RSH     12                                                              
+     03070  0 17 03115      64          EOR     CS                                                              
+     03071  0 75 03111      65          LDB     ERROR                                                           
+     03072  0 70 03111      66          SKM     ERROR                                                           
+     03073  0 01 03111      67          BRU     ERROR           CHECKSUM FAILS                                  
+     03074  0 71 03116      68          LDX     COUNT,X0                                                        
+     03075  0 75 03114      69          LDB     REL                                                             
+     03076  0 01 03107      70          BRU     BRX2                                                            
+     03077  0 36 03117      71  LOOP3   STB     T1              RELOCATION LOOP                                 
+     03100  0 76 43120      72          LDA     *T2                                                             
+     03101  0 55 03113      73          ADD     BIAS                                                            
+     03102  0 53 03117      74          SKN     T1                                                              
+     03103  0 01 03105      75          BRU     MIN                                                             
+     03104  0 35 43120      76          STA     *T2                                                             
+     03105  0 61 03120      77  MIN     MIN     T2                                                              
+     03106  0 67 00001      78          LSH     1                                                               
+     03107  0 41 03077      79  BRX2    BRX     LOOP3,X0                                                        
+     03110  0 01 03011      80  EXIT    BRU     BPT                                                             
+     03111  0 00 07777      81  ERROR   HLT     07777                                                           
+     03112  0 01 03110      82  BRUX    BRU     EXIT                                                            
+     03113                  83  BIAS    RES     1                                                               
+     03114                  84  CW      RES     1                                                               
+     03115                  85  LOC     RES     1                                                               
+     03116                  86  COUNT   RES     1                                                               
+     03117                  87  T1      RES     1                                                               
+     03120                  88  T2      RES     1                                                               
+            00003114        89  REL     EQU     CW                                                              
+            00003115        90  CS      EQU     LOC                                                             
+            00003000        91          END     START                                                           
+     03121  77777777            
+     03122  00043777            
+     03123  00004000            
+     03124  00007777            
+     03125  01700000            
+     03126  00200001            

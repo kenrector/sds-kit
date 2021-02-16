@@ -1,0 +1,470 @@
+*       S3
+S9300   EQU     0
+X0      EQU     S9300
+X2      EQU     2-S9300
+CAB     OPD     010400000
+CBA     OPD     016500000
+GAX     OPD     016600000
+CXA     OPD     016700000
+GBX     OPD     017000000
+GNA     OPD     017100000
+SKE     OPD     017200000
+SKR     OPD     017000000
+MUL     OPD     017400000
+DIV     OPD     017500000
+ADM     OPD     017600000
+XMA     OPD     017700000
+        AORG    2
+$CW     RES     1
+DW1     RES     31
+        ORG     0
+$CHR    RES     1
+$EDCT   RES     1
+$ALN    RES     1
+$DWC    RES     1
+CHAR    RES     1
+IFRM    FORM    3,6,1,14
+EDWE    HLT     LBUF
+EDWL    BRU     LBUF+1
+EDWV    HLT     LBUF+3
+$EDW    RES     1
+TEMP    RES     1
+PTYP    RES     1
+PLOC    RES     1
+QLOC    RES     1
+$ICW    RES     1
+CHKS    RES     1
+REL     RES     1
+SREL    RES     1
+PREL    RES     1
+$LBUF   RES     0
+        RES     3
+$EREF1  RES     0
+        RES     1
+$EREF2  RES     0
+        RES     4
+$CBUF   RES     0
+        RES     12
+$TBFE   RES     0
+        RES     8
+$CBFE   RES     0
+$DLY1   DATA    060606060
+ERRA    DATA    054
+        DATA    'O'
+        DATA    024
+        DATA    025
+        DATA    031
+        DATA    043
+        DATA    047
+        DATA    051
+        DATA    063
+        DATA    064
+$ERRC   DATA    ERRA-ERRC+0200000
+        DATA    060000000
+        DATA    0600000
+        DATA    06000
+        DATA    017000000
+        DATA    0170000
+        DATA    01700
+ETBL    RES     0
+$EDC    HLT     0
+        SUB     =060
+        LDB     Z
+EDC1    EXU     EDCS            EXECLUTE SHIFT
+        MIN     EDC1            STEP SHIFT
+        ADM    *EDW             ADD CHARACTER TO MEMORY
+        BRR     EDC             EXIT
+EDCS    LSH     18              1ST CHAR
+        LSH     12              2ND CHAR
+        LSH     6               3RD CHAR
+        BRU     EDC2            LAST CHAR IN WORD
+EDC2    LDB     EDCX            RESET EXC
+        STB     EDC1
+        ADM    *EDW             STORE LAST CHAR
+        MIN     EDW             STEP WORD
+        BRR     EDC             EAT
+EDCX    EXU     EDCS
+$EDS    HLT     0
+        STA     EDW             WORD POSITION
+        RSH     15
+        ADD     EDCX
+        STA     EDC1            CHAR POSITION
+        BRR     EDS             EXIT
+ELN     HLT     0
+        LDA     ALN             ALPNABETIC LINE NO.
+        ADD     =0666667
+        STA     ALN
+        ETR     DLY1
+        RSH     3
+        CNA
+        ADD     ALN             SUBTRACT ZONE FROM NON-ZONEBITS
+        ETR     =017171717
+        STA     ALN             SAVE ALPHANUMERIC LINE NUMBER
+        LDX     =00200000-3,X0
+ELN1    SKA     ETBL,X2             TEST FOR 0
+        BRU     ELN2
+        MRG     ETBL-3,X2           REPLACE0WITHBLANK
+        BRX     ELN1,X0
+ELN2    LDB     DLY1
+        RCY     12
+        STA     CBUF-2
+        STB     CBUF-1
+        BRR     ELN             EXIT
+*               RELOCATABLE B1NARY OUTPUT
+*
+$OUTP   HLT     0
+        LDX     CTYP,X0
+        LDA     DWC
+        ETR     =077777
+        SKG     Z
+        BRU     OUTP2           (DWC) = 0, RESET ONLY
+        CXA
+        SKE     PTYP
+        BRU     OUTP1           TYPE CHANGE, FLUSH AND RESET
+        LDA     =24
+        SKG     DWC
+        BRU     OUTP1           (DWC) = 24, FLUSH AND RESET
+        LDA     PTYP
+        SKE     Z
+        BRU     *TYP,X2         (PTYP) + 0
+        LDA     PLOC            (PIYP) = 0
+        ADD     =1
+        SKE     LOC
+        BRU     OUTP1           (PLOC)+1NOT = (LOC), FLUSH AA
+        BRU     *TYP,X2         (PLOC)+1= (LOC)
+OUTP1   BRM     FLUSH
+OUTP2   BRM     RESET
+        BRU     *TYP,X2
+ENDM    LDA     WORD
+        ETR     =077777
+        MRG     LBRU
+        STA     WORD            (WORD):= BRU0,0++(WORD)
+        LDA     MLOC
+        STA     QLOC            (QLOC) := (MLOC)
+*
+DATA    LDX     DWC,X0
+        LDA     LOC
+        STA     PLOC            (PLOC) := (LOC)
+        LDA     WORD
+        STA     DW1+1,X2        (DW1(DWC+1)) := (WORD)
+        LDA     WMOD
+        ETR     =2
+        LDB     Z
+        RSH     2,X2            B22(WMOD)*2**(22-(DWC))
+        CBA
+        MRG     REL
+        STA     REL             (KEL) :=IREL)++(A)
+        SKN     STYP            SKIP IF SPECIAL IY WORD
+        BRU     $+5
+        LDB     =1
+        LDA     Z
+        RCY     0,X2
+        ADM     SREL            (SKEL) := I**(24-DWC)++(SREL)
+        CLR
+        SKE     PMOD
+        LDB     =1
+        RCY     1,X2
+        ADM     PREL
+        MIN     DWC             (DWC):=(DWC)+1
+        BRR     OUTP            EXI1
+*
+FLUSH   HLT                     ENTRY
+        LDA     PTYP            RECORD TYPE OF RECORD BEING FLUSHED
+        SKG     Z
+        BRU     $+3             (PTYP) =0
+        SKE     =3
+        BRU     FLUSH1          (PTYP) = 1 OR 2
+        MIN     DWC             INCLUDE LOAD-ADDRESS  WORD IN COUNT
+        LDA     QLOC
+        STA     DW1             STORE LOAD ADDRESS
+        LDX     DWC,X0
+        LDA     REL
+        SKE     Z
+        BRU     $+2
+        BRU     FLSH2
+        STA     DW1,X2          STORE RELOCATION INDICATOR WRD
+        EAX     1,X2
+        MIN     DWC            INCLUDE LOAD-RELOCAT1ON WORD IN COUNT
+        LDA     =02000000
+        ADM     DW1             (M) := 1, (RELOCATION WORD PRESENT)
+FLSH2   LDA     SREL
+        SKE     Z
+        BRU     $+2
+        BRU     FLSH3
+        STA     DW1,X2
+        EAX     1,X2
+        MIN     DWC             INCLLUDE SPECIAL RELOC W0R0 IN COUNT
+        LDA     =020000000
+        ADM     DW1             (M) := 8+ (M)
+FLSH3   LDA     PREL
+        SKE     Z
+        BRU     $+2
+        BRU     FLUSH1
+        STA     DW1,X2
+        EAX     1,X2
+        MIN     DWC
+        LDA     =010000000
+        ADM     DW1
+*               FORM RECORD CONTROL WDRD
+FLUSH1  LDA     PTYP            RECORD TYPE
+        LDB     Z
+        LSH     6
+        ADD     =1              INDLUDE CONTROL WORD IN COUNT
+        ADD     DWC             NR OF WORDS IN RECORD
+        LSH     15
+        MRG     =050000         RECORD MODE (BINARY)
+        STA     CW
+*               COMPUTE CHECKSUM AND WR1TE RECORD
+        BRM     CHKSUM          CDMPUTE FOLDED CHECKSUM
+        MRG     CW              INSERT CHECKSUM IN CONTROL WORD
+        STA     CW              STORE COMPLETED RECORD CONTROL WORD
+        BRM     WRITR            WRITE ONE RECORD
+        LDA     Z
+        STA     DWC             (DWC) :=0
+        BRR     FLUSH           EXIT
+*
+*               SUBROUTINE TO COMPUTE FOLDED CHECKSUM
+CHKSUM  HLT                     ENYRY
+        LDA     CW
+        RSH     15
+        ETR     =077        (A) = NR WORDS IN RECORD
+        SUB     =2
+        STA     ICN
+        LDA     =DW1        ADDRESS OF 2D WORD
+        STA     ICW
+        LDA     CW
+        ETR     =077770000  EXTRACT CHECKSUM
+        EOR     =077770000  ODD PARITY CHECKSUM
+        EOR    *ICW
+        MIN     ICW         INCREMENT ADDRESS
+        SKR     ICN
+        BRU     $-3
+        LDB     Z           (A) = 24-BIT CHECKSUM OF WORDS 1 THRU
+        LCY     12
+        STB     CHKS
+        LDB     Z
+        RCY     12
+        EOR     CHKS        (A) = COMPLETED 12-BIT CHECKSUM
+        BRR     CHKSUM      EXIT
+ICN     DATA    0
+*
+*
+*
+RESET   HLT                 ENTRY
+        LDA     LOC
+        STA     QLOC        (QLOC):=(LOC)
+        LDA     Z
+        STA     REL         (KEL) :=0
+        STA     SREL        (SREL) T=0
+        STA     PREL
+        LDX     CTYP,X0
+        STX     PTYP,X0
+        BRR     RESET       EXIT
+*
+ENDN    LDA     Z
+        LDB     CW
+        LSH     3
+        SKE     =3
+        BRU     $+2
+        BRR     OUTP
+        LDA     =3
+        STA     PTYP
+        LDA     MLOC
+        STA     QLOC
+        BRM     FLUSH
+        BRR     OUTP
+*
+*               INSERT 3 WORD REF OR DEF ITEM IN CURRENT OUTPUT RECORD
+DEF     LDX     DWC,X0          ENTRY
+        LDA     *WORD
+        STA     DW1,X2          STORE 1ST 4 CHARS OF LABEL
+        MIN     WORD
+        LDA     *WORD
+        ETR     =077770000
+        MRG     =06060
+        STA     DW1+1,X2         STORE LAST .2 CHARS OF LABEL
+        LDB     Z
+        LDA     STYP
+        LSH     22
+        STA     ICN
+        LDA     *WORD
+        ETR     =2
+        XAB
+        MIN     WORD
+        LDA    *WORD
+        ETR     =077777
+        BRM     SKB
+        HLT     =2
+        MRG     =0100000        SET ADDRESS RELOCATION FLAG
+        MRG     ICN             SET SUB-TYPE
+DEF1    STA     DW1+2,X2
+        LDA     =3
+        ADM     DWC             (DWC) := (DWC)+3
+        BRR     OUTP            EXIT
+*
+REF     EQU     DEF
+*               CURRENT RECORD IMAGE
+TYP     HLT     DATA
+        HLT     DEF             EXTERNAL REF OR DEF
+        HLT     POP
+        HLT     ENDM
+        HLT     ENDN
+LBRU    BRU     0
+POP     LDX     DWC,X0
+        LDA     CNTR
+        STA     WORD
+        LDA     *WORD
+        STA     DW1,X2
+        MIN     WORD
+        LDA     *WORD
+*                               blank card in tech manual
+        ETR     =077770000
+        MRG     ='  '
+        STA     DW1+1,X2
+        MIN     WORD
+        LDA     *WORD
+        BRU     DEF1
+$READ   HLT     0
+        BRM     INPUT
+        LDA     =CBUF
+        STA     CHAR            SETBEGINNINGOFLIPE
+        LDA     GETX
+        STA     GETS            SET BEGINNINGOF WORD
+        BRM     ELN
+        BRM     GET             GET 1STCHARACTEROFLINE
+        BRR     READ            EXIT
+$FLD    HLT     0
+        LDA     =7
+        STA     TEMP
+FLD1    BRM     GET
+        SKE     =' '
+        BRR     FLD
+        SKR     TEMP
+        BRU     FLD1
+        BRR     FLD             EXIT
+$GET    HLT     0
+        LDA     *CHAR           LOAD CHARACTER
+GETS    EXU     GETT            EXECUTE SHIFT
+        MIN     GETS
+GET1    ETR     =077
+        STA     CHR
+        CAX
+        BRR     GET
+GETT    RSH     18              1ST CMAR
+        RSH     12              2ND CHAR
+        RSH     6               3RD CHAR
+        BRU     GET2            END WORD
+$GET2   LDB     GETX
+        STB     GETS            RESET EXU
+        MIN     CHAR            STEP WORD
+        BRU     GET1
+GETX    EXU     GETT
+$TCHR   HLT     0
+        STB     TEMP
+        BRM     GET             GET CHAR
+        LDB     TEMP
+        BRM     SKB
+        HLT     CTT,X2          TEST FOR MATCM
+        MIN     TCHR            CHARACTER IS O.K.
+        BRR     TCHR            EXIT
+$EDIT   HLT     0
+        BRM     EDE             EDIT ERRORS
+        BRM     EDL             EDIT LOCATION
+        LDA     EDWV
+        BRM     EDS
+        LDA     WORD
+        STA     WRD1            DATA    WORD
+        BRM     EDR             EDIT BY FORM
+        BRM     PRNT            PRINT LINE
+        BRM     OUTP            OUTPUT WORD
+        BRR     EDIT            EXIT
+$EDTV   HLT     0
+        BRM     EDE             EDIT ERRORS
+        LDA     EDWV            VALUE WORD POSITON
+        BRM     EDS
+        LDA     =7
+        STA     CNTR            7 CHARACTERS LEFT IN B
+        LDA     WORD            DATA
+        RSH     21              LEAVE 1ST CHAR IN A
+        ETR     =7
+        BRM     EDF             EDIT FIELD
+        BRM     PRNT            PR1NT LINE
+        BRR     EDTV            EXIT
+$EDTL   HLT     0
+        BRM     EDE             ED1T ERRORS
+        BRM     EDL             EDIT LOCATION
+        BRM     PRNT            PRINT LINE
+        BRR     EDTL            EXIT
+$EDE    HLT     0
+        LDA     EDWE            ERRORWORD POSITION
+        BRM     EDS
+        LDA     Z
+        XMA     VERR            RESET V ERRORFLAG
+        ADM     UERR            U SET IF V SET
+        LDX     ERRC,X0         ERROR COUNT
+EDE1    LDA     ERRC,X2         ERROR   LISTING CHAR
+        LDB     VERR,X2
+        BRM     SKB
+        HLT     M1
+        BRM     EDC             INSERT ERRORCODE
+        LDB     Z
+        STB     VERR,X2         RESET FLAG
+        BRX     EDE1,X0         TEST NEXTFLAG
+        BRR     EDE             EXIT
+EDL     HLT     0
+        LDA     EDWL            LOC WORD POS1TION
+        BRM     EDS
+        LDA     =4
+        STA     CNTR            MORE CHARACTERS INB
+        LDA     LOC
+        ETR     ADDR
+        RSH     12
+        BRM     EDF             EDIT LOC
+        BRR     EDL             EXIT
+EDR     HLT     0
+        LDB     =040000000
+EDR3    BRM     FLDC            CDUNT BITS FIELD
+        BRU     EDR1            NO MORE FIELDS
+        RSH     23
+        DIV     =3
+        BRM     SKB
+        HLT     =3
+        BRU     EDR2
+        SUB     =1
+        LDB     =3
+EDR2    STA     CNTR            OCTAL CHARACTERS IN FIELD
+        CBX                     BITS IN 1ST CHAR
+        LDA     Z
+        LDB     WRD1            DATA WORD
+        LSH     0,X2            1ST CHAR IN A
+        BRM     EDF             EDIT FIELD
+        LDA     =060
+        BRM     EDC             INSERT TRAILING BLANK
+        LDB     Z
+        BRU     EDR3            D0 NEXT FIELD
+EDR1    BRR     EDR             EXIT
+EDF     HLT     0
+        BRU     EDF1
+EDF2    LDA     Z
+        LSH     3               NEW OCTAL CHAR
+EDF1    STB     WRD1
+        BRM     EDC             INSERT CHAR INIMAGE
+        LDB     WRD1
+        SKR     CNTR            TLST FOREND FIELD
+        BRU     EDF2
+        BRR     EDF             EXIT
+$FLDC   HLT     0
+        LDA     WRD2            FORM WORD
+        EOR     =040000000
+        LDX     =22,X0
+        NOD     24              CDUNT BITS IN FIELD
+        LSH     1
+        STA     WRD2            NEW FORM WORD
+        STX     CNTR,X0
+        LDA     =23
+        SUB     CNTR
+        ETR     =077777
+        SKG     =24
+        MIN     FLDC
+FLC1    BRR     FLDC            EXIT
+        END

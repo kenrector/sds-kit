@@ -1,0 +1,110 @@
+* 6XXT
+$TLO    RES     0
+S9300   EQU     0
+X0      EQU     S9300
+X2      EQU     2-S9300
+CH      EQU     0
+U       EQU     1
+MMO     OPD     06000000
+$PRNT   PZE     0
+        LDA     =060606060
+        LDB     =-1
+TYP     MMO     EDCT
+        LDX     EDCT,X0
+        SKN     EDCT
+        SKM     LBUF,X2
+        BRU     TYPL1
+        BRU     TYP
+TYPL1   BRM     LNCT            INCREMENT AND TEST LINE COUNT
+        LDA     =-1
+        SUB     EDCT
+        STA     EDCT
+        SKG     =-20
+        LDA     =-20
+        STA     TTMP
+        LDA     LLBUF
+        BRM     TYPE
+        LDA     EDCT
+        STA     TTMP
+        SKN     EDCT
+        BRU     PRN2
+* TYPE  LAST N-75 CHARACTERS ON NEXT LINE
+TYP2    MIN     CTR             INCREMENT LINE COUNTER
+        LDA     =052000000
+        BRM     TYCC            TYPE CARRIAGE RETURN
+        LDA     =072000000
+        BRM     TYCC            TYPE TAB
+        LDA     LTBFE
+        BRM     TYPE            TYPE LAST N-75 CHARS OF LINE
+PRN2    LDX     =00200000-8,X0
+        LDA     ='    '
+        STA     CBUF,X2
+        BRX     $-1,X0
+        EAX     LBUF,X0
+        STX     EDW,X0
+        LDA     =8
+        STA     EDCT
+        LDA     =052000000
+        BRM     TYCC
+        BRR PRNT
+*
+* TYPE N CHARACTERS
+TYPE    PZE                         ENTRY
+        STA     EDW                 ADDRESS OF 1ST CHAR TO TYPE
+TMIW    LDA    *EDW
+        LDB     =077
+TMIW1   SUB     =060
+        SKA     =077
+        ADD     =046
+        ADD     =012
+        RCY     6
+        SKA     =077777700
+        BRU     TMIW1
+        STB     TMP                 STORE DATUM
+        TYP     CH,U,4
+        MIW     TMP
+        TOP     CH
+TBRT    BRTW
+        BRU     TBRT
+        MIN     EDW
+        MIN     EDCT
+        MIN     TTMP
+        SKN     TTMP
+        BRR     TYPE
+        BRU     TMIW
+* TYPE CONTROL CHARACTER
+TYCC    PZE                     ENTRY
+        STA     TMP
+TYC1    TYP     CH,U,1
+        MIW     TMP
+        TOP     CH
+TYSS    BRTW
+        BRU     TYSS
+        BRR     TYCC                EXIT
+*
+* LINE COUNT AND PAGE EJECT SUBROUTINE
+LNCT    PZE
+        MIN     CTR
+        LDA     CTR
+        SKG     =50
+        BRR     LNCT
+        BRM     THOME               HOME PAGE
+        BRR     LNCT                EXIT
+$HOME RES 0
+THOME   PZE     0
+        LDA     CTR                 L1NES TYPED
+        ADD     =002000000-66
+        STA     CTR
+        LDX     CTR,X0
+NPG     LDA     =052000000
+        BRM     TYCC
+        BRX     NPG,X0
+        CLR
+        STA     CTR
+        BRR     THOME
+CTR     DATA    0
+TMP     PZE
+TTMP    PZE
+LLBUF   PZE     LBUF
+LTBFE   PZE     TBFE
+        END

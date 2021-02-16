@@ -1,0 +1,84 @@
+MMO    OPD     06000000
+X0     EQU     0
+X2     EQU     2
+CW     EQU     3
+COUNT  EQU     0
+LOC    EQU     2
+LAST   EQU     3
+U      EQU     1
+CH     EQU     0
+       AORG    07600
+ORG    RES     0
+BIAS   EQU     1
+B      EQU     ORG+BIAS
+       WIM     3
+       WIM     4
+       BRU     2                   04
+       SKR     2
+       WIM     047
+*BACKWARDS BOOTSTRAP
+*BOOTSTRAP LOOP READS NEXT WORD IN TO LOCATION 046 AND FOLLOWING
+*WORDS INTO SUCCESSIVELY LOWER MEMORY LOCATIONS UNTIL LAST WORD (CRT)
+*REPLACES BRU IN LOCATION 4
+READ   RES     0
+       BRU     READ-B              46 NO
+       BRU     LAST                45 YES
+       SKN     COUNT
+       DATA    07777               43 NO HALT *CLEAR HALT TO ACCEPT
+       SKM     MASK-B              42 DOES RECORD CHECKSUM
+       LDB     MASK-B              41
+       EOR     LOC                 40
+NEXT   RES     0
+       RSH     12                  37
+       STA     LOC                 36 FOLD CHECKSUM
+       SRC     CH,U                35
+       EOR     LAST                34 TRANSFER ADDRESS FOR END RECORD
+       WIM     LAST                33 0 FOR DATA RECORD OR
+THREE  RES     0
+       BRU     LOOP-B              32 NO
+       SKN     COUNT               31 FINISHED
+       MIN     LOC                 30
+       MMO     COUNT               27
+       EOR     *LOC                26 ACCUMULATE CHECKSUM
+LOOP   RES     0
+       WIM     *LOC                25 READ NEXT WORD
+       BRU     READLW-B            24 FOR END RECORD BYPASS LOOP
+       OVT                         23
+       EOR     LOC                 22
+       LDA     CW                  21 BEGIN CHECKSUM
+       STA     COUNT               20
+READLW RES     0
+       RSH     18                  17
+       SUB     THREE-B
+       LSH     3                   15 END RECORD TURNS ON OVERFLOW
+       LDA     CW                  14 COMPUTE RECORD SIZE
+       WIM     LOC                 13 RECORD ORIGIN
+       BRU     CW                  12 YES *CLEAR HALT TO CONTINUE
+       BRU     NEXT-B              11 NO
+       BRTW                        10 CHECK FOR FEED ERRO
+MASK   RES     0
+       WIM     CW                  07 READ FIRST CONTROL WORD
+       RCB     CH,U,4              06
+       BRU     READ-B              05
+       CRT     CH,U                04 DELAY UNTIL CARD READER READY
+ENDq    RES     0
+START  LDA     =11
+       STA     TEMP
+       SKS     014046
+       BRU     $-1
+PUNCH  EOM     03646
+       LDX     =00177730
+       MIW     ORG+40,2
+       BRX     $-1
+       EOM     014000
+       SKS     021000
+       BRU     $-1
+       SKR     TEMP
+       NOP
+       SKN     TEMP
+       BRU     PUNCH
+       HLT
+       BRU     START
+TEMP   RES     1
+       END     START
+       

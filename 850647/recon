@@ -1,0 +1,36 @@
+; recon - command file to translate encoded to symbolic
+; using 850647-84
+;
+;
+; usage:  do  recon  file  
+;    The program will hang waiting for typewriter input specifying
+;    devices.
+;    Type ^(057) followed by two characters to specify first input and
+;    second, output device.  Characters may be C, P or M, to specify
+;    card, paper tape or magnetic tape.  Restart entire command by 
+;    typing / to correct error.
+;
+;    Magnetic tape output is on mt2
+;
+;    For example, tyoe ^CMc/r - input from card reader, output on mt2
+;
+;    Test with:  
+;    do recon 850644-44
+;      type:  ^CM
+;
+;    Program returns to 1113 for another ^command
+;    To list output on mag tape 2; listtape mt2   
+
+
+set log /users/admin/sds/simlog
+set debug /users/admin/sds/simdebug
+
+! cat 850647/850647-84 %1 > bootdeck
+att cr bootdeck
+att cp card-punch
+att mt2 mt2
+
+set cpu history=20000
+boot cr
+
+

@@ -1,0 +1,61 @@
+
+                             1                                                                                  
+                             2  *  OCRED TEXT FROM SYMBOL TECHNICAL MANUAL                                      
+                             3  *  MODIFIED TO NOT PUNCH TWO BLANK CARDS AT WEOF                                
+                             4  *  KEN RECTOR, 9/11/2020                                                        
+                             5  *                                                                               
+                             6  * ^XC                                                                           
+     00000                   7  $CBO    RES     0                                                               
+            00000000         8  S9300   EQU     0                                                               
+            00000000         9  X0      EQU     S9300                                                           
+            00000002        10  X2      EQU     2-S9300                                                         
+            00000000        11  CH      EQU     0                                                               
+            00000001        12  U       EQU     1                                                               
+     00000  0 00 00000      13  $WRITR  PZE     0               ENTRY                                           
+     00001  0 76 00044      14          LDA     =-12            LOAD REPEAT COUNT                               
+     00002  0 40 14046      15          CPT     CH,U                                                            
+     00003  0 01 00002      16          BRU     $-1                                                             
+     00004  0 40 12046      17          PBT     CH,U                                                            
+     00005  0 46 30003      18          CLR                     BUFFERED, SET REPEAT CDUN                       
+     00006  0 35 00032      19          STA     PETEC           SAVE REPEAT COUNT                               
+     00007  0 40 21000      20  PETEL1  BRTW                    WAIT FOR BUFFER TO BE READY                     
+     00010  0 01 00007      21          BRU     $-1                                                             
+     00011  0 02 03646      22          PCB     CH,U,4                                                          
+     00012  0 76 00035      23          LDA     PETECW                                                          
+     00013  0 35 00033      24          STA     PETEA           INIALIZE BUFFER ADDRESS                         
+     00014  0 71 00045      25          LDX     =00200000-40,X0                                                 
+     00015  0 75 00034      26          LDB     PETE0                                                           
+*    00016  0 76 00000      27          LDA     DWC             A = RECORD SIZE - 1                             
+     00017  0 72 00046      28  PETEL2  SKA     =040000000      IS A NEGAT1VE                                   
+     00020  0 36 00033      29          STB     PETEA           YES, SET ADDRESS = ADDRESS OF 0                 
+     00021  0 12 40033      30          MIW     *PETEA          OUTPUT WORD                                     
+     00022  0 61 00033      31          MIN     PETEA           INCREMENT ADDRESS                               
+     00023  0 54 00047      32          SUB     =1              DECREMENT COUNT                                 
+     00024  0 41 00017      33          BRX     PETEL2,X0                                                       
+     00025  0 02 14000      34          TOP     CH                                                              
+     00026  0 61 00032      35          MIN     PETEC           INCREMENT REPEAT COUNT                          
+     00027  0 53 00032      36          SKN     PETEC           IS ALL TRANSMISION COMPLETE                     
+     00030  0 51 00000      37          BRR     WRITR           YES, EXIT                                       
+     00031  0 01 00007      38          BRU     PETEL1          NO, LOOP AGAIN                                  
+                            39  *                                                                               
+     00032                  40  PETEC   RES     1               SAVE LOCATION FOR REPEAT COUNT                  
+     00033                  41  PETEA   RES     1               SAVE LOCATION FOR ADDRESS                       
+     00034  0 00 00050      42  PETE0   PZE     =0              ADDRESS OF A ZERO CONSTANT                      
+*    00035  0 00 00000      43  PETECW  PZE     CW                                                              
+     00036  0 00 00000      44  $WEOF   PZE     0                                                               
+     00037  0 76 00051      45          LDA     =-1                                                             
+*    00040  0 35 00016      46          STA     DWC                                                             
+                            47  *       BRM     WRITR           KENR                                            
+     00041  0 20 00000      48          NOP     0                                                               
+                            49  *       BRM     WRITR           KENR                                            
+     00042  0 20 00000      50          NOP     0                                                               
+     00043  0 51 00036      51          BRR     WEOF                                                            
+                            52          END                                                                     
+     00044  77777764            
+     00045  00177730            
+     00046  40000000            
+     00047  00000001            
+     00050  00000000            
+     00051  77777777            
+     00035  CW                  
+     00040  DWC                 

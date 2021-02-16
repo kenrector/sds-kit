@@ -1,0 +1,29 @@
+850647 900-SERIES ENCODED TO SYMBOLIC RECONSTRUCTOR(RECON) 
+AUTHOR: XEROX
+ABSTRACT:
+TO RECONSTRUCT FROM AN ENCODED REPRESENTATION OF A PROGRAM ON PAPER TAPE, CARDS OR MAGNETIC TAPE A SYMBOLIC REPRESENTATION OF THE PROGRAM ON CARDS. PAPER TAPE OR MAGNETIC TAPE.
+COMMENTS:
+SOURCE LANGUAGE: META-SYMBOL. SIZE: 1019 DECIMAL. CONFlGURATION: ANY XDS 900 SERIES COMPUTER WITH AT LEAST 4K WORDS OF MEMORY AND A CARD READER, OR PAPER TAPE READER, OR MAGNETIC TAPE UNIT AND CARD PUNCH OR PAPER TAPE PUNCH OR MAGNETIC TAPE UNIT. BINARY ALSO AVAILABLE ON MONARCH SYSTEM TAPES.
+
+
+; usage:  do  recon  file  
+;    The program will hang waiting for typewriter input command specifying
+;    devices.
+;
+;    Type ^ followed by two characters to specify input and
+;    output devices.  Characters may be C, P or M, to specify
+;    card, paper tape or magnetic tape.  Type / to restart entire
+;    command to correct an error.
+;
+;    Magnetic tape output is on mt2. To list output on mag tape 2; use
+;    sds_listtape mt2.
+;   
+;    Program returns to 1113 for another ^command.
+;
+;    For example, tyoe ^CMc/r - input from card reader, output on mt2
+;
+;    Test with:  
+;    do recon 850644-44
+;      type:  ^CM
+;
+

@@ -1,0 +1,26 @@
+; command file to assemble an ascii file
+;
+; do sym  hollerith-source  binary-output   listing-output
+;
+; no prompt, just type I/O options: ^'si''bo''lo''c/r'
+; ^CCL   for card input, card punch output, line printer listing 
+; type '/' to start option input over
+; type c at first halt, (642) if options were '^CCLc/r'
+; type q at next halt at (642)
+;
+set log /users/admin/sds/simlog
+set debug /users/admin/sds/simdebug
+
+! cat symbol/symbol >bootdeck
+! cat %1  >>bootdeck
+! cat %1  >>bootdeck
+
+att cr bootdeck
+att cp  %2
+att lpt %3
+
+
+dep bpt1 1
+set cpu history=20000
+
+boot cr

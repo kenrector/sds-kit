@@ -1,0 +1,951 @@
+
+                             1                                                                                  
+                             2  *       S1                                                                      
+                             3  *                                                                               
+D           16400000         4  CAB     OPD     016400000                                                       
+D           16500000         5  CBA     OPD     016500000                                                       
+D           16600000         6  CAX     OPD     016600000                                                       
+D           16700000         7  CXA     OPD     016700000                                                       
+D           17000000         8  CBX     OPD     017000000                                                       
+D           17100000         9  CNA     OPD     017100000                                                       
+D           17200000        10  SKE     OPD     017200000                                                       
+D           17300000        11  SKR     OPD     017300000                                                       
+D           17400000        12  MUL     OPD     017400000                                                       
+D           17500000        13  DIV     OPD     017500000                                                       
+D           17600000        14  ADM     OPD     017600000                                                       
+D           17700000        15  XMA     OPD     017700000                                                       
+            00000000        16  S9300   EQU     0                                                               
+            00000000        17  X0      EQU     S9300                                                           
+            00000002        18  X2      EQU     2-S9300                                                         
+            00000001        19  IN      EQU     1                                                               
+            00000002        20  OUT     EQU     2                                                               
+     00001                  21          AORG    1                                                               
+     00001  0 01 00127      22          BRU     BGN     RESTART                                                 
+     00042                  23          AORG    34                                                              
+     00042                  24  SXT     RES     4                                                               
+     00046                  25  SCXT    RES     4                                                               
+     00052                  26  $SOT    RES     16                                                              
+     00072                  27  SIT     RES     16                                                              
+     00112                  28  TPM     RES     6                                                               
+     00120                  29  TPS     RES     6                                                               
+     00126                  30  TPR     RES     6                                                               
+     00134                  31  $TPL    RES     6                                                               
+     00142                  32  ENDP    RES     0                                                               
+     00142                  33  $LOC    RES     1                                                               
+     00143                  34  $PMOD   RES     1                                                               
+     00144                  35  $WMOD   RES     1                                                               
+     00145                  36  $WORD   RES     1                                                               
+     00146                  37  $WRD2   RES     1                                                               
+     00147                  38  $WRD1   RES     1                                                               
+     00150                  39  $TERM   RES     1                                                               
+     00151                  40  $CTYP   RES     1                                                               
+     00152                  41  $STYP   RES     1                                                               
+     00153                  42  $PASS   RES     1                                                               
+     00154                  43  HIGH    RES     1                                                               
+     00155                  44  $LIMT   RES     1                                                               
+     00156                  45  LOC1    RES     1                                                               
+     00157                  46  LOCP    RES     1                                                               
+     00000                  47          ORG     0                                                               
+     00000                  48  $LADD   RES     1                                                               
+     00001                  49  $OCTF   RES     1                                                               
+     00002                  50  XFLG    RES     1                                                               
+     00003                  51  $IFLG   RES     1                                                               
+     00004                  52  EFLG    RES     1                                                               
+     00005                  53  $LTR1   RES     1                                                               
+     00006                  54  $LTR2   RES     1                                                               
+     00007                  55  $LTR3   RES     1                                                               
+     00010                  56  $MODE   RES     1                                                               
+     00011                  57  $VALU   RES     1                                                               
+     00012                  58  $XERR   RES     1                                                               
+     00013                  59  $OERR   RES     1                                                               
+     00014                  60  $DERR   RES     1                                                               
+     00015                  61  $EERR   RES     1                                                               
+     00016                  62  IERR    RES     1                                                               
+     00017                  63  LERR    RES     1                                                               
+     00020                  64  $PERR   RES     1                                                               
+     00021                  65  $RERR   RES     1                                                               
+     00022                  66  $TERR   RES     1                                                               
+     00023                  67  $UERR   RES     1                                                               
+     00024                  68  $VERR   RES     1                                                               
+     00025                  69  $CNTR   RES     1                                                               
+     00026                  70  CNT1    RES     1                                                               
+     00027                  71  CNT2    RES     1                                                               
+     00030                  72  CNT3    RES     1                                                               
+     00031                  73  CNTB    RES     1                                                               
+     00032                  74  $LN     RES     1                                                               
+     00033                  75  BCIF   RES     1                                                                
+     00034                  76  $LBL1   RES     1                                                               
+     00035                  77  $LBL1P1 RES     1                                                               
+     00036                  78  $LBL1P2 RES     1                                                               
+     00037                  79  IOC     RES     1                                                               
+     00040                  80  $X      RES     1                                                               
+     00041                  81  Z       RES     0                                                               
+     00041  00000000        82  CT      DATA    000000000                                                       
+     00042  00000100        83          DATA    000000100                                                       
+     00043                  84  B1      RES     0                                                               
+     00043  20000000        85          DATA    020000000                                                       
+     00044  20000100        86          DATA    020000100                                                       
+     00045                  87  B3      RES     0                                                               
+     00045  04000000        88          DATA    004000000                                                       
+     00046  0 00 00120      89  $LST    HLT     TPS                                                             
+     00047  0 00 00112      90  LMT     HLT     TPM             LOCAT1ON OF MNEMONIC TABLE PACKET               
+     00050  0 00 00126      91  $LRT    HLT     TPR                                                             
+     00051  0 00 00042      92  $LSXT   HLT     SXT                                                             
+     00052  0 00 00046      93  LSCX    HLT     SCXT                                                            
+     00053  0 00 00052      94  LSOT    HLT     SOT             LOCATION OF SCAN CONECTER                       
+     00054  0 00 00072      95  LSIT    HLT     SIT             LOCATION OF SCAN ITEM                           
+     00055  0 00 00034      96  LLBL    HLT     LBL1            LOCATION OF LBL                                 
+*    00056  0 00 00000      97  FRST    HLT     MT                  1ST MNEMONIC TABLE LOCATION                 
+*    00057  0 00 00000      98  FINL    HLT     MTE             FINAL MNEMONIC TABLE LOCATION                   
+     00060  00000060        99  $BCHR   DATA    060                                                             
+     00061  00000073       100  $CCHR   DATA    073                                                             
+     00062  00000053       101  DCHR    DATA    053                                                             
+     00063  00000054       102  $SCHR   DATA    054                                                             
+     00064  00000007       103  $A7     DATA    07                                                              
+     00065  00000777       104  A57     DATA    0777                                                            
+     00066  40000000       105  B0      DATA    040000000                                                       
+     00067  02000000       106  B4      DATA    02000000                                                        
+     00070  01000000       107  B5      DATA    01000000                                                        
+     00071  00400000       108  B6      DATA    0400000                                                         
+     00072  00200000       109  B7      DATA    0200000                                                         
+     00073  00100000       110  $B8     DATA    0100000                                                         
+     00074  00010000       111  B11     DATA    010000                                                          
+     00075  00004000       112  B12     DATA    04000                                                           
+     00076  00002000       113  B13     DATA    02000                                                           
+     00077  00001000       114  B14     DATA    01000                                                           
+     00100  00000200       115  B16     DATA    0200                                                            
+     00101  00000100       116  B17     DATA    0100                                                            
+     00102  00000040       117  B18     DATA    040                                                             
+     00103  00000020       118  B19     DATA    020                                                             
+     00104  00000010       119  B20     DATA    010                                                             
+     00105  00000004       120  B21     DATA    04                                                              
+     00106  00000002       121  B22     DATA    2                                                               
+     00107  00000001       122  B23     DATA    1                                                               
+     00110  00000077       123  C3      DATA    077                                                             
+     00111  77770000       124  C01     DATA    077770000                                                       
+     00112  00000102       125  P66     DATA    66                                                              
+     00113  00000030       126  P24     DATA    24                                                              
+     00114  00000016       127  P14     DATA    016                                                             
+     00115  00000012       128  P10     DATA    10                                                              
+     00116  00000003       129  P3      DATA    3                                                               
+     00117  77777777       130  M1      DATA    -1                                                              
+     00120  77777776       131  M2      DATA    -2                                                              
+     00121  77777773       132  M5      DATA    -5                                                              
+     00122  77777751       133  M23     DATA    -23                                                             
+     00123  77777721       134  M47     DATA    -47                                                             
+     00124  30000000       135  MC      DATA    030000000                                                       
+     00125  00000740       136  BPM     DATA    0740                                                            
+     00126  00000034       137  LL      DATA    034                                                             
+            00000045       138  $IC     EQU     B3                                                              
+            00000067       139  $CC     EQU     B4                                                              
+            00000070       140  LC      EQU     B5                                                              
+            00000071       141  $SC     EQU     B6                                                              
+            00000072       142  $DC     EQU     B7                                                              
+            00000073       143  $OC     EQU     B8                                                              
+            00000100       144  $REFM   EQU     B16                                                             
+            00000101       145  $DUPM   EQU     B17                                                             
+            00000106       146  $RELM   EQU     B22                                                             
+            00000107       147  EXTM    EQU     B23                                                             
+            00000115       148  SPAC    EQU     P10                                                             
+            00000107       149  REFT    EQU     B23                                                             
+            00000106       150  DEFT    EQU     B22                                                             
+     00127                 151  BGN     RES     0                                                               
+     00127  0 46 30003     152          CLR                                                                     
+     00130  0 35 00032     153          STA    LN                                                               
+     00131                 154  BGNB    RES     0                                                               
+     00131  0 71 00056     155          LDX     FRST,X0                                                         
+     00132  2 77 00003     156          EAX     3,2                                                             
+     00133  0 37 00025     157          STX     CNTR,X0                                                         
+     00134  2 76 00001     158  RST2    LDA     1,X2                                                            
+     00135  0 72 00102     159          SKA     B18      TEST ASSEMBLER DEFINED                                 
+     00136  0 01 00150     160          BRU     RST1    DONT SAVE PROGRAMMER DEFINED                            
+     00137  2 75 00000     161          LDB     0,X2                                                            
+     00140  0 36 40025     162          STB     *CNTR   SAVE 1ST WORD                                           
+     00141  0 61 00025     163          MIN     CNTR                                                            
+     00142  2 75 00001     164          LDB     1,X2                                                            
+     00143  0 36 40025     165          STB     *CNTR   SAVE 2ND WORD                                           
+     00144  0 61 00025     166          MIN     CNTR                                                            
+     00145  2 75 00002     167          LDB     2,X2                                                            
+     00146  0 36 40025     168          STB     *CNTR    SAVE 3RD WORD                                          
+     00147  0 61 00025     169          MIN     CNTR                                                            
+     00150  2 77 00003     170  RST1    EAX     3,X2    ADDRESS OF NEXT FROM WORD                               
+     00151  0 76 00025     171          LDA     CNTR    ADDRESS OF NEXT TO WORD                                 
+     00152  0 50 00057     172          SKE     FINL    TEST FOR END OF COMMAND TABLE                           
+     00153  0 01 00134     173          BRU     RST2                                                            
+     00154  0 71 01445     174  BGN2    LDX     =00200000-24,X0                                                 
+     00155  0 76 00041     175          LDA     Z                                                               
+     00156  2 35 00142     176  BGN3    STA     ENDP,X2     CLEAR ALL PACKETS                                   
+     00157  0 41 00156     177          BRX     BGN3,X0                                                         
+     00160  0 76 00154     178          LDA     HIGH    HIGHEST LOCATION                                        
+     00161  0 54 00116     179          SUB     P3                                                              
+     00162  0 35 00120     180          STA     TPS     BASE OF SYMBOL TABLE                                    
+     00163  0 35 00121     181          STA     TPS+1                                                           
+     00164  0 76 00111     182          LDA     C01                                                             
+     00165  0 35 00123     183          STA     TPS+3                                                           
+     00166  0 35 00125     184          STA     TPS+5                                                           
+     00167  0 76 00056     185          LDA     FRST                                                            
+     00170  0 54 00116     186          SUB     P3                                                              
+     00171  0 35 00112     187          STA     TPM     BASE OF MNEMONIC 1ABLE                                  
+     00172  0 76 00111     188          LDA     C01                                                             
+     00173  0 35 00115     189          STA     TPM+3                                                           
+     00174  0 76 00057     190          LDA     FINL                                                            
+     00175  0 54 00056     191          SUB     FRST                                                            
+     00176  0 71 00113     192          LDX     P24,X0                                                          
+     00177  0 35 00025     193          STA     CNTR        NO. OF WORDS IN TABLE                               
+     00200  0 67 10030     194          NOD     24                                                              
+     00201  0 14 00124     195          ETR     MC                                                              
+     00202  0 54 00045     196          SUB     B3                                                              
+     00203  0 72 00043     197          SKA     B1                                                              
+     00204  0 55 00045     198          ADD     B3                                                              
+     00205  0 46 20005     199          ABC                                                                     
+     00206  2 67 00000     200          LSH     0,X2                                                            
+     00207  0 35 00114     201          STA     TPM+2                                                           
+     00210  0 76 00025     202          LDA     CNTR                                                            
+     00211  0 54 00114     203          SUB     TPM+2                                                           
+     00212  0 35 00116     204          STA     TPM+4                                                           
+     00213  0 55 00056     205          ADD     FRST                                                            
+     00214  0 35 00113     206          STA     TPM+1                                                           
+     00215  0 76 00041     207          LDA     Z                                                               
+     00216  0 35 00153     208          STA     PASS        SET PASS1                                           
+     00217  0 35 00151     209          STA     CTYP                                                            
+     00220  0 76 00051     210          LDA     LSXT                                                            
+*    00221  0 35 00000     211          STA     SCNX        SET SCAN EXIT                                       
+     00222  0 76 00052     212          LDA     LSCX                                                            
+*    00223  0 35 00000     213          STA     SCIX                                                            
+     00224  0 76 00053     214          LDA     LSOT                                                            
+*    00225  0 35 00000     215          STA     LOP         SET SCAN CONNECTER                                  
+     00226  0 76 00054     216          LDA     LSIT                                                            
+*    00227  0 35 00000     217          STA     LITM        SET SCAN ITEM                                       
+     00230  0 76 00057     218          LDA     FINL        1ST AVAILABLE CELL                                  
+     00231  0 54 00154     219          SUB     HIGH                                                            
+     00232  0 35 00155     220          STA     LIMT        MINUS NO. OF CELLS AVAILABLE                        
+     00233  0 00 00000     221          HLT                                                                     
+     00234  0 76 00041     222  BGN4    LDA     Z                                                               
+*    00235  0 35 00000     223          STA     MLOC        0 TO MAX LOC                                        
+*    00236  0 35 00000     224          STA     ALN                                                             
+     00237  0 76 00073     225          LDA     B8                                                              
+     00240  0 35 00142     226          STA     LOC                                                             
+     00241  0 76 00041     227  LINE    LDA     Z                                                               
+     00242  0 35 00143     228          STA     PMOD                                                            
+     00243  0 35 00144     229          STA     WMOD        0 TO MODE                                           
+     00244  0 35 00002     230          STA     XFLG        RESET EXTERNALFLAG                                  
+     00245  0 35 00003     231          STA     IFLG        RESET INDIRECT FLAG                                 
+     00246  0 35 00034     232          STA     LBL1     RESET LABEL                                            
+     00247  0 35 00152     233          STA     STYP                                                            
+     00250  0 35 00017     234          STA     LERR                                                            
+     00251  0 76 00117     235          LDA     M1                                                              
+     00252  0 35 00001     236          STA     OCTF        RESET OCTAL FLAG                                    
+     00253  0 76 00122     237          LDA     M23                                                             
+*    00254  0 35 00000     238          STA     SCALE                                                           
+     00255  0 76 00126     239          LDA     LL                                                              
+*    00256  0 35 00000     240          STA     EDCT                                                            
+*    00257  0 43 00000     241          BRM     READ        READ LINE                                           
+     00260  0 50 00060     242          SKE     BCHR        TEST FOR BLANK LABEL                                
+     00261  0 01 00434     243          BRU     LIN1        PROCESS LABEL FIELD                                 
+*    00262  0 43 00000     244  LIN6    BRM     FLD         SKIP TO OPERATION                                   
+     00263  0 50 00060     245          SKE     BCHR                                                            
+     00264  0 01 00267     246          BRU     LP1                                                             
+     00265  0 43 00550     247          BRM     LXL                                                             
+     00266  0 01 00436     248          BRU     LIN10                                                           
+*    00267  0 43 00000     249  LP1     BRM     SYM                                                             
+*    00270  0 76 00000     250          LDA     CHR                                                             
+     00271  0 50 00063     251          SKE     SCHR        TEST FOR *                                          
+     00272  0 60 00003     252          SKR     IFLG                                                            
+     00273  0 61 00003     253          MIN     IFLG        SET 1FLAG                                           
+     00274  0 50 00063     254          SKE     SCHR                                                            
+     00275  0 53 00117     255          SKN     M1          ALWAY5 SK1P                                         
+*    00276  0 43 00000     256          BRM     GET         SKIP *                                              
+     00277  0 50 00060     257          SKE     BCHR        TEST FOR BLANK                                      
+*    00300  0 35 00000     258          STA     SM1         UNDEFINED COMMAND                                   
+*    00301  0 76 00000     259          LDA     LSYM                                                            
+     00302  0 75 00047     260          LDB     LMT                                                             
+*    00303  0 43 00000     261          BRM     SRCH        LODK UP MNEMONIC                                    
+*    00304  0 01 00000     262          BRU     POPI                                                            
+     00305  0 35 00145     263  $POPIRT STA     WORD                                                            
+     00306  0 36 00010     264          STB     MODE        SAVE TYPE                                           
+*    00307  0 43 00262     265          BRM     FLD         SKIP TO OPERAND FIELD                               
+     00310  0 76 00010     266          LDA     MODE                                                            
+     00311  0 72 00105     267          SKA     B21                                                             
+     00312  0 01 40145     268          BRU     *WORD                                                           
+     00313  0 43 00315     269          BRM     DLBL        DEFINE LABEL                                        
+     00314  0 01 00335     270          BRU     LIN7                                                            
+     00315  0 00 00000     271  DLBL    HLT     0                                                               
+     00316  0 76 00034     272          LDA     LBL1                                                            
+     00317  0 50 00041     273          SKE     Z                                                               
+     00320  0 50 00034     274          SKE     LBL1                                                            
+     00321  0 51 00315     275          BRR     DLBL        EXIT                                                
+     00322  0 76 00035     276          LDA     LBL1+1                                                          
+     00323  0 75 00142     277          LDB     LOC                                                             
+     00324  0 36 00036     278          STB     LBL1+2                                                          
+     00325  0 43 01432     279          BRM     SKB                                                             
+     00326  0 00 00073     280          HLT     B8                                                              
+     00327  0 16 00106     281          MRG     B22                                                             
+     00330  0 35 00035     282          STA     LBL1+1                                                          
+     00331  0 76 00055     283          LDA     LLBL                                                            
+     00332  0 75 00046     284          LDB     LST                                                             
+*    00333  0 43 00000     285          BRM     NSRT        INSERT IN SYMBOL TABLE                              
+     00334  0 51 00315     286          BRR     DLBL        EXIT LABEL  DEFINE                                  
+     00335  0 76 00010     287  LIN7    LDA     MODE                                                            
+     00336  0 72 00106     288          SKA     B22                                                             
+     00337  0 01 40145     289          BRU     *WORD                                                           
+     00340  0 53 00153     290          SKN     PASS                                                            
+     00341  0 01 00432     291          BRU     LIN2        1ST PASS                                            
+     00342  0 72 00076     292          SKA     B13                                                             
+*    00343  0 01 00000     293          BRU     POPR                                                            
+     00344  0 72 00107     294          SKA     B23                                                             
+     00345  0 01 01343     295          BRU     FREF                                                            
+     00346  0 72 00104     296          SKA     B20                                                             
+     00347  0 01 00442     297          BRU     INR3                                                            
+     00350  0 75 00117     298          LDB     M1                                                              
+     00351  0 72 00103     299          SKA     B19                                                             
+*    00352  0 75 00000     300          LDB     FORCEO                                                          
+     00353  0 36 00001     301          STB     OCTF        OCTAL ADDRESS                                       
+*    00354  0 43 00000     302  INR1    BRM     SCNL        GET INSTRUCTION ADDRESS                             
+     00355  0 02 20001     303  INR1A   ROV                                                                     
+*    00356  0 71 00000     304          LDX     NAB,X0                                                          
+     00357  2 67 00000     305          LSH     0,X2                                                            
+     00360  2 66 00000     306          RSH     0,X2                                                            
+*    00361  0 14 00000     307          ETR     ADDR                                                            
+     00362  0 16 00145     308          MRG     WORD                                                            
+     00363  0 40 20001     309  INR9    OVT                                                                     
+     00364  0 61 00022     310          MIN     TERR        SET T ERROR                                         
+     00365  0 36 00144     311          STB     WMOD                                                            
+     00366  0 75 01446     312          LDB      =07700000                                                      
+*    00367  0 70 00000     313          SKM     EOD                                                             
+     00370  0 01 00372     314          BRU     INR93                                                           
+     00371  0 01 00374     315          BRU     INR92                                                           
+*    00372  0 70 00000     316  INR93   SKM     EOM                                                             
+     00373  0 01 00404     317          BRU     INR91                                                           
+     00374  0 53 00003     318  INR92   SKN     IFLG                                                            
+     00375  0 16 01447     319          MRG     =040000                                                         
+     00376  0 01 00406     320          BRU     INR94                                                           
+     00377  0 53 00153     321  $PZE    SKN     PASS                                                            
+     00400  0 01 00432     322          BRU     LIN2                                                            
+*    00401  0 43 00354     323          BRM     SCNL                                                            
+     00402  0 36 00144     324          STB     WMOD                                                            
+     00403  0 14 01450     325          ETR     =077777                                                         
+     00404  0 53 00003     326  INR91   SKN     IFLG                                                            
+*    00405  0 16 00000     327          MRG     INDB        SET INDIRECT BIT                                    
+     00406  0 35 00145     328  INR94   STA     WORD                                                            
+     00407  0 76 00117     329          LDA     M1                                                              
+     00410  0 35 00001     330          STA     OCTF        RESET OCTALFLAG                                     
+     00411  0 76 00150     331          LDA     TERM                                                            
+     00412  0 50 00061     332          SKE     CCHR                                                            
+     00413  0 01 00423     333          BRU     LIN3                                                            
+*    00414  0 43 00000     334          BRM     SCAN        GET INDEX                                           
+*    00415  0 14 00000     335          ETR     XMSK        MASK X FIELD                                        
+     00416  0 50 00011     336          SKE     VALU                                                            
+     00417  0 61 00022     337          MIN     TERR        SET TRUNCATION ERROR                                
+     00420  0 67 00025     338          LSH     21          POSITION X FIELD                                    
+     00421  0 16 00145     339  $INR2   MRG     WORD                                                            
+     00422  0 35 00145     340          STA     WORD                                                            
+*    00423  0 76 00000     341  $LIN3   LDA     INST                                                            
+     00424  0 35 00146     342          STA     WRD2        INSTRUCTION FORM                                    
+     00425  0 76 00060     343  LIN8    LDA     BCHR                                                            
+     00426  0 50 00150     344          SKE     TERM        TEST FOR BLANK                                      
+     00427  0 61 00015     345          MIN     EERR        SET ERROR                                           
+     00430  0 35 00150     346          STA     TERM                                                            
+*    00431  0 43 00000     347          BRM     EDIT        EDIT INSTRUCTION                                    
+     00432  0 61 00142     348  $LIN2   MIN     LOC         L+1 TO L                                            
+     00433  0 01 00241     349          BRU     LINE                                                            
+     00434  0 50 00063     350  LIN1    SKE     SCHR        TEST FOR *                                          
+     00435  0 01 00510     351          BRU     LIN4                                                            
+     00436                 352  $NOP0   RES     0                                                               
+     00436  0 53 00153     353  LIN10   SKN     PASS                                                            
+     00437  0 01 00241     354          BRU     LINE        SKIP IF 1ST PASS                                    
+*    00440  0 43 00000     355          BRM     PRNT       PRINT COMMENTS LINE                                  
+     00441  0 01 00241     356          BRU     LINE                                                            
+     00442  0 76 00010     357  INR3    LDA     MODE                                                            
+     00443  0 72 00075     358          SKA     B12                                                             
+     00444  0 01 00446     359          BRU     $+2                                                             
+     00445  0 01 00467     360          BRU     INR31                                                           
+*    00446  0 43 00414     361          BRM     SCAN                                                            
+     00447  0 75 00041     362          LDB     Z                                                               
+     00450  0 72 00105     363          SKA     B21                                                             
+*    00451  0 75 00367     364          LDB     EOD                                                             
+     00452  0 14 00116     365          ETR     P3                                                              
+     00453  0 46 00400     366          CAX                                                                     
+     00454  0 46 10012     367          BAC                                                                     
+     00455  2 16 00041     368          MRG     CT,X2                                                           
+     00456  0 16 00145     369          MRG     WORD                                                            
+     00457  0 75 01446     370          LDB     =07700000                                                       
+*    00460  0 70 00000     371          SKM     SKSEOD                                                          
+     00461  0 01 00463     372          BRU     $+2                                                             
+*    00462  0 17 00000     373          EOR     EODI                                                            
+     00463  0 35 00145     374          STA     WORD                                                            
+     00464  0 76 00150     375          LDA     TERM                                                            
+     00465  0 50 00061     376          SKE     CCHR                                                            
+     00466  0 01 00423     377          BRU     LIN3                                                            
+     00467  0 76 01447     378  INR31   LDA     =040000                                                         
+     00470  0 53 00003     379          SKN     IFLG                                                            
+     00471  0 63 00145     380          ADM     WORD                                                            
+*    00472  0 43 00446     381          BRM     SCAN                                                            
+     00473  0 14 00110     382          ETR     C3                                                              
+     00474  0 50 00011     383          SKE     VALU                                                            
+     00475  0 61 00022     384          MIN     TERR                                                            
+     00476  0 63 00145     385          ADM     WORD        INSERT UNIT                                         
+     00477  0 76 00150     386          LDA     TERM                                                            
+     00500  0 50 00061     387          SKE     CCHR                                                            
+     00501  0 01 00423     388          BRU     LIN3                                                            
+*    00502  0 43 00472     389          BRM     SCAN        GET CHAR/WORD                                       
+     00503  0 50 00041     390          SKE     Z                                                               
+     00504  0 54 00107     391          SUB     B23                                                             
+     00505  0 14 00116     392          ETR     P3                                                              
+     00506  0 67 00007     393          LSH     7          POSITION CHAR/WORD                                   
+     00507  0 01 00421     394          BRU     INR2                                                            
+     00510  0 50 00062     395  LIN4    SKE     DCHR        TEST FOR $                                          
+     00511  0 01 00515     396          BRU     LIN5                                                            
+     00512  0 53 00153     397          SKN     PASS                                                            
+     00513  0 61 00002     398          MIN     XFLG        SET EXTERNAL FLAG                                   
+*    00514  0 43 00276     399  LIN49   BRM     GET                                                             
+     00515  0 75 00071     400  LIN5    LDB     SC          CHECK FOR LABEL CHARACTER                           
+     00516  0 73 00041     401          SKG     Z                                                               
+     00517  0 61 00017     402          MIN     LERR        1ST CHAR= 0 P )                                     
+     00520  0 43 01432     403          BRM     SKB                                                             
+*    00521  2 00 00000     404          HLT     CTT,X2                                                          
+     00522  0 01 00524     405          BRU     LIN9                                                            
+     00523  0 61 00017     406  LIN11   MIN     LERR        SET LABEL FIELD ERROR FLAG                          
+*    00524  0 43 00267     407  LIN9    BRM     SYM                                                             
+     00525  0 35 00034     408          STA     LBL1        SAVE                                                
+     00526  0 46 00010     409          CBA                                                                     
+     00527  0 16 00002     410          MRG     XFLG        SET EXTERNALMODE                                    
+     00530  0 35 00035     411          STA     LBL1+1                                                          
+     00531  0 16 00034     412          MRG     LBL1                                                            
+*    00532  0 72 00000     413          SKA     DLY1        TDST FOR AT LEST 1 ALPHABETEC                       
+     00533  0 53 00117     414          SKN     M1          ALWAYS SKIP                                         
+     00534  0 61 00017     415          MIN     LERR                                                            
+*    00535  0 76 00270     416          LDA      CHR                                                            
+     00536  0 50 01451     417          SKE     =','                                                            
+     00537  0 01 00542     418          BRU     LIN99                                                           
+     00540  0 43 00550     419          BRM     LXL                                                             
+     00541  0 01 00514     420          BRU     LIN49                                                           
+     00542  0 50 00060     421  LIN99   SKE     BCHR                                                            
+     00543  0 61 00017     422          MIN     LERR        ILLEGAL CHARACTER IN LABEL                          
+     00544  0 76 00041     423          LDA     Z                                                               
+     00545  0 50 00017     424          SKE     LERR        TEST FOR LABEL ERROR                                
+     00546  0 35 00034     425          STA     LBL1        DONT ENTER LABEL                                    
+     00547  0 01 00262     426          BRU     LIN6                                                            
+     00550  0 00 00000     427  LXL     HLT     0                                                               
+     00551  0 76 00055     428          LDA     LLBL                                                            
+     00552  0 75 00046     429          LDB     LST                                                             
+*    00553  0 43 00303     430          BRM     SRCH                                                            
+     00554  0 51 00550     431          BRR     LXL                                                             
+     00555  0 46 00010     432          CBA                                                                     
+     00556  0 16 00002     433          MRG     XFLG                                                            
+     00557  2 35 00001     434          STA     1,X2                                                            
+     00560  0 51 00550     435          BRR     LXL                                                             
+*    00561  0 43 00502     436  $EQU    BRM     SCAN        GET VALUE                                           
+     00562  0 35 00145     437          STA     WORD                                                            
+     00563  0 46 00014     438          XAB                                                                     
+     00564  0 14 00120     439          ETR     M2                                                              
+     00565  0 63 00035     440          ADM     LBL1+1                                                          
+     00566  0 36 00036     441          STB     LBL1+2                                                          
+     00567  0 76 00055     442          LDA     LLBL                                                            
+     00570  0 75 00046     443          LDB     LST                                                             
+*    00571  0 43 00333     444  EQU1    BRM     NSRT        INSERT IN SYMBOL TABLE                              
+     00572  0 53 00153     445  EQU2    SKN     PASS                                                            
+     00573  0 01 00241     446          BRU     LINE                                                            
+*    00574  0 43 00000     447          BRM     EDTV        PR1NT                                               
+     00575  0 01 00241     448          BRU     LINE                                                            
+*    00576  0 76 00352     449  $OPD    LDA     FORCEO                                                          
+     00577  0 35 00001     450          STA     OCTF        SET OCTAL FLAG                                      
+*    00600  0 43 00561     451          BRM     SCAN        GET VALUE                                           
+     00601  0 35 00145     452          STA     WORD                                                            
+     00602  0 35 00036     453          STA     LBL1+2                                                          
+     00603  0 76 00102     454          LDA     B18                                                             
+     00604  0 63 00035     455          ADM     LBL1+1                                                          
+     00605  0 76 00055     456  OPD1    LDA     LLBL                                                            
+     00606  0 75 00047     457          LDB     LMT                                                             
+*    00607  0 43 00571     458          BRM     NSRT                                                            
+     00610  0 14 01452     459          ETR     =07777                                                          
+     00611  0 50 01453     460          SKE     =02140                                                          
+     00612  0 01 00572     461          BRU     EQU2                                                            
+     00613  0 76 00035     462          LDA     LBL1+1                                                          
+     00614  2 35 00001     463          STA     1,X2                                                            
+     00615  0 76 00036     464          LDA     LBL1+2                                                          
+     00616  2 35 00002     465          STA     2,X2                                                            
+     00617  0 01 00572     466          BRU     EQU2                                                            
+     00620  0 46 30003     467  $FORM   CLR                                                                     
+     00621  0 36 00146     468  FRM3    STB     WRD2        STORE FORM WORD                                     
+*    00622  0 43 00600     469          BRM     SCAN        GET FIELD LENGTH                                    
+     00623  0 46 00400     470          CAX                                                                     
+     00624  0 75 00146     471          LDB     WRD2                                                            
+     00625  0 76 00066     472          LDA     B0                                                              
+     00626  2 67 20000     473          LCY     0,X2        INSERT NEW FIELD                                    
+     00627  0 72 00117     474          SKA     M1                                                              
+     00630  0 01 00640     475          BRU     FRM1        MORE THAN 24 BITS                                   
+     00631  0 43 01432     476          BRM     SKB                                                             
+     00632  0 00 00066     477          HLT     B0                                                              
+     00633  0 01 00641     478          BRU     FRM2        END OF FORM                                         
+     00634  0 76 00150     479          LDA     TERM                                                            
+     00635  0 50 00061     480          SKE     CCHR                                                            
+     00636  0 01 00640     481          BRU     FRM1        LESS THAN 24 BITS                                   
+     00637  0 01 00621     482          BRU     FRM3        PROCESS NEXT FIELD                                  
+     00640  0 61 00022     483  FRM1    MIN     TERR        SET TRUNCATION ERROR                                
+     00641  0 46 00010     484  FRM2    CBA                                                                     
+     00642  0 16 00066     485          MRG     B0                                                              
+     00643  0 35 00036     486          STA     LBL1+2                                                          
+     00644  0 76 00107     487          LDA     B23                                                             
+     00645  0 55 00102     488          ADD     B18                                                             
+     00646  0 63 00035     489          ADM     LBL1+1                                                          
+     00647  0 76 00055     490          LDA     LLBL                                                            
+     00650  0 75 00047     491          LDB     LMT                                                             
+*    00651  0 43 00607     492          BRM     NSRT        INSERT FORM ITEM                                    
+     00652  0 53 00153     493          SKN     PASS                                                            
+     00653  0 01 00241     494          BRU     LINE        SKIP IF PASS1                                       
+*    00654  0 43 00000     495          BRM     EDE         EDIT ERRORS                                         
+*    00655  0 43 00440     496  FRM4    BRM     PRNT                                                            
+     00656  0 01 00241     497          BRU     LINE                                                            
+     00657  0 53 00153     498  $PAGE   SKN     PASS                                                            
+     00660  0 01 00241     499          BRU     LINE                                                            
+*    00661  0 43 00000     500          BRM     HOME        EJECT TO NEXT PAGE                                  
+*    00662  0 43 00655     501          BRM     PRNT                                                            
+     00663  0 01 00241     502          BRU     LINE                                                            
+     00664  0 46 30003     503  $AORG   CLR                                                                     
+     00665  0 01 00667     504          BRU     ORG1                                                            
+     00666  0 76 00073     505  $ORG    LDA     B8                                                              
+     00667  0 43 00673     506  ORG1    BRM     ILOC        GET NEW LOC                                         
+     00670  0 35 00142     507          STA     LOC                                                             
+     00671  0 43 00315     508          BRM     DLBL        DEFINE LABEL                                        
+     00672  0 01 00704     509          BRU     BSS1                                                            
+     00673  0 00 00000     510  ILOC    HLT     0                                                               
+     00674  0 35 00156     511          STA     LOC1                                                            
+*    00675  0 43 00000     512          BRM     MAXL        SET MAXIMUM LOC                                     
+*    00676  0 43 00622     513          BRM     SCAN        GET INCREMENT                                       
+     00677  0 55 00156     514          ADD     LOC1                                                            
+     00700  0 35 00156     515          STA     LOC1        SAVE RESULT                                         
+     00701  0 51 00673     516          BRR     ILOC        EXIT                                                
+     00702  0 76 00142     517  $BSS    LDA     LOC         OLD LOC                                             
+     00703  0 43 00673     518          BRM     ILOC        GET NEW LOC                                         
+     00704  0 53 00153     519  BSS1    SKN     PASS        TEST PASS                                           
+     00705  0 53 00117     520          SKN     M1          D0NT PR1NT IF 1ST PASS                              
+*    00706  0 43 00000     521          BRM     EDTL        PRINT LOCATION                                      
+     00707  0 76 00156     522          LDA     LOC1        NEW LOCATION                                        
+     00710  0 35 00142     523          STA     LOC                                                             
+     00711  0 01 00241     524          BRU     LINE                                                            
+*    00712  0 43 00676     525  $DATA   BRM     SCAN                                                            
+     00713  0 53 00153     526          SKN     PASS                                                            
+     00714  0 01 00722     527          BRU     DATA1                                                           
+     00715  0 35 00145     528          STA     WORD                                                            
+     00716  0 36 00144     529          STB     WMOD                                                            
+     00717  0 76 00066     530          LDA     B0                                                              
+     00720  0 35 00146     531          STA     WRD2                                                            
+*    00721  0 43 00431     532          BRM     EDIT                                                            
+     00722  0 61 00142     533  DATA1   MIN     LOC                                                             
+     00723  0 76 00150     534          LDA     TERM                                                            
+     00724  0 50 00061     535          SKE     CCHR                                                            
+     00725  0 01 00241     536          BRU     LINE                                                            
+     00726  0 01 00712     537          BRU     DATA                                                            
+     00727  0 76 00123     538  $DED    LDA     M47         SCALE                                               
+*    00730  0 35 00254     539          STA     SCALE                                                           
+*    00731  0 43 00000     540          BRM     DPW         GET DOUBLE PRECISION WORD                           
+*    00732  0 23 00000     541          EXU     DPWR        TO EXCHANGE OR NOT TO EXCHANGE                      
+     00733  0 36 00145     542          STB     WORD                                                            
+     00734  0 35 00011     543          STA     VALU                                                            
+     00735  0 53 00153     544          SKN     PASS                                                            
+     00736  0 01 00742     545          BRU     DED1                                                            
+     00737  0 76 00066     546          LDA     B0                                                              
+     00740  0 35 00146     547          STA     WRD2                                                            
+*    00741  0 43 00721     548          BRM     EDIT                                                            
+     00742  0 61 00142     549  DED1    MIN     LOC                                                             
+     00743  0 53 00153     550          SKN     PASS                                                            
+     00744  0 01 00752     551          BRU     DED2                                                            
+     00745  0 76 00011     552          LDA     VALU                                                            
+     00746  0 35 00145     553          STA     WORD                                                            
+     00747  0 76 00066     554          LDA     B0                                                              
+     00750  0 35 00146     555          STA     WRD2                                                            
+*    00751  0 43 00741     556          BRM     EDIT                                                            
+     00752  0 61 00142     557  DED2    MIN     LOC                                                             
+     00753  0 76 00150     558          LDA     TERM                                                            
+     00754  0 50 00061     559          SKE     CCHR                                                            
+     00755  0 01 00241     560          BRU     LINE                                                            
+     00756  0 01 00727     561          BRU     DED                                                             
+     00757                 562  $BCD    RES                                                                     
+     00757  0 75 00115     563          LDB     SPAC                                                            
+     00760  0 01 00762     564          BRU     $+2                                                             
+     00761                 565  $TEXT   RES     0                                                               
+     00761  0 75 00060     566          LDB     BCHR                                                            
+     00762  0 36 00033     567          STB     BCIF                                                            
+*    00763  0 76 00535     568          LDA     CHR                                                             
+     00764  0 50 01454     569          SKE     ='<'                                                            
+     00765  0 01 00772     570          BRU     TEXT7                                                           
+     00766  0 76 00114     571          LDA     P14                                                             
+     00767  0 35 00150     572          STA     TERM                                                            
+     00770  0 76 01455     573          LDA     =55                                                             
+     00771  0 01 01002     574          BRU     TEXT6                                                           
+*    00772  0 43 00000     575  TEXT7   BRM     DECW                                                            
+     00773  0 54 00107     576  TEXT1   SUB     B23                                                             
+     00774  0 75 00101     577          LDB     B17                                                             
+     00775  0 36 00150     578          STB     TERM                                                            
+     00776  0 73 01455     579          SKG     =55                                                             
+     00777  0 01 01002     580          BRU     TEXT6                                                           
+     01000  0 76 01455     581          LDA     =55                                                             
+     01001  0 61 00022     582          MIN     TERR                                                            
+     01002  0 35 00031     583  TEXT6   STA     CNTB                                                            
+*    01003  0 43 00514     584          BRM     GET                                                             
+     01004  0 53 00031     585  TEXT2   SKN     CNTB                                                            
+     01005  0 53 00117     586          SKN     M1          ALWAYS SKIP                                         
+     01006  0 01 00241     587          BRU     LINE        DONE                                                
+     01007  0 76 00033     588          LDA     BCIF                                                            
+     01010  0 64 01456     589          MUL     =01010101                                                       
+     01011  0 67 00027     590          LSH     23                                                              
+     01012  0 35 00145     591          STA     WORD        SET WORD TO BLANK:                                  
+     01013  0 71 01457     592          LDX     =00200000-4,X0                                                  
+*    01014  0 76 00763     593  TEXT3   LDA     CHR                                                             
+     01015  0 50 00060     594          SKE     BCHR                                                            
+     01016  0 01 01020     595          BRU     $+2                                                             
+     01017  0 76 00033     596          LDA     BCIF                                                            
+     01020  0 50 00150     597          SKE     TERM                                                            
+     01021  0 01 01025     598          BRU     TEXT8                                                           
+     01022  0 46 01000     599          CNA                                                                     
+     01023  0 35 00031     600          STA     CNTB                                                            
+     01024  0 01 01036     601          BRU     TEXT4                                                           
+     01025  0 54 00033     602  TEXT8   SUB     BCIF                                                            
+     01026  0 75 00041     603          LDB     Z                                                               
+     01027  2 23 01051     604          EXU     TEXT5,X2    EXECUTE SHIFT                                       
+     01030  0 63 00145     605          ADM     WORD        ADD CHARACTER TO WORD                               
+     01031  0 37 00025     606          STX     CNTR,X0                                                         
+*    01032  0 43 01003     607          BRM     GET                                                             
+     01033  0 71 00025     608          LDX     CNTR,X0                                                         
+     01034  0 60 00031     609          SKR     CNTB                                                            
+     01035  0 41 01014     610          BRX     TEXT3,X0                                                        
+     01036  0 76 00066     611  TEXT4   LDA     B0                                                              
+     01037  0 35 00146     612          STA     WRD2                                                            
+     01040  0 53 00153     613          SKN     PASS                                                            
+     01041  0 53 00117     614          SKN     M1          YES                                                 
+*    01042  0 43 00751     615          BRM     EDIT        EDIT ALPHA-NUMERIC WORD                             
+     01043  0 61 00142     616          MIN     LOC         L+1 TO L                                            
+     01044  0 01 01004     617          BRU     TEXT2                                                           
+     01045  0 67 00022     618          LSH     18                                                              
+     01046  0 67 00014     619          LSH     12                                                              
+     01047  0 67 00006     620          LSH     6                                                               
+     01050  0 20 00000     621          NOP     0                                                               
+     01051                 622  TEXT5   RES     0                                                               
+     01051  0 76 00041     623  ENDPS   LDA     Z                                                               
+     01052  0 35 00153     624          STA     PASS        FORCE END OF PASS 1                                 
+     01053                 625  $END    RES     0                                                               
+     01053  0 53 00153     626  END1A   SKN     PASS                                                            
+     01054  0 01 01056     627          BRU     END1        END PASS 1                                          
+     01055  0 01 01173     628          BRU     END2                                                            
+     01056                 629  END1    RES     0                                                               
+*    01056  0 43 00000     630          BRM     ENDSI                                                           
+     01057  0 76 00117     631          LDA     M1                                                              
+     01060  0 35 00153     632          STA     PASS        CHANGE PASS                                         
+     01061  0 76 00142     633          LDA     LOC                                                             
+     01062  0 35 00157     634          STA     LOCP        SET LITERAL OR1GIN                                  
+     01063  0 35 00000     635          STA     LADD        SET 1ST LITERAL  ADDRESS                            
+*    01064  0 71 00000     636          LDX     ERRC,X0                                                         
+     01065  0 76 00041     637          LDA     Z                                                               
+     01066  2 35 00024     638  END3    STA     VERR,X2     CLEAR ERROR FLAGS                                   
+     01067  0 41 01066     639          BRX     END3,X0                                                         
+     01070  0 35 00024     640          STA     VERR                                                            
+*    01071  0 35 00000     641          STA     DWC                                                             
+     01072  0 76 00106     642          LDA     DEFT                                                            
+     01073  0 35 00152     643          STA     STYP                                                            
+     01074  0 76 00107     644          LDA     B23                                                             
+     01075  0 35 00151     645          STA     CTYP                                                            
+     01076  0 71 00120     646          LDX     TPS,X0                                                          
+     01077  0 46 00200     647  END14   CXA                                                                     
+     01100  0 55 00116     648          ADD     P3                                                              
+     01101  0 73 00154     649          SKG     HIGH                                                            
+     01102  0 53 00117     650          SKN     M1                                                              
+     01103  0 01 01120     651          BRU     END13                                                           
+     01104  0 46 00400     652          CAX                                                                     
+     01105  2 76 00001     653          LDA     1,X2                                                            
+     01106  0 72 00107     654          SKA     EXTM                                                            
+     01107  0 53 00117     655          SKN     M1                                                              
+     01110  0 01 01077     656          BRU     END14                                                           
+     01111  0 14 00120     657          ETR     M2                                                              
+     01112  2 35 00001     658          STA     1,X2                                                            
+     01113  0 37 00145     659          STX     WORD,X0                                                         
+     01114  0 37 00025     660          STX     CNTR,X0                                                         
+*    01115  0 43 00000     661          BRM     OUTP                                                            
+     01116  0 71 00025     662          LDX     CNTR,X0                                                         
+     01117  0 01 01077     663          BRU     END14                                                           
+     01120  0 76 00041     664  END13   LDA     Z                                                               
+     01121  0 35 00005     665          STA     LTR1                                                            
+     01122  0 76 00106     666          LDA     B22                                                             
+     01123  0 35 00151     667          STA     CTYP                                                            
+     01124  0 76 00112     668          LDA     TPM                                                             
+     01125  0 55 00114     669          ADD     TPM+2                                                           
+     01126  0 55 00116     670          ADD     TPM+4                                                           
+     01127  0 35 00134     671          STA     TPL             ORICIN OF LITERAL TABLE                         
+     01130  0 71 00056     672          LDX     FRST,X0                                                         
+     01131  2 77 00003     673          EAX     3,X2                                                            
+     01132  0 37 00025     674  ENDP2   STX     CNTR,X0                                                         
+     01133  2 76 00001     675          LDA     1,X2                                                            
+     01134  0 75 01452     676          LDB     =07777                                                          
+     01135  0 70 01460     677          SKM     =02040                                                          
+     01136  0 01 01146     678          BRU     ENDP1                                                           
+     01137  2 76 00002     679          LDA     2,X2                                                            
+     01140  0 66 20020     680          RCY     16                                                              
+     01141  0 16 00005     681          MRG     LTR1                                                            
+     01142  0 67 20020     682          LCY     16                                                              
+     01143  2 35 00002     683          STA     2,X2                                                            
+     01144  0 61 00005     684          MIN     LTR1                                                            
+*    01145  0 43 01115     685          BRM     OUTP                                                            
+     01146  0 71 00025     686  ENDP1   LDX     CNTR,X0                                                         
+     01147  2 77 00003     687          EAX     3,X2                                                            
+     01150  0 46 00200     688          CXA                                                                     
+     01151  0 50 00134     689          SKE     TPL                                                             
+     01152  0 01 01132     690          BRU     ENDP2                                                           
+     01153  0 76 00041     691          LDA     Z                                                               
+     01154  0 35 00151     692          STA     CTYP                                                            
+     01155  0 76 00120     693          LDA     TPS                                                             
+     01156  0 35 00126     694          STA     TPR             ORIGIN OF REFERENCE TABLE                       
+     01157  0 35 00127     695          STA     TPR+1                                                           
+     01160  0 76 00111     696          LDA     C01                                                             
+     01161  0 35 00131     697          STA     TPR+3                                                           
+     01162  0 35 00133     698          STA     TPR+5                                                           
+     01163  0 35 00135     699          STA     TPL+1                                                           
+     01164  0 76 00117     700          LDA     M1                                                              
+     01165  0 35 00137     701          STA     TPL+3                                                           
+*    01166  0 76 00532     702          LDA     DLY1                                                            
+     01167  0 71 01461     703          LDX     =00200000-8,X0                                                  
+*    01170  2 35 00000     704  END8    STA     CBUF,X2         CLEAR PRINT LINE                                
+     01171  0 41 01170     705          BRX     END8,X0                                                         
+     01172  0 01 00234     706          BRU     BGN4                                                            
+     01173  0 76 00107     707  END2    LDA     B23                                                             
+     01174  0 35 00004     708          STA     EFLG                                                            
+*    01175  0 76 01014     709          LDA     CHR                                                             
+     01176  0 50 00060     710          SKE     BCHR                                                            
+     01177  0 53 00117     711          SKN     M1          ALWAYS SKIP                                         
+     01200  0 01 01210     712          BRU     END4       NO TRANSFER                                          
+*    01201  0 43 00712     713          BRM     SCAN        GET TRANSFER ADDRESS                                
+     01202  0 35 00145     714          STA     WORD                                                            
+     01203  0 76 00066     715          LDA     B0                                                              
+     01204  0 35 00146     716          STA     WRD2                                                            
+*    01205  0 43 00574     717          BRM     EDTV        EOTT                                                
+     01206  0 60 00004     718          SKR     EFLG        SET TRANSFER FLAG                                   
+     01207  0 01 01211     719          BRU     END5                                                            
+*    01210  0 43 00662     720  END4    BRM     PRNT        PRINT                                               
+     01211  0 71 00134     721  END5    LDX     TPL,X0      L1T TABLE ORIGIN                                    
+     01212  0 76 00157     722          LDA     LOCP                                                            
+     01213  0 35 00142     723          STA     LOC                                                             
+     01214  0 35 00005     724          STA     LTR1        0 TO SEQUENCE                                       
+     01215  0 50 00000     725  END6    SKE     LADD                                                            
+     01216  0 01 01275     726          BRU     PLTR        LITERAL TO OUTPUT                                   
+*    01217  0 43 00675     727          BRM     MAXL        MAXIMUM LOCATION                                    
+     01220  0 76 00107     728          LDA     REFT                                                            
+     01221  0 35 00152     729          STA     STYP                                                            
+     01222  0 76 00107     730          LDA     B23                                                             
+     01223  0 35 00151     731          STA     CTYP                                                            
+     01224  0 71 00050     732          LDX     LRT,X0      1ST WORD OF REF TABLE                               
+     01225  2 76 00000     733          LDA     0,X2                                                            
+     01226  0 55 00116     734          ADD     P3                                                              
+     01227  0 35 00005     735          STA     LTR1                                                            
+     01230  2 55 00002     736          ADD     2,X2                                                            
+     01231  2 55 00004     737          ADD     4,X2                                                            
+     01232  0 35 00006     738          STA     LTR2        END OF REF TABLE                                    
+     01233  0 76 00006     739  END12   LDA     LTR2                                                            
+     01234  0 73 00005     740          SKG     LTR1                                                            
+     01235  0 01 01256     741          BRU     END15       NO MORE REFS                                        
+     01236  0 76 00005     742          LDA     LTR1                                                            
+     01237  0 35 00145     743          STA     WORD                                                            
+     01240  0 76 40005     744          LDA     *LTR1                                                           
+*    01241  0 35 00000     745          STA     EREF1                                                           
+     01242  0 61 00005     746          MIN     LTR1                                                            
+     01243  0 76 40005     747          LDA     *LTR1                                                           
+     01244  0 14 00111     748          ETR     C01                                                             
+     01245  0 16 01462     749          MRG     ='  '                                                           
+*    01246  0 35 00000     750          STA     EREF2                                                           
+     01247  0 61 00005     751          MIN     LTR1                                                            
+     01250  0 76 40005     752          LDA     *LTR1                                                           
+     01251  0 61 00005     753          MIN     LTR1                                                            
+     01252  0 35 00142     754          STA     LOC                                                             
+*    01253  0 43 00706     755          BRM     EDTL                                                            
+*    01254  0 43 01145     756          BRM     OUTP        OUTPUT REF                                          
+     01255  0 01 01233     757          BRU     END12                                                           
+     01256  0 76 00116     758  END15   LDA     P3                                                              
+     01257  0 35 00151     759          STA     CTYP        END CARD TYPE                                       
+     01260  0 60 00004     760          SKR     EFLG                                                            
+     01261  0 01 01267     761          BRU     END7        NO TRANSFER                                         
+     01262  0 76 00011     762          LDA     VALU                                                            
+     01263  0 35 00145     763          STA     WORD        ADDRESS                                             
+     01264  0 76 00010     764          LDA     MODE                                                            
+     01265  0 35 00144     765          STA     WMOD                                                            
+*    01266  0 43 01254     766          BRM     OUTP        OUTPUT TRANSFER CARD                                
+     01267  0 76 00105     767  END7    LDA     B21                                                             
+     01270  0 35 00151     768          STA     CTYP                                                            
+*    01271  0 43 01266     769          BRM     OUTP        CLEAR   CARDS                                       
+     01272                 770  END11   RES     0                                                               
+*    01272  0 43 00661     771          BRM     HOME                                                            
+*    01273  0 43 00000     772          BRM     WEOF                                                            
+     01274  0 01 00127     773          BRU     BGN                                                             
+     01275  0 46 00200     774  PLTR    CXA                                                                     
+     01276  0 55 00116     775          ADD     P3          CURRENT SEQUENCE                                    
+     01277  0 46 00400     776          CAX                                                                     
+     01300  2 76 00002     777          LDA     2,X2                                                            
+     01301  0 50 00005     778  PLT2    SKE     LTR1                                                            
+     01302  0 01 01320     779          BRU     PLT1        OUT OF SEQUENCE                                     
+     01303  2 76 00000     780          LDA     0,X2                                                            
+     01304  0 35 00145     781          STA     WORD        VALUE                                               
+     01305  2 76 00001     782          LDA     1,X2                                                            
+     01306  0 35 00144     783          STA     WMOD        MODE                                                
+     01307  0 76 00066     784          LDA     B0                                                              
+     01310  0 35 00146     785          STA     WRD2                                                            
+     01311  0 37 00006     786          STX     LTR2,X0                                                         
+*    01312  0 43 01042     787          BRM     EDIT                                                            
+     01313  0 71 00006     788          LDX     LTR2,X0     RESTORE                                             
+     01314  0 61 00005     789          MIN     LTR1        ICREMENT SEQUENCE                                   
+     01315  0 76 00005     790          LDA     LTR1                                                            
+     01316  0 61 00142     791          MIN     LOC                                                             
+     01317  0 01 01215     792          BRU     END6                                                            
+     01320  0 54 00157     793  PLT1    SUB     LOCP                                                            
+     01321  0 35 00025     794          STA     CNTR                                                            
+     01322  0 55 00025     795          ADD     CNTR                                                            
+     01323  0 55 00025     796          ADD     CNTR        3 * SEQUENCE                                        
+     01324  0 55 00116     797          ADD     P3                                                              
+     01325  0 55 00134     798          ADD     TPL                                                             
+     01326  0 35 00007     799          STA     LTR3        CORRECT POS1TION                                    
+     01327  2 76 00000     800          LDA     0,X2                                                            
+     01330  0 62 40007     801          XMA    *LTR3        EXCHANGE LITERALS                                   
+     01331  2 35 00000     802          STA     0,X2                                                            
+     01332  0 61 00007     803          MIN     LTR3                                                            
+     01333  2 76 00001     804          LDA     1,X2                                                            
+     01334  0 62 40007     805          XMA    *LTR3                                                            
+     01335  2 35 00001     806          STA     1,X2                                                            
+     01336  0 61 00007     807          MIN     LTR3                                                            
+     01337  2 76 00002     808          LDA     2,X2                                                            
+     01340  0 62 40007     809          XMA    *LTR3                                                            
+     01341  2 35 00002     810          STA     2,X2                                                            
+     01342  0 01 01301     811          BRU     PLT2                                                            
+     01343  0 76 00113     812  FREF    LDA     P24                                                             
+     01344  0 35 00026     813          STA     CNT1        NO. OF BITS LEFT                                    
+     01345  0 76 00121     814          LDA     M5                                                              
+     01346  0 35 00030     815          STA     CNT3        SET FIELD COUNT                                     
+     01347  0 76 00145     816          LDA     WORD                                                            
+     01350  0 35 00147     817          STA     WRD1        SAVE FORM FOR ED1T                                  
+     01351  0 35 00146     818          STA     WRD2                                                            
+     01352  0 76 00041     819          LDA     Z                                                               
+     01353  0 35 00145     820          STA     WORD        0 TO DATA                                           
+     01354  0 75 00066     821          LDB     B0                                                              
+*    01355  0 43 00000     822  FR4     BRM     FLDC        COUNT BITS IN FIELD                                 
+     01356  0 01 01415     823          BRU     FR5         NO MORE FIELD5                                      
+     01357  0 61 00030     824          MIN     CNT3                                                            
+     01360  0 35 00027     825          STA     CNT2        FIELD SIZE                                          
+*    01361  0 50 00000     826          SKE     AB          ADDRESS BITS                                        
+     01362  0 01 01370     827          BRU     FR2         N0T ADDRESS SIZE                                    
+     01363  0 50 00026     828          SKE     CNT1        BITS LEFT                                           
+     01364  0 01 01370     829          BRU     FR2         NOT ADDRESS FIELD                                   
+*    01365  0 43 00401     830          BRM     SCNL                                                            
+     01366  0 36 00144     831          STB     WMOD                                                            
+     01367  0 01 01374     832          BRU     FR3                                                             
+*    01370  0 43 01201     833  FR2     BRM     SCAN        GET NON-ADDRESS FIELD                               
+     01371  0 43 01432     834          BRM     SKB                                                             
+     01372  0 00 00106     835          HLT     RELM                                                            
+     01373  0 61 00021     836          MIN     RERR        SET R FLAG                                          
+     01374  0 75 00041     837  FR3     LDB     Z                                                               
+     01375  0 71 00027     838          LDX     CNT2,X0                                                         
+     01376  2 66 00000     839          RSH     0,X2        LEFT ADLUST IN B                                    
+     01377  0 50 00041     840          SKE     Z                                                               
+     01400  0 01 01423     841          BRU     FR6                                                             
+     01401  0 76 00041     842  FR1     LDA     Z                                                               
+     01402  0 71 00026     843          LDX     CNT1,X0                                                         
+     01403  2 67 00000     844          LSH     0,X2                                                            
+     01404  0 16 00145     845          MRG     WORD        INSERT FIELD IN WORD                                
+     01405  0 35 00145     846          STA     WORD                                                            
+     01406  0 76 00026     847          LDA     CNT1                                                            
+     01407  0 54 00027     848          SUB     CNT2        DECREMENT BITS LEFT                                 
+     01410  0 35 00026     849          STA     CNT1                                                            
+     01411  0 76 00150     850          LDA     TERM                                                            
+     01412  0 50 00061     851          SKE     CCHR        TEST FOR COMMA                                      
+     01413  0 01 01415     852          BRU     FR5         END OF REFERENCE                                    
+     01414  0 01 01355     853          BRU     FR4         PROCES5 NEXT FIELD                                  
+     01415  0 76 00147     854  FR5     LDA     WRD1                                                            
+     01416  0 35 00146     855          STA     WRD2        SET FDRM FOR PRNTTNG                                
+     01417  0 76 00066     856          LDA     B0                                                              
+     01420  0 53 00030     857          SKN     CNT3                                                            
+     01421  0 35 00146     858          STA     WRD2        TOO MANY FIELDS TO EDIT                             
+     01422  0 01 00425     859          BRU     LIN8                                                            
+     01423  0 50 00117     860  FR6     SKE     M1                                                              
+     01424  0 61 00022     861          MIN     TERR                                                            
+     01425  0 43 01432     862          BRM     SKB                                                             
+     01426  0 00 00066     863          HLT     B0                                                              
+     01427  0 53 00117     864          SKN     M1                                                              
+     01430  0 61 00022     865          MIN     TERR                                                            
+     01431  0 01 01401     866          BRU     FR1                                                             
+     01432  0 00 00000     867  $SKB    HLT                                                                     
+     01433  0 62 01432     868          XMA     SKB                                                             
+     01434  0 55 01444     869          ADD     IND1                                                            
+     01435  0 62 01432     870          XMA     SKB                                                             
+     01436  0 46 00014     871          XAB                                                                     
+     01437  0 72 41432     872          SKA     *SKB                                                            
+     01440  0 01 01442     873          BRU     $+2                                                             
+     01441  0 61 01432     874          MIN     SKB                                                             
+     01442  0 46 00014     875          XAB                                                                     
+     01443  0 51 01432     876          BRR     SKB                                                             
+     01444  0 00 40001     877  IND1    HLT     *1                                                              
+                           878  $M1,LINE,B0,P14,BCIF,SPAC,TEXT1,M23                                             
+                           879  $IERR,INR1,DLBL,FRM4,XFLG,OPD1                                                  
+                           880  $B11,C3,Z                                                                       
+                           881          END                                                                     
+     01445  00177750            
+     01446  07700000            
+     01447  00040000            
+     01450  00077777            
+     01451  00000073            
+     01452  00007777            
+     01453  00002140            
+     01454  00000036            
+     01455  00000067            
+     01456  01010101            
+     01457  00177774            
+     01460  00002040            
+     01461  00177770            
+     01462  00006060            
+     00227  LITM                
+     00225  LOP                 
+     00301  LSYM                
+     01217  MAXL                
+     00235  MLOC                
+     00057  MTE                 
+     00056  MT                  
+     00356  NAB                 
+     00651  NSRT                
+     01271  OUTP                
+     00304  POPI                
+     00343  POPR                
+     01210  PRNT                
+     00257  READ                
+     00730  SCALE               
+     01370  SCAN                
+     00223  SCIX                
+     01365  SCNL                
+     00221  SCNX                
+     00460  SKSEOD              
+     00300  SM1                 
+     00553  SRCH                
+     00524  SYM                 
+     01273  WEOF                
+     00415  XMSK                
+     01361  AB                  
+     00361  ADDR                
+     00236  ALN                 
+     01170  CBUF                
+     01175  CHR                 
+     00521  CTT                 
+     00772  DECW                
+     01166  DLY1                
+     00732  DPWR                
+     00731  DPW                 
+     01071  DWC                 
+     00256  EDCT                
+     00654  EDE                 
+     01312  EDIT                
+     01253  EDTL                
+     01205  EDTV                
+     01056  ENDSI               
+     00462  EODI                
+     00451  EOD                 
+     00372  EOM                 
+     01241  EREF1               
+     01246  EREF2               
+     01064  ERRC                
+     01355  FLDC                
+     00307  FLD                 
+     00576  FORCEO              
+     01032  GET                 
+     01272  HOME                
+     00405  INDB                
+     00423  INST                

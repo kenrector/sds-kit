@@ -1,0 +1,86 @@
+
+            06000000           1  MMO    OPD     06000000
+            00000000           2  X0     EQU     0
+            00000002           3  X2     EQU     2
+            00000003           4  CW     EQU     3
+            00000000           5  COUNT  EQU     0
+            00000002           6  LOC    EQU     2
+            00000003           7  LAST   EQU     3
+            00000001           8  U      EQU     1
+            00000000           9  CH     EQU     0
+     07600                    10         AORG    07600
+     07600                    11  ORG    RES     0
+            00000001          12  BIAS   EQU     1
+            00007601          13  B      EQU     ORG+BIAS
+     07600  0 32 0 00003      14         WIM     3
+     07601  0 32 0 00004      15         WIM     4
+     07602  0 01 0 00002      16         BRU     2                   04
+     07603  0 60 0 00002      17         SKR     2
+     07604  0 32 0 00047      18         WIM     047
+                              19  *BACKWARDS BOOTSTRAP
+                              20  *BOOTSTRAP LOOP READS NEXT WORD IN TO LOCATION 046 AND FOLLOWING
+                              21  *WORDS INTO SUCCESSIVELY LOWER MEMORY LOCATIONS UNTIL LAST WORD (CRT)
+                              22  *REPLACES BRU IN LOCATION 4
+     07605                    23  READ   RES     0
+     07605  0 01 0 00004      24         BRU     READ-B              46 NO
+     07606  0 01 0 00003      25         BRU     LAST                45 YES
+     07607  0 53 0 00000      26         SKN     COUNT
+     07610  00007777          27         DATA    07777               43 NO HALT *CLEAR HALT TO ACCEPT
+     07611  0 70 0 00043      28         SKM     MASK-B              42 DOES RECORD CHECKSUM
+     07612  0 75 0 00043      29         LDB     MASK-B              41
+     07613  0 17 0 00002      30         EOR     LOC                 40
+     07614                    31  NEXT   RES     0
+     07614  0 66 0 00014      32         RSH     12                  37
+     07615  0 35 0 00002      33         STA     LOC                 36 FOLD CHECKSUM
+     07616  0 20 12006        34         SRC     CH,U                35
+     07617  0 17 0 00003      35         EOR     LAST                34 TRANSFER ADDRESS FOR END RECORD
+     07620  0 32 0 00003      36         WIM     LAST                33 0 FOR DATA RECORD OR
+     07621                    37  THREE  RES     0
+     07621  0 01 0 00025      38         BRU     LOOP-B              32 NO
+     07622  0 53 0 00000      39         SKN     COUNT               31 FINISHED
+     07623  0 61 0 00002      40         MIN     LOC                 30
+     07624  0 60 0 00000      41         MMO     COUNT               27
+     07625  0 17 1 00002      42         EOR     *LOC                26 ACCUMULATE CHECKSUM
+     07626                    43  LOOP   RES     0
+     07626  0 32 1 00002      44         WIM     *LOC                25 READ NEXT WORD
+     07627  0 01 0 00033      45         BRU     READLW-B            24 FOR END RECORD BYPASS LOOP
+     07630  0 40 0 20001      46         OVT                         23
+     07631  0 17 0 00002      47         EOR     LOC                 22
+     07632  0 76 0 00003      48         LDA     CW                  21 BEGIN CHECKSUM
+     07633  0 35 0 00000      49         STA     COUNT               20
+     07634                    50  READLW RES     0
+     07634  0 66 0 00022      51         RSH     18                  17
+     07635  0 54 0 00020      52         SUB     THREE-B
+     07636  0 67 0 00003      53         LSH     3                   16 END RECORD TURNS ON OVERFLOW
+     07637  0 76 0 00003      54         LDA     CW                  14 COMPUTE RECORD SIZE
+     07640  0 32 0 00002      55         WIM     LOC                 13 RECORD ORIGIN
+     07641  0 01 0 00003      56         BRU     CW                  12 YES *CLEAR HALT TO CONTINUE
+     07642  0 01 0 00013      57         BRU     NEXT-B              11 NO
+     07643  0 40 0 21000      58         BRTW                        10 CHECK FOR FEED ERRO
+     07644                    59  MASK   RES     0
+     07644  0 32 0 00003      60         WIM     CW                  07 READ FIRST CONTROL WORD
+     07645  0 20 03606        61         RCB     CH,U,4              06
+     07646  0 01 0 00004      62         BRU     READ-B              05
+     07647  0 40 12006        63         CRT     CH,U                04 DELAY UNTIL CARD READER READY
+     07650                    64  ENDQ    RES     0
+     07650  0 76 0 07672      65  START  LDA     =11
+     07651  0 35 0 07671      66         STA     TEMP
+     07652  0 40 0 14046      67         SKS     014046
+     07653  0 01 0 07652      68         BRU     $-1
+     07654  0 02 0 03646      69  PUNCH  EOM     03646
+     07655  0 71 0 07673      70         LDX     =00177730
+     07656  2 12 0 07650      71         MIW     ORG+40,2
+     07657  0 41 0 07656      72         BRX     $-1
+     07660  0 02 0 14000      73         EOM     014000
+     07661  0 40 0 21000      74         SKS     021000
+     07662  0 01 0 07661      75         BRU     $-1
+     07663  0 60 0 07671      76         SKR     TEMP
+     07664  0 20 0 00000      77         NOP
+     07665  0 53 0 07671      78         SKN     TEMP
+     07666  0 01 0 07654      79         BRU     PUNCH
+     07667  0 00 0 00000      80         HLT
+     07670  0 01 0 07650      81         BRU     START
+     07671                    82  TEMP   RES     1
+            00007650          83         END     START
+     07672  00000013    
+     07673  00177730    

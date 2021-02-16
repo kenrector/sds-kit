@@ -1,0 +1,30 @@
+; Run Fortran II system standalone ascii input
+;
+set log /users/admin/sds/simlog
+set debug /users/admin/sds/simdebug
+
+!rm %2
+
+! cat fortransa/fort  >bootdeck
+! tools/mkdeck -a %1 >>bootdeck
+
+att cr bootdeck
+att cp %2
+att lpt /users/admin/sds/line-printer
+
+att mt0 /users/admin/sds/mt0
+att mt1 /users/admin/sds/mt1
+att mt2 /users/admin/sds/mt2
+att mt3 /users/admin/sds/mt3
+
+set cpu history=7000
+
+;  reset bp1;  punch object program
+dep bpt1 0
+;  reset bpt2;  type source statements
+dep bpt2 0
+;dep bpt3 0
+;dep bpt4 0
+
+boot cr
+

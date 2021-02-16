@@ -1,0 +1,27 @@
+; command file to run punch test
+;
+set log /users/admin/sds/simlog
+set debug /users/admin/sds/simdebug
+
+; set bpt 1 to boot from cards
+; this will load 850657.bo at 30000 and halt at 30070
+;
+; set bpt 1 for single char test
+; this will write 64 cards to cp
+; set bpt 2 for character set test after punching,
+;
+; to verify after running the test, detach cp 
+; and attach card-punch to cr
+; set bpt 3 and continue;  
+
+! cat 850648/850648-84 symbol/section-2a.bo 850657/850657.bo card-punch >bootdeck
+
+set cpu history=700
+
+! rm card-punch
+att cr bootdeck
+att cp card-punch
+
+; set bpt1 to boot from card re
+dep bpt1 1
+boot cr

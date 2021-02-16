@@ -1,0 +1,54 @@
+*      940 MAG TAPE EXAMPLE
+*      based on reference manual example
+*
+BRI    OPD    01100000
+*
+*
+       AORG    0200
+GWMT   PZE
+       CLA
+       STA     COUNT
+       SKS     10411                TAPE READY TEST
+       BRU     $+2
+       BRU     $-2
+       LDA     GWMT
+       STA     FAST                 SET FAST'S RETURN
+       MIN     FAST
+       WTD     *0,1,4
+       BRU     FAST+1
+*
+FAST   PZE
+       LDX     COUNT
+       LDA     OKAY
+       LDB     MASK
+       SKM     COUNT
+       BRU     $+2
+       BRI     FAST                 FINISHED ALL
+*
+       ALC     0                    ALERT INTERLACE IN CHAN W
+       EXU     A,2                  IOXX EOM
+       POT     A+1,2
+       MIN     COUNT
+       MIN     COUNT
+       BRI     FAST                 RETURN
+*
+A      EOM     015600               IOSP, ZERO WORD COUNT INTERRUPT
+       DATA    6202000              100 WORDS, LOC 02000
+       EOM     015600               IOSP, ZERO WORD COUNT INTERRUPT
+       DATA    014402500            200 WORDS, LOC 02500
+       EOM     015000               IORD, ZERO WORD COUNT INTERRUPT
+       DATA    06203000             100 WORDS, LOC 03000
+OKAY   DATA    6
+COUNT  DATA    0
+MASK   DATA    077777777
+INT    BRM     FAST
+*
+MAIN   LDA     INT
+       STA     031
+       EIR
+       BRM     GWMT
+       NOP
+       NOP
+       BRU     $-2
+       END     MAIN
+

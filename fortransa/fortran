@@ -1,0 +1,18 @@
+; Run Fortran II system standalone
+; listing typewriter output
+; binary object output on card-punch
+;
+set log /users/admin/sds/simlog
+set debug /users/admin/sds/simdebug
+
+!cat fff/fort %1 >bootdeck
+
+att cr bootdeck
+att cp card-punch
+
+set cpu history=7000
+
+dep bpt1 1
+dep bpt2 0
+boot cr
+

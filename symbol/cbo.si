@@ -1,0 +1,51 @@
+*  OCRed text from Symbol Technical Manual
+*  modified to not punch two blank cards at weof
+*  Ken Rector, 9/11/2020
+*
+* ^XC
+$CBO    RES     0
+S9300   EQU     0
+X0      EQU     S9300
+X2      EQU     2-S9300
+CH      EQU     0
+U       EQU     1
+$WRITR  PZE     0               ENTRY
+        LDA     =-12            LOAD REPEAT COUNT
+        CPT     CH,U
+        BRU     $-1
+        PBT     CH,U
+        CLR                     BUFFERED, SET REPEAT CDUN
+        STA     PETEC           SAVE REPEAT COUNT
+PETEL1  BRTW                    WAIT FOR BUFFER TO BE READY
+        BRU     $-1
+        PCB     CH,U,4
+        LDA     PETECW
+        STA     PETEA           INIALIZE BUFFER ADDRESS
+        LDX     =00200000-40,X0
+        LDB     PETE0
+        LDA     DWC             A = RECORD SIZE - 1
+PETEL2  SKA     =040000000      IS A NEGAT1VE
+        STB     PETEA           YES, SET ADDRESS = ADDRESS OF 0
+        MIW     *PETEA          OUTPUT WORD
+        MIN     PETEA           INCREMENT ADDRESS
+        SUB     =1              DECREMENT COUNT
+        BRX     PETEL2,X0
+        TOP     CH
+        MIN     PETEC           INCREMENT REPEAT COUNT
+        SKN     PETEC           IS ALL TRANSMISION COMPLETE
+        BRR     WRITR           YES, EXIT
+        BRU     PETEL1          NO, LOOP AGAIN
+*
+PETEC   RES     1               SAVE LOCATION FOR REPEAT COUNT
+PETEA   RES     1               SAVE LOCATION FOR ADDRESS
+PETE0   PZE     =0              ADDRESS OF A ZERO CONSTANT
+PETECW  PZE     CW
+$WEOF   PZE     0
+        LDA     =-1
+        STA     DWC
+*       BRM     WRITR           kenr
+        NOP     0
+*       BRM     WRITR           kenr
+        NOP     0
+        BRR     WEOF
+        END

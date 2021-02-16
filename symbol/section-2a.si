@@ -1,0 +1,90 @@
+        AORG    03000
+S9300 	EQU     0
+X0      EQU     S9300
+X2      EQU     2-S9300
+CH      EQU     0
+U       EQU     1
+START   LDB     =-1             COMPUTE MAXIMUM MEMORY ADDR
+        LDA     =040000*/S9300+2047
+LOOP1   SUB     =04000
+        STA     BIAS
+        STA     *BIAS
+        SKM     *BIAS
+        BRU     LOOP1
+        SUB     =4095           SUBTRACT 07777
+        STA     BIAS            BiAS=MEMORY SIIE+4K
+BPT     BRTW
+        BRU     BPT
+        BPT     1
+        BRU     CARDS
+        RPT     CH,U,4
+        BRU     READ
+CARDS   CRT     CH,U
+        BRU     CARDS
+        RCB     CH,U,4
+READ    WIM     CW              CONTROL WORD
+        LDA     CW
+        ROV
+        LSH     3               END RECORD TURNSONOYERFLO1
+        RSH     18
+        STA     COUNT           WORD COUNT
+        BRTW                    CHECK FOR CARD FEED ERROR
+        BRU     $+2             NO
+        BRU     ERROR           YES
+        WIM     LOC             RECORD ORIGIN
+        LDA     LOC
+        SKA     =01700000       IS RECORD RELOCATABLE
+        ADD     BIAS            YES
+        OVT                     NO, CHECK FOR END RECORD
+        LDA     BRUX            YES
+        STA     T1              T1,T2 NOW POINT EITHER TO RECORD
+        STA     T2              ORIGIN OR TO EX1T
+        LDA     LOC
+        RSH     19              (A)=1 IF REL WORD PRESENT
+        ADD     =00200001       COMPUTE XREG CONSTANT CORRESPONDING
+        SUB     COUNT           TO NUMBER OF DATA WORDS TO READ
+        STA     COUNT
+        LDA     CW              BEGIN CHECKSUM
+        EOR     LOC
+        LDX     COUNT,X0
+        BRU     BRX1
+LOOP2   WIM     *T1             READ RECORD
+        EOR     *T1
+        MIN     T1
+BRX1    BRX     LOOP2,X0
+        WIM     REL             READ IN REL WORD IF ANY
+        EOR     REL
+        BPT     1
+        SRC     CH,U
+        BETW                    CHECK FOR BUFFER ERROR
+        BRU     ERROR
+        STA     CS              FOLD CHECKSLUM
+        RSH     12
+        EOR     CS
+        LDB     ERROR
+        SKM     ERROR
+        BRU     ERROR           CHECKSUM FAILS
+        LDX     COUNT,X0
+        LDB     REL
+        BRU     BRX2
+LOOP3   STB     T1              RELOCATION LOOP
+        LDA     *T2
+        ADD     BIAS
+        SKN     T1
+        BRU     MIN
+        STA     *T2
+MIN     MIN     T2
+        LSH     1
+BRX2    BRX     LOOP3,X0
+EXIT    BRU     BPT
+ERROR   HLT     07777
+BRUX    BRU     EXIT
+BIAS    RES     1
+CW      RES     1
+LOC     RES     1
+COUNT   RES     1
+T1      RES     1
+T2      RES     1
+REL     EQU     CW
+CS      EQU     LOC
+        END     START

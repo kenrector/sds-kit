@@ -1,0 +1,26 @@
+* \057 C
+$CSI    RES     0
+S9300   EQU     0
+X0      EQU     S9300
+X2      EQU     2-S9300
+CH      EQU     0
+U       EQU     1
+$INPUT  RES	    0
+CARD    PZE	    0
+CKSK    CRT     CH,U
+        BRU     CKSK
+        RCD     CH,U,4
+        LDX     =00200000-20,X0
+CWIM    WIM     CBFE,X2             ((CBFE,2):=(W)
+        BRTW
+        BRX     CWIM,X0
+        BETW
+        BRU     CSKSE
+        BRR     CARD                EXIT**
+CSKSE   HLT                         HALT ON MIS-READ
+        BRU     CKSK
+*
+*
+$ENDSI  PZE     0
+        BRR     ENDSI
+        END

@@ -1,0 +1,22 @@
+This is the source code, binaries and listing output for the
+SDS Symbol Assembler described in Symbol Tech Manual dated March 1965, with
+catalog number 900688A.  This source code was obtained using the
+ocropus OCR system and first assembled by a cross assembler.  The result of
+that operation was then used to assemble the code again
+on the simh SDS simulator to produce the .bo files in this directory.
+
+The section-7 code is a version extracted from the PAL tapes contributed by JPL.
+Some portions of that were removed to get everything to work.  The standard 
+SDS release of this module could not be located.
+
+The cat_sym.sh script collects the binaries into a single file, or card deck if
+you will, prefaced with a one card loader program.  The script also produces
+ a namelist file giving the values for external definitions.  The order of 
+the namelist is that which would occur when card reader, card punch and 
+line printer modules are included at run time.
+
+Instructions on how to use the assembler can be found in the Technical Manual
+and the Symbol MetaSymbol Reference Manual, SDS publication 900506G.
+
+Two simulator command files, sym_ascii and sym, are provided as examples
+of how to run the assembler.

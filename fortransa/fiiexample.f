@@ -1,0 +1,22 @@
+C  PROGRAM TO SOLVE THE QUADRATIC EQUATION                              ABCDEFGH
+      READ 10,A,B,C
+      DISC = B*B-4*A*C
+      IF (DISC) 15,25,35
+  15  R = 0.0 - 0.5 * B/A
+      AI = 0.5 * SQRTF(0.0-DISC)/A
+      PRINT 11,R,AI
+      GO TO 99
+  25  R = 0.0 - 0.5 * B/A
+      PRINT 21,R
+      GO TO 99
+  35  SD = SQRTF(DISC)
+      R1 = 0.5*(SD-B)/A
+      R2 = 0.5*(0.0-(B+SD))/A
+      PRINT 31,R2,R1
+  99  STOP
+  10  FORMAT( 3F12.5 )
+  11  FORMAT( 19H TWO COMPLEX ROOTS:, F12.5,14H PLUS OR MINUS,
+     CF12.5, 2H I )
+  21  FORMAT( 15H ONE REAL ROOT:, F12.5 )
+  31  FORMAT( 16H TWO REAL ROOTS:, F12.5, 5H AND , F12.5 )
+      END

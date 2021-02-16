@@ -1,0 +1,16 @@
+
+set cpu history=7000
+reset cr
+! cat fortransa/fldr %1 fortransa/flib_corrected fortransa/ldr_2crd fortransa/frun.bo >rundeck
+
+;   reset bpt1;  output on typwewriter
+dep bpt1 0
+;   set bpt2;  produce map
+dep bpt2 1
+;   set bpt3;  type lbel map
+dep bpt3 1
+;   reset bpt4;  no label trace
+dep bpt4 0
+
+att cr rundeck
+boot cr

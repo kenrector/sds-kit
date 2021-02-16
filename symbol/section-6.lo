@@ -1,0 +1,515 @@
+
+                             1                                                                                  
+                             2  *       S3                                                                      
+            00000000         3  S9300   EQU     0                                                               
+            00000000         4  X0      EQU     S9300                                                           
+            00000002         5  X2      EQU     2-S9300                                                         
+D           10400000         6  CAB     OPD     010400000                                                       
+D           16500000         7  CBA     OPD     016500000                                                       
+            16600000         8  GAX     OPD     016600000                                                       
+D           16700000         9  CXA     OPD     016700000                                                       
+            17000000        10  GBX     OPD     017000000                                                       
+            17100000        11  GNA     OPD     017100000                                                       
+D           17200000        12  SKE     OPD     017200000                                                       
+D           17000000        13  SKR     OPD     017000000                                                       
+D           17400000        14  MUL     OPD     017400000                                                       
+D           17500000        15  DIV     OPD     017500000                                                       
+D           17600000        16  ADM     OPD     017600000                                                       
+D           17700000        17  XMA     OPD     017700000                                                       
+     00002                  18          AORG    2                                                               
+     00002                  19  $CW     RES     1                                                               
+     00003                  20  DW1     RES     31                                                              
+     00000                  21          ORG     0                                                               
+     00000                  22  $CHR    RES     1                                                               
+     00001                  23  $EDCT   RES     1                                                               
+     00002                  24  $ALN    RES     1                                                               
+     00003                  25  $DWC    RES     1                                                               
+     00004                  26  CHAR    RES     1                                                               
+                            27  IFRM    FORM    3,6,1,14                                                        
+     00005  0 00 00022      28  EDWE    HLT     LBUF                                                            
+     00006  0 01 00023      29  EDWL    BRU     LBUF+1                                                          
+     00007  0 00 00025      30  EDWV    HLT     LBUF+3                                                          
+     00010                  31  $EDW    RES     1                                                               
+     00011                  32  TEMP    RES     1                                                               
+     00012                  33  PTYP    RES     1                                                               
+     00013                  34  PLOC    RES     1                                                               
+     00014                  35  QLOC    RES     1                                                               
+     00015                  36  $ICW    RES     1                                                               
+     00016                  37  CHKS    RES     1                                                               
+     00017                  38  REL     RES     1                                                               
+     00020                  39  SREL    RES     1                                                               
+     00021                  40  PREL    RES     1                                                               
+     00022                  41  $LBUF   RES     0                                                               
+     00022                  42          RES     3                                                               
+     00025                  43  $EREF1  RES     0                                                               
+     00025                  44          RES     1                                                               
+     00026                  45  $EREF2  RES     0                                                               
+     00026                  46          RES     4                                                               
+     00032                  47  $CBUF   RES     0                                                               
+     00032                  48          RES     12                                                              
+     00046                  49  $TBFE   RES     0                                                               
+     00046                  50          RES     8                                                               
+     00056                  51  $CBFE   RES     0                                                               
+     00056  60606060        52  $DLY1   DATA    060606060                                                       
+     00057  00000054        53  ERRA    DATA    054                                                             
+     00060  00000046        54          DATA    'O'                                                             
+     00061  00000024        55          DATA    024                                                             
+     00062  00000025        56          DATA    025                                                             
+     00063  00000031        57          DATA    031                                                             
+     00064  00000043        58          DATA    043                                                             
+     00065  00000047        59          DATA    047                                                             
+     00066  00000051        60          DATA    051                                                             
+     00067  00000063        61          DATA    063                                                             
+     00070  00000064        62          DATA    064                                                             
+     00071  00177766        63  $ERRC   DATA    ERRA-ERRC+0200000                                               
+     00072  60000000        64          DATA    060000000                                                       
+     00073  00600000        65          DATA    0600000                                                         
+     00074  00006000        66          DATA    06000                                                           
+     00075  17000000        67          DATA    017000000                                                       
+     00076  00170000        68          DATA    0170000                                                         
+     00077  00001700        69          DATA    01700                                                           
+     00100                  70  ETBL    RES     0                                                               
+     00100  0 00 00000      71  $EDC    HLT     0                                                               
+     00101  0 54 00676      72          SUB     =060                                                            
+*    00102  0 75 00000      73          LDB     Z                                                               
+     00103  0 23 00107      74  EDC1    EXU     EDCS            EXECLUTE SHIFT                                  
+     00104  0 61 00103      75          MIN     EDC1            STEP SHIFT                                      
+     00105  0 63 40010      76          ADM    *EDW             ADD CHARACTER TO MEMORY                         
+     00106  0 51 00100      77          BRR     EDC             EXIT                                            
+     00107  0 67 00022      78  EDCS    LSH     18              1ST CHAR                                        
+     00110  0 67 00014      79          LSH     12              2ND CHAR                                        
+     00111  0 67 00006      80          LSH     6               3RD CHAR                                        
+     00112  0 01 00113      81          BRU     EDC2            LAST CHAR IN WORD                               
+     00113  0 75 00120      82  EDC2    LDB     EDCX            RESET EXC                                       
+     00114  0 36 00103      83          STB     EDC1                                                            
+     00115  0 63 40010      84          ADM    *EDW             STORE LAST CHAR                                 
+     00116  0 61 00010      85          MIN     EDW             STEP WORD                                       
+     00117  0 51 00100      86          BRR     EDC             EAT                                             
+     00120  0 23 00107      87  EDCX    EXU     EDCS                                                            
+     00121  0 00 00000      88  $EDS    HLT     0                                                               
+     00122  0 35 00010      89          STA     EDW             WORD POSITION                                   
+     00123  0 66 00017      90          RSH     15                                                              
+     00124  0 55 00120      91          ADD     EDCX                                                            
+     00125  0 35 00103      92          STA     EDC1            CHAR POSITION                                   
+     00126  0 51 00121      93          BRR     EDS             EXIT                                            
+     00127  0 00 00000      94  ELN     HLT     0                                                               
+     00130  0 76 00002      95          LDA     ALN             ALPNABETIC LINE NO.                             
+     00131  0 55 00677      96          ADD     =0666667                                                        
+     00132  0 35 00002      97          STA     ALN                                                             
+     00133  0 14 00056      98          ETR     DLY1                                                            
+     00134  0 66 00003      99          RSH     3                                                               
+     00135  0 46 01000     100          CNA                                                                     
+     00136  0 55 00002     101          ADD     ALN             SUBTRACT ZONE FROM NON-ZONEBITS                 
+     00137  0 14 00700     102          ETR     =017171717                                                      
+     00140  0 35 00002     103          STA     ALN             SAVE ALPHANUMERIC LINE NUMBER                   
+     00141  0 71 00701     104          LDX     =00200000-3,X0                                                  
+     00142  2 72 00100     105  ELN1    SKA     ETBL,X2             TEST FOR 0                                  
+     00143  0 01 00146     106          BRU     ELN2                                                            
+     00144  2 16 00075     107          MRG     ETBL-3,X2           REPLACE0WITHBLANK                           
+     00145  0 41 00142     108          BRX     ELN1,X0                                                         
+     00146  0 75 00056     109  ELN2    LDB     DLY1                                                            
+     00147  0 66 20014     110          RCY     12                                                              
+     00150  0 35 00030     111          STA     CBUF-2                                                          
+     00151  0 36 00031     112          STB     CBUF-1                                                          
+     00152  0 51 00127     113          BRR     ELN             EXIT                                            
+                           114  *               RELOCATABLE B1NARY OUTPUT                                       
+                           115  *                                                                               
+     00153  0 00 00000     116  $OUTP   HLT     0                                                               
+*    00154  0 71 00000     117          LDX     CTYP,X0                                                         
+     00155  0 76 00003     118          LDA     DWC                                                             
+     00156  0 14 00702     119          ETR     =077777                                                         
+*    00157  0 73 00102     120          SKG     Z                                                               
+     00160  0 01 00200     121          BRU     OUTP2           (DWC) = 0, RESET ONLY                           
+     00161  0 46 00200     122          CXA                                                                     
+     00162  0 50 00012     123          SKE     PTYP                                                            
+     00163  0 01 00177     124          BRU     OUTP1           TYPE CHANGE, FLUSH AND RESET                    
+     00164  0 76 00703     125          LDA     =24                                                             
+     00165  0 73 00003     126          SKG     DWC                                                             
+     00166  0 01 00177     127          BRU     OUTP1           (DWC) = 24, FLUSH AND RESET                     
+     00167  0 76 00012     128          LDA     PTYP                                                            
+*    00170  0 50 00157     129          SKE     Z                                                               
+     00171  2 01 40434     130          BRU     *TYP,X2         (PTYP) + 0                                      
+     00172  0 76 00013     131          LDA     PLOC            (PIYP) = 0                                      
+     00173  0 55 00704     132          ADD     =1                                                              
+*    00174  0 50 00000     133          SKE     LOC                                                             
+     00175  0 01 00177     134          BRU     OUTP1           (PLOC)+1NOT = (LOC), FLUSH AA                   
+     00176  2 01 40434     135          BRU     *TYP,X2         (PLOC)+1= (LOC)                                 
+     00177  0 43 00241     136  OUTP1   BRM     FLUSH                                                           
+     00200  0 43 00354     137  OUTP2   BRM     RESET                                                           
+     00201  2 01 40434     138          BRU     *TYP,X2                                                         
+*    00202  0 76 00000     139  ENDM    LDA     WORD                                                            
+     00203  0 14 00702     140          ETR     =077777                                                         
+     00204  0 16 00441     141          MRG     LBRU                                                            
+*    00205  0 35 00202     142          STA     WORD            (WORD):= BRU0,0++(WORD)                         
+*    00206  0 76 00000     143          LDA     MLOC                                                            
+     00207  0 35 00014     144          STA     QLOC            (QLOC) := (MLOC)                                
+                           145  *                                                                               
+     00210  0 71 00003     146  DATA    LDX     DWC,X0                                                          
+*    00211  0 76 00174     147          LDA     LOC                                                             
+     00212  0 35 00013     148          STA     PLOC            (PLOC) := (LOC)                                 
+*    00213  0 76 00205     149          LDA     WORD                                                            
+     00214  2 35 00004     150          STA     DW1+1,X2        (DW1(DWC+1)) := (WORD)                          
+*    00215  0 76 00000     151          LDA     WMOD                                                            
+     00216  0 14 00705     152          ETR     =2                                                              
+*    00217  0 75 00170     153          LDB     Z                                                               
+     00220  2 66 00002     154          RSH     2,X2            B22(WMOD)*2**(22-(DWC))                         
+     00221  0 46 00010     155          CBA                                                                     
+     00222  0 16 00017     156          MRG     REL                                                             
+     00223  0 35 00017     157          STA     REL             (KEL) :=IREL)++(A)                              
+*    00224  0 53 00000     158          SKN     STYP            SKIP IF SPECIAL IY WORD                         
+     00225  0 01 00232     159          BRU     $+5                                                             
+     00226  0 75 00704     160          LDB     =1                                                              
+*    00227  0 76 00217     161          LDA     Z                                                               
+     00230  2 66 20000     162          RCY     0,X2                                                            
+     00231  0 63 00020     163          ADM     SREL            (SKEL) := I**(24-DWC)++(SREL)                   
+     00232  0 46 30003     164          CLR                                                                     
+*    00233  0 50 00000     165          SKE     PMOD                                                            
+     00234  0 75 00704     166          LDB     =1                                                              
+     00235  2 66 20001     167          RCY     1,X2                                                            
+     00236  0 63 00021     168          ADM     PREL                                                            
+     00237  0 61 00003     169          MIN     DWC             (DWC):=(DWC)+1                                  
+     00240  0 51 00153     170          BRR     OUTP            EXI1                                            
+                           171  *                                                                               
+     00241  0 00 00000     172  FLUSH   HLT                     ENTRY                                           
+     00242  0 76 00012     173          LDA     PTYP            RECORD TYPE OF RECORD BEING FLUSHED             
+*    00243  0 73 00227     174          SKG     Z                                                               
+     00244  0 01 00247     175          BRU     $+3             (PTYP) =0                                       
+     00245  0 50 00706     176          SKE     =3                                                              
+     00246  0 01 00306     177          BRU     FLUSH1          (PTYP) = 1 OR 2                                 
+     00247  0 61 00003     178          MIN     DWC             INCLUDE LOAD-ADDRESS  WORD IN COUNT             
+     00250  0 76 00014     179          LDA     QLOC                                                            
+     00251  0 35 00003     180          STA     DW1             STORE LOAD ADDRESS                              
+     00252  0 71 00003     181          LDX     DWC,X0                                                          
+     00253  0 76 00017     182          LDA     REL                                                             
+*    00254  0 50 00243     183          SKE     Z                                                               
+     00255  0 01 00257     184          BRU     $+2                                                             
+     00256  0 01 00264     185          BRU     FLSH2                                                           
+     00257  2 35 00003     186          STA     DW1,X2          STORE RELOCATION INDICATOR WRD                  
+     00260  2 77 00001     187          EAX     1,X2                                                            
+     00261  0 61 00003     188          MIN     DWC            INCLUDE LOAD-RELOCAT1ON WORD IN COUNT            
+     00262  0 76 00707     189          LDA     =02000000                                                       
+     00263  0 63 00003     190          ADM     DW1             (M) := 1, (RELOCATION WORD PRESENT)             
+     00264  0 76 00020     191  FLSH2   LDA     SREL                                                            
+*    00265  0 50 00254     192          SKE     Z                                                               
+     00266  0 01 00270     193          BRU     $+2                                                             
+     00267  0 01 00275     194          BRU     FLSH3                                                           
+     00270  2 35 00003     195          STA     DW1,X2                                                          
+     00271  2 77 00001     196          EAX     1,X2                                                            
+     00272  0 61 00003     197          MIN     DWC             INCLLUDE SPECIAL RELOC W0R0 IN COUNT            
+     00273  0 76 00710     198          LDA     =020000000                                                      
+     00274  0 63 00003     199          ADM     DW1             (M) := 8+ (M)                                   
+     00275  0 76 00021     200  FLSH3   LDA     PREL                                                            
+*    00276  0 50 00265     201          SKE     Z                                                               
+     00277  0 01 00301     202          BRU     $+2                                                             
+     00300  0 01 00306     203          BRU     FLUSH1                                                          
+     00301  2 35 00003     204          STA     DW1,X2                                                          
+     00302  2 77 00001     205          EAX     1,X2                                                            
+     00303  0 61 00003     206          MIN     DWC                                                             
+     00304  0 76 00711     207          LDA     =010000000                                                      
+     00305  0 63 00003     208          ADM     DW1                                                             
+                           209  *               FORM RECORD CONTROL WDRD                                        
+     00306  0 76 00012     210  FLUSH1  LDA     PTYP            RECORD TYPE                                     
+*    00307  0 75 00276     211          LDB     Z                                                               
+     00310  0 67 00006     212          LSH     6                                                               
+     00311  0 55 00704     213          ADD     =1              INDLUDE CONTROL WORD IN COUNT                   
+     00312  0 55 00003     214          ADD     DWC             NR OF WORDS IN RECORD                           
+     00313  0 67 00017     215          LSH     15                                                              
+     00314  0 16 00712     216          MRG     =050000         RECORD MODE (BINARY)                            
+     00315  0 35 00002     217          STA     CW                                                              
+                           218  *               COMPUTE CHECKSUM AND WR1TE RECORD                               
+     00316  0 43 00325     219          BRM     CHKSUM          CDMPUTE FOLDED CHECKSUM                         
+     00317  0 16 00002     220          MRG     CW              INSERT CHECKSUM IN CONTROL WORD                 
+     00320  0 35 00002     221          STA     CW              STORE COMPLETED RECORD CONTROL WORD             
+*    00321  0 43 00000     222          BRM     WRITR            WRITE ONE RECORD                               
+*    00322  0 76 00307     223          LDA     Z                                                               
+     00323  0 35 00003     224          STA     DWC             (DWC) :=0                                       
+     00324  0 51 00241     225          BRR     FLUSH           EXIT                                            
+                           226  *                                                                               
+                           227  *               SUBROUTINE TO COMPUTE FOLDED CHECKSUM                           
+     00325  0 00 00000     228  CHKSUM  HLT                     ENYRY                                           
+     00326  0 76 00002     229          LDA     CW                                                              
+     00327  0 66 00017     230          RSH     15                                                              
+     00330  0 14 00713     231          ETR     =077        (A) = NR WORDS IN RECORD                            
+     00331  0 54 00705     232          SUB     =2                                                              
+     00332  0 35 00353     233          STA     ICN                                                             
+     00333  0 76 00706     234          LDA     =DW1        ADDRESS OF 2D WORD                                  
+     00334  0 35 00015     235          STA     ICW                                                             
+     00335  0 76 00002     236          LDA     CW                                                              
+     00336  0 14 00714     237          ETR     =077770000  EXTRACT CHECKSUM                                    
+     00337  0 17 00714     238          EOR     =077770000  ODD PARITY CHECKSUM                                 
+     00340  0 17 40015     239          EOR    *ICW                                                             
+     00341  0 61 00015     240          MIN     ICW         INCREMENT ADDRESS                                   
+     00342  0 60 00353     241          SKR     ICN                                                             
+     00343  0 01 00340     242          BRU     $-3                                                             
+*    00344  0 75 00322     243          LDB     Z           (A) = 24-BIT CHECKSUM OF WORDS 1 THRU               
+     00345  0 67 20014     244          LCY     12                                                              
+     00346  0 36 00016     245          STB     CHKS                                                            
+*    00347  0 75 00344     246          LDB     Z                                                               
+     00350  0 66 20014     247          RCY     12                                                              
+     00351  0 17 00016     248          EOR     CHKS        (A) = COMPLETED 12-BIT CHECKSUM                     
+     00352  0 51 00325     249          BRR     CHKSUM      EXIT                                                
+     00353  00000000       250  ICN     DATA    0                                                               
+                           251  *                                                                               
+                           252  *                                                                               
+                           253  *                                                                               
+     00354  0 00 00000     254  RESET   HLT                 ENTRY                                               
+*    00355  0 76 00211     255          LDA     LOC                                                             
+     00356  0 35 00014     256          STA     QLOC        (QLOC):=(LOC)                                       
+*    00357  0 76 00347     257          LDA     Z                                                               
+     00360  0 35 00017     258          STA     REL         (KEL) :=0                                           
+     00361  0 35 00020     259          STA     SREL        (SREL) T=0                                          
+     00362  0 35 00021     260          STA     PREL                                                            
+*    00363  0 71 00154     261          LDX     CTYP,X0                                                         
+     00364  0 37 00012     262          STX     PTYP,X0                                                         
+     00365  0 51 00354     263          BRR     RESET       EXIT                                                
+                           264  *                                                                               
+*    00366  0 76 00357     265  ENDN    LDA     Z                                                               
+     00367  0 75 00002     266          LDB     CW                                                              
+     00370  0 67 00003     267          LSH     3                                                               
+     00371  0 50 00706     268          SKE     =3                                                              
+     00372  0 01 00374     269          BRU     $+2                                                             
+     00373  0 51 00153     270          BRR     OUTP                                                            
+     00374  0 76 00706     271          LDA     =3                                                              
+     00375  0 35 00012     272          STA     PTYP                                                            
+*    00376  0 76 00206     273          LDA     MLOC                                                            
+     00377  0 35 00014     274          STA     QLOC                                                            
+     00400  0 43 00241     275          BRM     FLUSH                                                           
+     00401  0 51 00153     276          BRR     OUTP                                                            
+                           277  *                                                                               
+                           278  *               INSERT 3 WORD REF OR DEF ITEM IN CURRENT OUTPUT RECORD          
+     00402  0 71 00003     279  DEF     LDX     DWC,X0          ENTRY                                           
+*    00403  0 76 40213     280          LDA     *WORD                                                           
+     00404  2 35 00003     281          STA     DW1,X2          STORE 1ST 4 CHARS OF LABEL                      
+*    00405  0 61 00403     282          MIN     WORD                                                            
+*    00406  0 76 40405     283          LDA     *WORD                                                           
+     00407  0 14 00714     284          ETR     =077770000                                                      
+     00410  0 16 00715     285          MRG     =06060                                                          
+     00411  2 35 00004     286          STA     DW1+1,X2         STORE LAST .2 CHARS OF LABEL                   
+*    00412  0 75 00366     287          LDB     Z                                                               
+*    00413  0 76 00224     288          LDA     STYP                                                            
+     00414  0 67 00026     289          LSH     22                                                              
+     00415  0 35 00353     290          STA     ICN                                                             
+*    00416  0 76 40406     291          LDA     *WORD                                                           
+     00417  0 14 00705     292          ETR     =2                                                              
+     00420  0 46 00014     293          XAB                                                                     
+*    00421  0 61 00416     294          MIN     WORD                                                            
+*    00422  0 76 40421     295          LDA    *WORD                                                            
+     00423  0 14 00702     296          ETR     =077777                                                         
+*    00424  0 43 00000     297          BRM     SKB                                                             
+     00425  0 00 00705     298          HLT     =2                                                              
+     00426  0 16 00716     299          MRG     =0100000        SET ADDRESS RELOCATION FLAG                     
+     00427  0 16 00353     300          MRG     ICN             SET SUB-TYPE                                    
+     00430  2 35 00005     301  DEF1    STA     DW1+2,X2                                                        
+     00431  0 76 00706     302          LDA     =3                                                              
+     00432  0 63 00003     303          ADM     DWC             (DWC) := (DWC)+3                                
+     00433  0 51 00153     304          BRR     OUTP            EXIT                                            
+                           305  *                                                                               
+            00000402       306  REF     EQU     DEF                                                             
+                           307  *               CURRENT RECORD IMAGE                                            
+     00434  0 00 00210     308  TYP     HLT     DATA                                                            
+     00435  0 00 00402     309          HLT     DEF             EXTERNAL REF OR DEF                             
+     00436  0 00 00442     310          HLT     POP                                                             
+     00437  0 00 00202     311          HLT     ENDM                                                            
+     00440  0 00 00366     312          HLT     ENDN                                                            
+     00441  0 01 00000     313  LBRU    BRU     0                                                               
+     00442  0 71 00003     314  POP     LDX     DWC,X0                                                          
+*    00443  0 76 00000     315          LDA     CNTR                                                            
+*    00444  0 35 00422     316          STA     WORD                                                            
+*    00445  0 76 40444     317          LDA     *WORD                                                           
+     00446  2 35 00003     318          STA     DW1,X2                                                          
+*    00447  0 61 00445     319          MIN     WORD                                                            
+*    00450  0 76 40447     320          LDA     *WORD                                                           
+                           321  *                               BLANK CARD IN TECH MANUAL                       
+     00451  0 14 00714     322          ETR     =077770000                                                      
+     00452  0 16 00715     323          MRG     ='  '                                                           
+     00453  2 35 00004     324          STA     DW1+1,X2                                                        
+*    00454  0 61 00450     325          MIN     WORD                                                            
+*    00455  0 76 40454     326          LDA     *WORD                                                           
+     00456  0 01 00430     327          BRU     DEF1                                                            
+     00457  0 00 00000     328  $READ   HLT     0                                                               
+*    00460  0 43 00000     329          BRM     INPUT                                                           
+     00461  0 76 00717     330          LDA     =CBUF                                                           
+     00462  0 35 00004     331          STA     CHAR            SETBEGINNINGOFLIPE                              
+     00463  0 76 00521     332          LDA     GETX                                                            
+     00464  0 35 00503     333          STA     GETS            SET BEGINNINGOF WORD                            
+     00465  0 43 00127     334          BRM     ELN                                                             
+     00466  0 43 00501     335          BRM     GET             GET 1STCHARACTEROFLINE                          
+     00467  0 51 00457     336          BRR     READ            EXIT                                            
+     00470  0 00 00000     337  $FLD    HLT     0                                                               
+     00471  0 76 00720     338          LDA     =7                                                              
+     00472  0 35 00011     339          STA     TEMP                                                            
+     00473  0 43 00501     340  FLD1    BRM     GET                                                             
+     00474  0 50 00676     341          SKE     =' '                                                            
+     00475  0 51 00470     342          BRR     FLD                                                             
+     00476  0 60 00011     343          SKR     TEMP                                                            
+     00477  0 01 00473     344          BRU     FLD1                                                            
+     00500  0 51 00470     345          BRR     FLD             EXIT                                            
+     00501  0 00 00000     346  $GET    HLT     0                                                               
+     00502  0 76 40004     347          LDA     *CHAR           LOAD CHARACTER                                  
+     00503  0 23 00511     348  GETS    EXU     GETT            EXECUTE SHIFT                                   
+     00504  0 61 00503     349          MIN     GETS                                                            
+     00505  0 14 00713     350  GET1    ETR     =077                                                            
+     00506  0 35 00000     351          STA     CHR                                                             
+     00507  0 46 00400     352          CAX                                                                     
+     00510  0 51 00501     353          BRR     GET                                                             
+     00511  0 66 00022     354  GETT    RSH     18              1ST CMAR                                        
+     00512  0 66 00014     355          RSH     12              2ND CHAR                                        
+     00513  0 66 00006     356          RSH     6               3RD CHAR                                        
+     00514  0 01 00515     357          BRU     GET2            END WORD                                        
+     00515  0 75 00521     358  $GET2   LDB     GETX                                                            
+     00516  0 36 00503     359          STB     GETS            RESET EXU                                       
+     00517  0 61 00004     360          MIN     CHAR            STEP WORD                                       
+     00520  0 01 00505     361          BRU     GET1                                                            
+     00521  0 23 00511     362  GETX    EXU     GETT                                                            
+     00522  0 00 00000     363  $TCHR   HLT     0                                                               
+     00523  0 36 00011     364          STB     TEMP                                                            
+     00524  0 43 00501     365          BRM     GET             GET CHAR                                        
+     00525  0 75 00011     366          LDB     TEMP                                                            
+*    00526  0 43 00424     367          BRM     SKB                                                             
+*    00527  2 00 00000     368          HLT     CTT,X2          TEST FOR MATCM                                  
+     00530  0 61 00522     369          MIN     TCHR            CHARACTER IS O.K.                               
+     00531  0 51 00522     370          BRR     TCHR            EXIT                                            
+     00532  0 00 00000     371  $EDIT   HLT     0                                                               
+     00533  0 43 00566     372          BRM     EDE             EDIT ERRORS                                     
+     00534  0 43 00606     373          BRM     EDL             EDIT LOCATION                                   
+     00535  0 76 00007     374          LDA     EDWV                                                            
+     00536  0 43 00121     375          BRM     EDS                                                             
+*    00537  0 76 00455     376          LDA     WORD                                                            
+*    00540  0 35 00000     377          STA     WRD1            DATA    WORD                                    
+     00541  0 43 00620     378          BRM     EDR             EDIT BY FORM                                    
+*    00542  0 43 00000     379          BRM     PRNT            PRINT LINE                                      
+     00543  0 43 00153     380          BRM     OUTP            OUTPUT WORD                                     
+     00544  0 51 00532     381          BRR     EDIT            EXIT                                            
+     00545  0 00 00000     382  $EDTV   HLT     0                                                               
+     00546  0 43 00566     383          BRM     EDE             EDIT ERRORS                                     
+     00547  0 76 00007     384          LDA     EDWV            VALUE WORD POSITON                              
+     00550  0 43 00121     385          BRM     EDS                                                             
+     00551  0 76 00720     386          LDA     =7                                                              
+*    00552  0 35 00443     387          STA     CNTR            7 CHARACTERS LEFT IN B                          
+*    00553  0 76 00537     388          LDA     WORD            DATA                                            
+     00554  0 66 00025     389          RSH     21              LEAVE 1ST CHAR IN A                             
+     00555  0 14 00720     390          ETR     =7                                                              
+     00556  0 43 00646     391          BRM     EDF             EDIT FIELD                                      
+*    00557  0 43 00542     392          BRM     PRNT            PR1NT LINE                                      
+     00560  0 51 00545     393          BRR     EDTV            EXIT                                            
+     00561  0 00 00000     394  $EDTL   HLT     0                                                               
+     00562  0 43 00566     395          BRM     EDE             ED1T ERRORS                                     
+     00563  0 43 00606     396          BRM     EDL             EDIT LOCATION                                   
+*    00564  0 43 00557     397          BRM     PRNT            PRINT LINE                                      
+     00565  0 51 00561     398          BRR     EDTL            EXIT                                            
+     00566  0 00 00000     399  $EDE    HLT     0                                                               
+     00567  0 76 00005     400          LDA     EDWE            ERRORWORD POSITION                              
+     00570  0 43 00121     401          BRM     EDS                                                             
+*    00571  0 76 00412     402          LDA     Z                                                               
+*    00572  0 62 00000     403          XMA     VERR            RESET V ERRORFLAG                               
+*    00573  0 63 00000     404          ADM     UERR            U SET IF V SET                                  
+     00574  0 71 00071     405          LDX     ERRC,X0         ERROR COUNT                                     
+     00575  2 76 00071     406  EDE1    LDA     ERRC,X2         ERROR   LISTING CHAR                            
+*    00576  2 75 00572     407          LDB     VERR,X2                                                         
+*    00577  0 43 00526     408          BRM     SKB                                                             
+*    00600  0 00 00000     409          HLT     M1                                                              
+     00601  0 43 00100     410          BRM     EDC             INSERT ERRORCODE                                
+*    00602  0 75 00571     411          LDB     Z                                                               
+*    00603  2 36 00576     412          STB     VERR,X2         RESET FLAG                                      
+     00604  0 41 00575     413          BRX     EDE1,X0         TEST NEXTFLAG                                   
+     00605  0 51 00566     414          BRR     EDE             EXIT                                            
+     00606  0 00 00000     415  EDL     HLT     0                                                               
+     00607  0 76 00006     416          LDA     EDWL            LOC WORD POS1TION                               
+     00610  0 43 00121     417          BRM     EDS                                                             
+     00611  0 76 00721     418          LDA     =4                                                              
+*    00612  0 35 00552     419          STA     CNTR            MORE CHARACTERS INB                             
+*    00613  0 76 00355     420          LDA     LOC                                                             
+*    00614  0 14 00000     421          ETR     ADDR                                                            
+     00615  0 66 00014     422          RSH     12                                                              
+     00616  0 43 00646     423          BRM     EDF             EDIT LOC                                        
+     00617  0 51 00606     424          BRR     EDL             EXIT                                            
+     00620  0 00 00000     425  EDR     HLT     0                                                               
+     00621  0 75 00722     426          LDB     =040000000                                                      
+     00622  0 43 00660     427  EDR3    BRM     FLDC            CDUNT BITS FIELD                                
+     00623  0 01 00645     428          BRU     EDR1            NO MORE FIELDS                                  
+     00624  0 66 00027     429          RSH     23                                                              
+     00625  0 65 00706     430          DIV     =3                                                              
+*    00626  0 43 00577     431          BRM     SKB                                                             
+     00627  0 00 00706     432          HLT     =3                                                              
+     00630  0 01 00633     433          BRU     EDR2                                                            
+     00631  0 54 00704     434          SUB     =1                                                              
+     00632  0 75 00706     435          LDB     =3                                                              
+*    00633  0 35 00612     436  EDR2    STA     CNTR            OCTAL CHARACTERS IN FIELD                       
+     00634  0 46 00020     437          CBX                     BITS IN 1ST CHAR                                
+*    00635  0 76 00602     438          LDA     Z                                                               
+*    00636  0 75 00540     439          LDB     WRD1            DATA WORD                                       
+     00637  2 67 00000     440          LSH     0,X2            1ST CHAR IN A                                   
+     00640  0 43 00646     441          BRM     EDF             EDIT FIELD                                      
+     00641  0 76 00676     442          LDA     =060                                                            
+     00642  0 43 00100     443          BRM     EDC             INSERT TRAILING BLANK                           
+*    00643  0 75 00635     444          LDB     Z                                                               
+     00644  0 01 00622     445          BRU     EDR3            D0 NEXT FIELD                                   
+     00645  0 51 00620     446  EDR1    BRR     EDR             EXIT                                            
+     00646  0 00 00000     447  EDF     HLT     0                                                               
+     00647  0 01 00652     448          BRU     EDF1                                                            
+*    00650  0 76 00643     449  EDF2    LDA     Z                                                               
+     00651  0 67 00003     450          LSH     3               NEW OCTAL CHAR                                  
+*    00652  0 36 00636     451  EDF1    STB     WRD1                                                            
+     00653  0 43 00100     452          BRM     EDC             INSERT CHAR INIMAGE                             
+*    00654  0 75 00652     453          LDB     WRD1                                                            
+*    00655  0 60 00633     454          SKR     CNTR            TLST FOREND FIELD                               
+     00656  0 01 00650     455          BRU     EDF2                                                            
+     00657  0 51 00646     456          BRR     EDF             EXIT                                            
+     00660  0 00 00000     457  $FLDC   HLT     0                                                               
+*    00661  0 76 00000     458          LDA     WRD2            FORM WORD                                       
+     00662  0 17 00722     459          EOR     =040000000                                                      
+     00663  0 71 00723     460          LDX     =22,X0                                                          
+     00664  0 67 10030     461          NOD     24              CDUNT BITS IN FIELD                             
+     00665  0 67 00001     462          LSH     1                                                               
+*    00666  0 35 00661     463          STA     WRD2            NEW FORM WORD                                   
+*    00667  0 37 00655     464          STX     CNTR,X0                                                         
+     00670  0 76 00724     465          LDA     =23                                                             
+*    00671  0 54 00667     466          SUB     CNTR                                                            
+     00672  0 14 00702     467          ETR     =077777                                                         
+     00673  0 73 00703     468          SKG     =24                                                             
+     00674  0 61 00660     469          MIN     FLDC                                                            
+     00675  0 51 00660     470  FLC1    BRR     FLDC            EXIT                                            
+                           471          END                                                                     
+     00676  00000060            
+     00677  00666667            
+     00700  17171717            
+     00701  00177775            
+     00702  00077777            
+     00703  00000030            
+     00704  00000001            
+     00705  00000002            
+     00706  00000003            
+     00707  02000000            
+     00710  20000000            
+     00711  10000000            
+     00712  00050000            
+     00713  00000077            
+     00714  77770000            
+     00715  00006060            
+     00716  00100000            
+     00717  00000032            
+     00720  00000007            
+     00721  00000004            
+     00722  40000000            
+     00723  00000026            
+     00724  00000027            
+     00613  LOC                 
+     00600  M1                  
+     00376  MLOC                
+     00233  PMOD                
+     00564  PRNT                
+     00626  SKB                 
+     00413  STYP                
+     00573  UERR                
+     00603  VERR                
+     00215  WMOD                
+     00553  WORD                
+     00654  WRD1                
+     00666  WRD2                
+     00321  WRITR               
+     00650  Z                   
+     00614  ADDR                
+     00671  CNTR                
+     00527  CTT                 
+     00363  CTYP                
+     00460  INPUT               

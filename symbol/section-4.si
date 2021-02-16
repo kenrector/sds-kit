@@ -1,0 +1,880 @@
+*       S1
+*
+CAB     OPD     016400000
+CBA     OPD     016500000
+CAX     OPD     016600000
+CXA     OPD     016700000
+CBX     OPD     017000000
+CNA     OPD     017100000
+SKE     OPD     017200000
+SKR     OPD     017300000
+MUL     OPD     017400000
+DIV     OPD     017500000
+ADM     OPD     017600000
+XMA     OPD     017700000
+S9300   EQU     0
+X0      EQU     S9300
+X2      EQU     2-S9300
+IN      EQU     1
+OUT     EQU     2
+        AORG    1
+        BRU     BGN     RESTART
+        AORG    34
+SXT     RES     4
+SCXT    RES     4
+$SOT    RES     16
+SIT     RES     16
+TPM     RES     6
+TPS     RES     6
+TPR     RES     6
+$TPL    RES     6
+ENDP    RES     0
+$LOC    RES     1
+$PMOD   RES     1
+$WMOD   RES     1
+$WORD   RES     1
+$WRD2   RES     1
+$WRD1   RES     1
+$TERM   RES     1
+$CTYP   RES     1
+$STYP   RES     1
+$PASS   RES     1
+HIGH    RES     1
+$LIMT   RES     1
+LOC1    RES     1
+LOCP    RES     1
+        ORG     0
+$LADD   RES     1
+$OCTF   RES     1
+XFLG    RES     1
+$IFLG   RES     1
+EFLG    RES     1
+$LTR1   RES     1
+$LTR2   RES     1
+$LTR3   RES     1
+$MODE   RES     1
+$VALU   RES     1
+$XERR   RES     1
+$OERR   RES     1
+$DERR   RES     1
+$EERR   RES     1
+IERR    RES     1
+LERR    RES     1
+$PERR   RES     1
+$RERR   RES     1
+$TERR   RES     1
+$UERR   RES     1
+$VERR   RES     1
+$CNTR   RES     1
+CNT1    RES     1
+CNT2    RES     1
+CNT3    RES     1
+CNTB    RES     1
+$LN     RES     1
+BCIF   RES     1
+$LBL1   RES     1
+$LBL1P1 RES     1
+$LBL1P2 RES     1
+IOC     RES     1
+$X      RES     1
+Z       RES     0
+CT      DATA    000000000
+        DATA    000000100
+B1      RES     0
+        DATA    020000000
+        DATA    020000100
+B3      RES     0
+        DATA    004000000
+$LST    HLT     TPS
+LMT     HLT     TPM 		LOCAT1ON OF MNEMONIC TABLE PACKET
+$LRT    HLT     TPR
+$LSXT   HLT     SXT
+LSCX    HLT     SCXT
+LSOT    HLT     SOT 		LOCATION OF SCAN CONECTER
+LSIT    HLT     SIT 		LOCATION OF SCAN ITEM
+LLBL    HLT     LBL1 		LOCATION OF LBL
+FRST    HLT     MT 		    1ST MNEMONIC TABLE LOCATION
+FINL    HLT     MTE 		FINAL MNEMONIC TABLE LOCATION
+$BCHR   DATA    060
+$CCHR   DATA    073
+DCHR    DATA    053
+$SCHR   DATA    054
+$A7     DATA    07
+A57     DATA    0777
+B0      DATA    040000000
+B4      DATA    02000000
+B5      DATA    01000000
+B6      DATA    0400000
+B7      DATA    0200000
+$B8     DATA    0100000
+B11     DATA    010000
+B12     DATA    04000
+B13     DATA    02000
+B14     DATA    01000
+B16     DATA    0200
+B17     DATA    0100
+B18     DATA    040
+B19     DATA    020
+B20     DATA    010
+B21     DATA    04
+B22     DATA    2
+B23     DATA    1
+C3      DATA    077
+C01     DATA    077770000
+P66     DATA    66
+P24     DATA    24
+P14     DATA    016
+P10     DATA    10
+P3      DATA    3
+M1      DATA    -1
+M2      DATA    -2
+M5      DATA    -5
+M23     DATA    -23
+M47     DATA    -47
+MC      DATA    030000000
+BPM     DATA    0740
+LL      DATA    034
+$IC     EQU     B3
+$CC     EQU     B4
+LC      EQU     B5
+$SC     EQU     B6
+$DC     EQU     B7
+$OC     EQU     B8
+$REFM   EQU     B16
+$DUPM   EQU     B17
+$RELM   EQU     B22
+EXTM    EQU     B23
+SPAC    EQU     P10
+REFT    EQU     B23
+DEFT    EQU     B22
+BGN     RES     0
+        CLR
+        STA    LN
+BGNB    RES     0
+        LDX     FRST,X0
+        EAX     3,2
+        STX     CNTR,X0
+RST2    LDA     1,X2
+        SKA     B18      TEST ASSEMBLER DEFINED
+        BRU     RST1    DONT SAVE PROGRAMMER DEFINED
+        LDB     0,X2
+        STB     *CNTR   SAVE 1ST WORD
+        MIN     CNTR
+        LDB     1,X2
+        STB     *CNTR   SAVE 2ND WORD
+        MIN     CNTR
+        LDB     2,X2
+        STB     *CNTR    SAVE 3RD WORD
+        MIN     CNTR
+RST1    EAX     3,X2    ADDRESS OF NEXT FROM WORD
+        LDA     CNTR    ADDRESS OF NEXT TO WORD
+        SKE     FINL    TEST FOR END OF COMMAND TABLE
+        BRU     RST2
+BGN2    LDX     =00200000-24,X0
+        LDA     Z
+BGN3    STA     ENDP,X2     CLEAR ALL PACKETS
+        BRX     BGN3,X0
+        LDA     HIGH    HIGHEST LOCATION
+        SUB     P3
+        STA     TPS     BASE OF SYMBOL TABLE
+        STA     TPS+1
+        LDA     C01
+        STA     TPS+3
+        STA     TPS+5
+        LDA     FRST
+        SUB     P3
+        STA     TPM     BASE OF MNEMONIC 1ABLE
+        LDA     C01
+        STA     TPM+3
+        LDA     FINL
+        SUB     FRST
+        LDX     P24,X0
+        STA     CNTR        NO. OF WORDS IN TABLE
+        NOD     24
+        ETR     MC
+        SUB     B3
+        SKA     B1
+        ADD     B3
+        ABC
+        LSH     0,X2
+        STA     TPM+2
+        LDA     CNTR
+        SUB     TPM+2
+        STA     TPM+4
+        ADD     FRST
+        STA     TPM+1
+        LDA     Z
+        STA     PASS        SET PASS1
+        STA     CTYP
+        LDA     LSXT
+        STA     SCNX        SET SCAN EXIT
+        LDA     LSCX
+        STA     SCIX
+        LDA     LSOT
+        STA     LOP         SET SCAN CONNECTER
+        LDA     LSIT
+        STA     LITM        SET SCAN ITEM
+        LDA     FINL        1ST AVAILABLE CELL
+        SUB     HIGH
+        STA     LIMT        MINUS NO. OF CELLS AVAILABLE
+        HLT
+BGN4    LDA     Z
+        STA     MLOC        0 TO MAX LOC
+        STA     ALN
+        LDA     B8
+        STA     LOC
+LINE    LDA     Z
+        STA     PMOD
+        STA     WMOD        0 TO MODE
+        STA     XFLG        RESET EXTERNALFLAG
+        STA     IFLG        RESET INDIRECT FLAG
+        STA     LBL1     RESET LABEL
+        STA     STYP
+        STA     LERR
+        LDA     M1
+        STA     OCTF        RESET OCTAL FLAG
+        LDA     M23
+        STA     SCALE
+        LDA     LL
+        STA     EDCT
+        BRM     READ        READ LINE
+        SKE     BCHR        TEST FOR BLANK LABEL
+        BRU     LIN1        PROCESS LABEL FIELD
+LIN6    BRM     FLD         SKIP TO OPERATION
+        SKE     BCHR
+        BRU     LP1
+        BRM     LXL
+        BRU     LIN10
+LP1     BRM     SYM
+        LDA     CHR
+        SKE     SCHR        TEST FOR *
+        SKR     IFLG
+        MIN     IFLG        SET 1FLAG
+        SKE     SCHR
+        SKN     M1          ALWAY5 SK1P
+        BRM     GET         SKIP *
+        SKE     BCHR        TEST FOR BLANK
+        STA     SM1         UNDEFINED COMMAND
+        LDA     LSYM
+        LDB     LMT
+        BRM     SRCH        LODK UP MNEMONIC
+        BRU     POPI
+$POPIRT STA     WORD
+        STB     MODE        SAVE TYPE
+        BRM     FLD         SKIP TO OPERAND FIELD
+        LDA     MODE
+        SKA     B21
+        BRU     *WORD
+        BRM     DLBL        DEFINE LABEL
+        BRU     LIN7
+DLBL    HLT     0
+        LDA     LBL1
+        SKE     Z
+        SKE     LBL1
+        BRR     DLBL        EXIT
+        LDA     LBL1+1
+        LDB     LOC
+        STB     LBL1+2
+        BRM     SKB
+        HLT     B8
+        MRG     B22
+        STA     LBL1+1
+        LDA     LLBL
+        LDB     LST
+        BRM     NSRT        INSERT IN SYMBOL TABLE
+        BRR     DLBL        EXIT LABEL  DEFINE
+LIN7    LDA     MODE
+        SKA     B22
+        BRU     *WORD
+        SKN     PASS
+        BRU     LIN2        1ST PASS
+        SKA     B13
+        BRU     POPR
+        SKA     B23
+        BRU     FREF
+        SKA     B20
+        BRU     INR3
+        LDB     M1
+        SKA     B19
+        LDB     FORCEO
+        STB     OCTF        OCTAL ADDRESS
+INR1    BRM     SCNL        GET INSTRUCTION ADDRESS
+INR1A   ROV
+        LDX     NAB,X0
+        LSH     0,X2
+        RSH     0,X2
+        ETR     ADDR
+        MRG     WORD
+INR9    OVT
+        MIN     TERR        SET T ERROR
+        STB     WMOD
+        LDB      =07700000
+        SKM     EOD
+        BRU     INR93
+        BRU     INR92
+INR93   SKM     EOM
+        BRU     INR91
+INR92   SKN     IFLG
+        MRG     =040000
+        BRU     INR94
+$PZE    SKN     PASS
+        BRU     LIN2
+        BRM     SCNL
+        STB     WMOD
+        ETR     =077777
+INR91   SKN     IFLG
+        MRG     INDB        SET INDIRECT BIT
+INR94   STA     WORD
+        LDA     M1
+        STA     OCTF        RESET OCTALFLAG
+        LDA     TERM
+        SKE     CCHR
+        BRU     LIN3
+        BRM     SCAN        GET INDEX
+        ETR     XMSK        MASK X FIELD
+        SKE     VALU
+        MIN     TERR        SET TRUNCATION ERROR
+        LSH     21          POSITION X FIELD
+$INR2   MRG     WORD
+        STA     WORD
+$LIN3   LDA     INST
+        STA     WRD2        INSTRUCTION FORM
+LIN8    LDA     BCHR
+        SKE     TERM        TEST FOR BLANK
+        MIN     EERR        SET ERROR
+        STA     TERM
+        BRM     EDIT        EDIT INSTRUCTION
+$LIN2   MIN     LOC         L+1 TO L
+        BRU     LINE
+LIN1    SKE     SCHR        TEST FOR *
+        BRU     LIN4
+$NOP0   RES     0
+LIN10   SKN     PASS
+        BRU     LINE        SKIP IF 1ST PASS
+        BRM     PRNT       PRINT COMMENTS LINE
+        BRU     LINE
+INR3    LDA     MODE
+        SKA     B12
+        BRU     $+2
+        BRU     INR31
+        BRM     SCAN
+        LDB     Z
+        SKA     B21
+        LDB     EOD
+        ETR     P3
+        CAX
+        BAC
+        MRG     CT,X2
+        MRG     WORD
+        LDB     =07700000
+        SKM     SKSEOD
+        BRU     $+2
+        EOR     EODI
+        STA     WORD
+        LDA     TERM
+        SKE     CCHR
+        BRU     LIN3
+INR31   LDA     =040000
+        SKN     IFLG
+        ADM     WORD
+        BRM     SCAN
+        ETR     C3
+        SKE     VALU
+        MIN     TERR
+        ADM     WORD        INSERT UNIT
+        LDA     TERM
+        SKE     CCHR
+        BRU     LIN3
+        BRM     SCAN        GET CHAR/WORD
+        SKE     Z
+        SUB     B23
+        ETR     P3
+        LSH     7          POSITION CHAR/WORD
+        BRU     INR2
+LIN4    SKE     DCHR        TEST FOR $
+        BRU     LIN5
+        SKN     PASS
+        MIN     XFLG        SET EXTERNAL FLAG
+LIN49   BRM     GET
+LIN5    LDB     SC          CHECK FOR LABEL CHARACTER
+        SKG     Z
+        MIN     LERR        1ST CHAR= 0 P )
+        BRM     SKB
+        HLT     CTT,X2
+        BRU     LIN9
+LIN11   MIN     LERR        SET LABEL FIELD ERROR FLAG
+LIN9    BRM     SYM
+        STA     LBL1        SAVE
+        CBA
+        MRG     XFLG        SET EXTERNALMODE
+        STA     LBL1+1
+        MRG     LBL1
+        SKA     DLY1        TDST FOR AT LEST 1 ALPHABETEC
+        SKN     M1          ALWAYS SKIP
+        MIN     LERR
+        LDA      CHR
+        SKE     =','
+        BRU     LIN99
+        BRM     LXL
+        BRU     LIN49
+LIN99   SKE     BCHR
+        MIN     LERR        ILLEGAL CHARACTER IN LABEL
+        LDA     Z
+        SKE     LERR        TEST FOR LABEL ERROR
+        STA     LBL1        DONT ENTER LABEL
+        BRU     LIN6
+LXL     HLT     0
+        LDA     LLBL
+        LDB     LST
+        BRM     SRCH
+        BRR     LXL
+        CBA
+        MRG     XFLG
+        STA     1,X2
+        BRR     LXL
+$EQU    BRM     SCAN        GET VALUE
+        STA     WORD
+        XAB
+        ETR     M2
+        ADM     LBL1+1
+        STB     LBL1+2
+        LDA     LLBL
+        LDB     LST
+EQU1    BRM     NSRT        INSERT IN SYMBOL TABLE
+EQU2    SKN     PASS
+        BRU     LINE
+        BRM     EDTV        PR1NT
+        BRU     LINE
+$OPD    LDA     FORCEO
+        STA     OCTF        SET OCTAL FLAG
+        BRM     SCAN        GET VALUE
+        STA     WORD
+        STA     LBL1+2
+        LDA     B18
+        ADM     LBL1+1
+OPD1    LDA     LLBL
+        LDB     LMT
+        BRM     NSRT
+        ETR     =07777
+        SKE     =02140
+        BRU     EQU2
+        LDA     LBL1+1
+        STA     1,X2
+        LDA     LBL1+2
+        STA     2,X2
+        BRU     EQU2
+$FORM   CLR
+FRM3    STB     WRD2        STORE FORM WORD
+        BRM     SCAN        GET FIELD LENGTH
+        CAX
+        LDB     WRD2
+        LDA     B0
+        LCY     0,X2        INSERT NEW FIELD
+        SKA     M1
+        BRU     FRM1        MORE THAN 24 BITS
+        BRM     SKB
+        HLT     B0
+        BRU     FRM2        END OF FORM
+        LDA     TERM
+        SKE     CCHR
+        BRU     FRM1        LESS THAN 24 BITS
+        BRU     FRM3        PROCESS NEXT FIELD
+FRM1    MIN     TERR        SET TRUNCATION ERROR
+FRM2    CBA
+        MRG     B0
+        STA     LBL1+2
+        LDA     B23
+        ADD     B18
+        ADM     LBL1+1
+        LDA     LLBL
+        LDB     LMT
+        BRM     NSRT        INSERT FORM ITEM
+        SKN     PASS
+        BRU     LINE        SKIP IF PASS1
+        BRM     EDE         EDIT ERRORS
+FRM4    BRM     PRNT
+        BRU     LINE
+$PAGE   SKN     PASS
+        BRU     LINE
+        BRM     HOME        EJECT TO NEXT PAGE
+        BRM     PRNT
+        BRU     LINE
+$AORG   CLR
+        BRU     ORG1
+$ORG    LDA     B8
+ORG1    BRM     ILOC        GET NEW LOC
+        STA     LOC
+        BRM     DLBL        DEFINE LABEL
+        BRU     BSS1
+ILOC    HLT     0
+        STA     LOC1
+        BRM     MAXL        SET MAXIMUM LOC
+        BRM     SCAN        GET INCREMENT
+        ADD     LOC1
+        STA     LOC1        SAVE RESULT
+        BRR     ILOC        EXIT
+$BSS    LDA     LOC         OLD LOC
+        BRM     ILOC        GET NEW LOC
+BSS1    SKN     PASS        TEST PASS
+        SKN     M1          D0NT PR1NT IF 1ST PASS
+        BRM     EDTL        PRINT LOCATION
+        LDA     LOC1        NEW LOCATION
+        STA     LOC
+        BRU     LINE
+$DATA   BRM     SCAN
+        SKN     PASS
+        BRU     DATA1
+        STA     WORD
+        STB     WMOD
+        LDA     B0
+        STA     WRD2
+        BRM     EDIT
+DATA1   MIN     LOC
+        LDA     TERM
+        SKE     CCHR
+        BRU     LINE
+        BRU     DATA
+$DED    LDA     M47         SCALE
+        STA     SCALE
+        BRM     DPW         GET DOUBLE PRECISION WORD
+        EXU     DPWR        TO EXCHANGE OR NOT TO EXCHANGE
+        STB     WORD
+        STA     VALU
+        SKN     PASS
+        BRU     DED1
+        LDA     B0
+        STA     WRD2
+        BRM     EDIT
+DED1    MIN     LOC
+        SKN     PASS
+        BRU     DED2
+        LDA     VALU
+        STA     WORD
+        LDA     B0
+        STA     WRD2
+        BRM     EDIT
+DED2    MIN     LOC
+        LDA     TERM
+        SKE     CCHR
+        BRU     LINE
+        BRU     DED
+$BCD    RES
+        LDB     SPAC
+        BRU     $+2
+$TEXT   RES     0
+        LDB     BCHR
+        STB     BCIF
+        LDA     CHR
+        SKE     ='<'
+        BRU     TEXT7
+        LDA     P14
+        STA     TERM
+        LDA     =55
+        BRU     TEXT6
+TEXT7   BRM     DECW
+TEXT1   SUB     B23
+        LDB     B17
+        STB     TERM
+        SKG     =55
+        BRU     TEXT6
+        LDA     =55
+        MIN     TERR
+TEXT6   STA     CNTB
+        BRM     GET
+TEXT2   SKN     CNTB
+        SKN     M1          ALWAYS SKIP
+        BRU     LINE        DONE
+        LDA     BCIF
+        MUL     =01010101
+        LSH     23
+        STA     WORD        SET WORD TO BLANK:
+        LDX     =00200000-4,X0
+TEXT3   LDA     CHR
+        SKE     BCHR
+        BRU     $+2
+        LDA     BCIF
+        SKE     TERM
+        BRU     TEXT8
+        CNA
+        STA     CNTB
+        BRU     TEXT4
+TEXT8   SUB     BCIF
+        LDB     Z
+        EXU     TEXT5,X2    EXECUTE SHIFT
+        ADM     WORD        ADD CHARACTER TO WORD
+        STX     CNTR,X0
+        BRM     GET
+        LDX     CNTR,X0
+        SKR     CNTB
+        BRX     TEXT3,X0
+TEXT4   LDA     B0
+        STA     WRD2
+        SKN     PASS
+        SKN     M1          YES
+        BRM     EDIT        EDIT ALPHA-NUMERIC WORD
+        MIN     LOC         L+1 TO L
+        BRU     TEXT2
+        LSH     18
+        LSH     12
+        LSH     6
+        NOP     0
+TEXT5   RES     0
+ENDPS   LDA     Z
+        STA     PASS        FORCE END OF PASS 1
+$END    RES     0
+END1A   SKN     PASS
+        BRU     END1        END PASS 1
+        BRU     END2
+END1    RES     0
+        BRM     ENDSI
+        LDA     M1
+        STA     PASS        CHANGE PASS
+        LDA     LOC
+        STA     LOCP        SET LITERAL OR1GIN
+        STA     LADD        SET 1ST LITERAL  ADDRESS
+        LDX     ERRC,X0
+        LDA     Z
+END3    STA     VERR,X2     CLEAR ERROR FLAGS
+        BRX     END3,X0
+        STA     VERR
+        STA     DWC
+        LDA     DEFT
+        STA     STYP
+        LDA     B23
+        STA     CTYP
+        LDX     TPS,X0
+END14   CXA
+        ADD     P3
+        SKG     HIGH
+        SKN     M1
+        BRU     END13
+        CAX
+        LDA     1,X2
+        SKA     EXTM
+        SKN     M1
+        BRU     END14
+        ETR     M2
+        STA     1,X2
+        STX     WORD,X0
+        STX     CNTR,X0
+        BRM     OUTP
+        LDX     CNTR,X0
+        BRU     END14
+END13   LDA     Z
+        STA     LTR1
+        LDA     B22
+        STA     CTYP
+        LDA     TPM
+        ADD     TPM+2
+        ADD     TPM+4
+        STA     TPL             ORICIN OF LITERAL TABLE
+        LDX     FRST,X0
+        EAX     3,X2
+ENDP2   STX     CNTR,X0
+        LDA     1,X2
+        LDB     =07777
+        SKM     =02040
+        BRU     ENDP1
+        LDA     2,X2
+        RCY     16
+        MRG     LTR1
+        LCY     16
+        STA     2,X2
+        MIN     LTR1
+        BRM     OUTP
+ENDP1   LDX     CNTR,X0
+        EAX     3,X2
+        CXA
+        SKE     TPL
+        BRU     ENDP2
+        LDA     Z
+        STA     CTYP
+        LDA     TPS
+        STA     TPR             ORIGIN OF REFERENCE TABLE
+        STA     TPR+1
+        LDA     C01
+        STA     TPR+3
+        STA     TPR+5
+        STA     TPL+1
+        LDA     M1
+        STA     TPL+3
+        LDA     DLY1
+        LDX     =00200000-8,X0
+END8    STA     CBUF,X2         CLEAR PRINT LINE
+        BRX     END8,X0
+        BRU     BGN4
+END2    LDA     B23
+        STA     EFLG
+        LDA     CHR
+        SKE     BCHR
+        SKN     M1          ALWAYS SKIP
+        BRU     END4       NO TRANSFER
+        BRM     SCAN        GET TRANSFER ADDRESS
+        STA     WORD
+        LDA     B0
+        STA     WRD2
+        BRM     EDTV        EOTT
+        SKR     EFLG        SET TRANSFER FLAG
+        BRU     END5
+END4    BRM     PRNT        PRINT
+END5    LDX     TPL,X0      L1T TABLE ORIGIN
+        LDA     LOCP
+        STA     LOC
+        STA     LTR1        0 TO SEQUENCE
+END6    SKE     LADD
+        BRU     PLTR        LITERAL TO OUTPUT
+        BRM     MAXL        MAXIMUM LOCATION
+        LDA     REFT
+        STA     STYP
+        LDA     B23
+        STA     CTYP
+        LDX     LRT,X0      1ST WORD OF REF TABLE
+        LDA     0,X2
+        ADD     P3
+        STA     LTR1
+        ADD     2,X2
+        ADD     4,X2
+        STA     LTR2        END OF REF TABLE
+END12   LDA     LTR2
+        SKG     LTR1
+        BRU     END15       NO MORE REFS
+        LDA     LTR1
+        STA     WORD
+        LDA     *LTR1
+        STA     EREF1
+        MIN     LTR1
+        LDA     *LTR1
+        ETR     C01
+        MRG     ='  '
+        STA     EREF2
+        MIN     LTR1
+        LDA     *LTR1
+        MIN     LTR1
+        STA     LOC
+        BRM     EDTL
+        BRM     OUTP        OUTPUT REF
+        BRU     END12
+END15   LDA     P3
+        STA     CTYP        END CARD TYPE
+        SKR     EFLG
+        BRU     END7        NO TRANSFER
+        LDA     VALU
+        STA     WORD        ADDRESS
+        LDA     MODE
+        STA     WMOD
+        BRM     OUTP        OUTPUT TRANSFER CARD
+END7    LDA     B21
+        STA     CTYP
+        BRM     OUTP        CLEAR   CARDS
+END11   RES     0
+        BRM     HOME
+        BRM     WEOF
+        BRU     BGN
+PLTR    CXA
+        ADD     P3          CURRENT SEQUENCE
+        CAX
+        LDA     2,X2
+PLT2    SKE     LTR1
+        BRU     PLT1        OUT OF SEQUENCE
+        LDA     0,X2
+        STA     WORD        VALUE
+        LDA     1,X2
+        STA     WMOD        MODE
+        LDA     B0
+        STA     WRD2
+        STX     LTR2,X0
+        BRM     EDIT
+        LDX     LTR2,X0     RESTORE
+        MIN     LTR1        ICREMENT SEQUENCE
+        LDA     LTR1
+        MIN     LOC
+        BRU     END6
+PLT1    SUB     LOCP
+        STA     CNTR
+        ADD     CNTR
+        ADD     CNTR        3 * SEQUENCE
+        ADD     P3
+        ADD     TPL
+        STA     LTR3        CORRECT POS1TION
+        LDA     0,X2
+        XMA    *LTR3        EXCHANGE LITERALS
+        STA     0,X2
+        MIN     LTR3
+        LDA     1,X2
+        XMA    *LTR3
+        STA     1,X2
+        MIN     LTR3
+        LDA     2,X2
+        XMA    *LTR3
+        STA     2,X2
+        BRU     PLT2
+FREF    LDA     P24
+        STA     CNT1        NO. OF BITS LEFT
+        LDA     M5
+        STA     CNT3        SET FIELD COUNT
+        LDA     WORD
+        STA     WRD1        SAVE FORM FOR ED1T
+        STA     WRD2
+        LDA     Z
+        STA     WORD        0 TO DATA
+        LDB     B0
+FR4     BRM     FLDC        COUNT BITS IN FIELD
+        BRU     FR5         NO MORE FIELD5
+        MIN     CNT3
+        STA     CNT2        FIELD SIZE
+        SKE     AB          ADDRESS BITS
+        BRU     FR2         N0T ADDRESS SIZE
+        SKE     CNT1        BITS LEFT
+        BRU     FR2         NOT ADDRESS FIELD
+        BRM     SCNL
+        STB     WMOD
+        BRU     FR3
+FR2     BRM     SCAN        GET NON-ADDRESS FIELD
+        BRM     SKB
+        HLT     RELM
+        MIN     RERR        SET R FLAG
+FR3     LDB     Z
+        LDX     CNT2,X0
+        RSH     0,X2        LEFT ADLUST IN B
+        SKE     Z
+        BRU     FR6
+FR1     LDA     Z
+        LDX     CNT1,X0
+        LSH     0,X2
+        MRG     WORD        INSERT FIELD IN WORD
+        STA     WORD
+        LDA     CNT1
+        SUB     CNT2        DECREMENT BITS LEFT
+        STA     CNT1
+        LDA     TERM
+        SKE     CCHR        TEST FOR COMMA
+        BRU     FR5         END OF REFERENCE
+        BRU     FR4         PROCES5 NEXT FIELD
+FR5     LDA     WRD1
+        STA     WRD2        SET FDRM FOR PRNTTNG
+        LDA     B0
+        SKN     CNT3
+        STA     WRD2        TOO MANY FIELDS TO EDIT
+        BRU     LIN8
+FR6     SKE     M1
+        MIN     TERR
+        BRM     SKB
+        HLT     B0
+        SKN     M1
+        MIN     TERR
+        BRU     FR1
+$SKB    HLT
+        XMA     SKB
+        ADD     IND1
+        XMA     SKB
+        XAB
+        SKA     *SKB
+        BRU     $+2
+        MIN     SKB
+        XAB
+        BRR     SKB
+IND1    HLT     *1
+$M1,LINE,B0,P14,BCIF,SPAC,TEXT1,M23
+$IERR,INR1,DLBL,FRM4,XFLG,OPD1
+$B11,C3,Z
+        END

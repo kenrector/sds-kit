@@ -1,0 +1,384 @@
+
+
+           EXTERNAL DEFS 
+
+File:  csi.bo  Load Address: 00233
+Relocatable:
+	CSI         00000    00233
+	INPUT       00000    00233
+	ENDSI       00015    00250
+
+ Unsatisfied Refs:
+	CBFE       csi.bo
+
+File:  cbo.bo  Load Address: 00253
+Relocatable:
+	WRITR       00000    00253
+	CBO         00000    00253
+	WEOF        00036    00311
+
+ Unsatisfied Refs:
+	CW         cbo.bo
+	DWC        cbo.bo
+
+File:  llo.bo  Load Address: 00325
+Relocatable:
+	LLO         00000    00325
+	PRNT        00000    00325
+	HOME        00044    00371
+
+ Unsatisfied Refs:
+	LBUF       llo.bo
+	CBUF       llo.bo
+	EDCT       llo.bo
+	EDW        llo.bo
+
+File:  section-4.bo  Load Address: 00406
+Relocatable:
+	LADD        00000    00406
+	OCTF        00001    00407
+	XFLG        00002    00410
+	IFLG        00003    00411
+	LTR1        00005    00413
+	LTR2        00006    00414
+	LTR3        00007    00415
+	MODE        00010    00416
+	VALU        00011    00417
+	XERR        00012    00420
+	OERR        00013    00421
+	DERR        00014    00422
+	EERR        00015    00423
+	IERR        00016    00424
+	PERR        00020    00426
+	RERR        00021    00427
+	TERR        00022    00430
+	UERR        00023    00431
+	VERR        00024    00432
+	CNTR        00025    00433
+	LN          00032    00440
+	BCIF        00033    00441
+	LBL1        00034    00442
+	LBL1P1      00035    00443
+	LBL1P2      00036    00444
+	X           00040    00446
+	Z           00041    00447
+	IC          00045    00453
+	LST         00046    00454
+	LRT         00050    00456
+	LSXT        00051    00457
+	BCHR        00060    00466
+	CCHR        00061    00467
+	SCHR        00063    00471
+	A7          00064    00472
+	B0          00066    00474
+	CC          00067    00475
+	SC          00071    00477
+	DC          00072    00500
+	B8          00073    00501
+	OC          00073    00501
+	B11         00074    00502
+	REFM        00100    00506
+	DUPM        00101    00507
+	RELM        00106    00514
+	C3          00110    00516
+	P14         00114    00522
+	SPAC        00115    00523
+	M1          00117    00525
+	M23         00122    00530
+	LINE        00241    00647
+	POPIRT      00305    00713
+	DLBL        00315    00723
+	INR1        00354    00762
+	PZE         00377    01005
+	INR2        00421    01027
+	LIN3        00423    01031
+	LIN2        00432    01040
+	NOP0        00436    01044
+	EQU         00561    01167
+	OPD         00576    01204
+	OPD1        00605    01213
+	FORM        00620    01226
+	FRM4        00655    01263
+	PAGE        00657    01265
+	AORG        00664    01272
+	ORG         00666    01274
+	BSS         00702    01310
+	DATA        00712    01320
+	DED         00727    01335
+	BCD         00757    01365
+	TEXT        00761    01367
+	TEXT1       00773    01401
+	END         01053    01461
+	SKB         01432    02040
+
+ Absolute:
+	SOT         00052
+	TPL         00134
+	LOC         00142
+	PMOD        00143
+	WMOD        00144
+	WORD        00145
+	WRD2        00146
+	WRD1        00147
+	TERM        00150
+	CTYP        00151
+	STYP        00152
+	PASS        00153
+	LIMT        00155
+
+
+ Unsatisfied Refs:
+	LITM       section-4.bo
+	LOP        section-4.bo
+	LSYM       section-4.bo
+	MAXL       section-4.bo
+	MLOC       section-4.bo
+	MTE        section-4.bo
+	MT         section-4.bo
+	NAB        section-4.bo
+	NSRT       section-4.bo
+	OUTP       section-4.bo
+	POPI       section-4.bo
+	POPR       section-4.bo
+	PRNT       section-4.bo
+	READ       section-4.bo
+	SCALE      section-4.bo
+	SCAN       section-4.bo
+	SCIX       section-4.bo
+	SCNL       section-4.bo
+	SCNX       section-4.bo
+	SKSEOD     section-4.bo
+	SM1        section-4.bo
+	SRCH       section-4.bo
+	SYM        section-4.bo
+	WEOF       section-4.bo
+	XMSK       section-4.bo
+	AB         section-4.bo
+	ADDR       section-4.bo
+	ALN        section-4.bo
+	CBUF       section-4.bo
+	CHR        section-4.bo
+	CTT        section-4.bo
+	DECW       section-4.bo
+	DLY1       section-4.bo
+	DPWR       section-4.bo
+	DPW        section-4.bo
+	DWC        section-4.bo
+	EDCT       section-4.bo
+	EDE        section-4.bo
+	EDIT       section-4.bo
+	EDTL       section-4.bo
+	EDTV       section-4.bo
+	ENDSI      section-4.bo
+	EODI       section-4.bo
+	EOD        section-4.bo
+	EOM        section-4.bo
+	EREF1      section-4.bo
+	EREF2      section-4.bo
+	ERRC       section-4.bo
+	FLDC       section-4.bo
+	FLD        section-4.bo
+	FORCEO     section-4.bo
+	GET        section-4.bo
+	HOME       section-4.bo
+	INDB       section-4.bo
+	INST       section-4.bo
+
+File:  section-5.bo  Load Address: 02071
+Relocatable:
+	LSYM        00000    02071
+	MLOC        00001    02072
+	SCNX        00002    02073
+	LOP         00003    02074
+	LITM        00004    02075
+	SCIX        00005    02076
+	SM1         00035    02126
+	SCALE       00052    02143
+	CTT         00106    02177
+	SCNL        00206    02277
+	SCNM        00216    02307
+	SCAN        00315    02406
+	SYM         01050    03141
+	SRCH        01103    03174
+	NSRT        01157    03250
+	DPW         01434    03525
+	OCTW        01756    04047
+	DECW        02007    04100
+	MAXL        02056    04147
+
+ Unsatisfied Refs:
+	LADD       section-5.bo
+	LIMT       section-5.bo
+	LOC        section-5.bo
+	LRT        section-5.bo
+	LST        section-5.bo
+	LSXT       section-5.bo
+	LTR1       section-5.bo
+	LTR2       section-5.bo
+	LTR3       section-5.bo
+	M1         section-5.bo
+	MODE       section-5.bo
+	OC         section-5.bo
+	OCTF       section-5.bo
+	OERR       section-5.bo
+	PASS       section-5.bo
+	PERR       section-5.bo
+	REFM       section-5.bo
+	RELM       section-5.bo
+	RERR       section-5.bo
+	SCHR       section-5.bo
+	SC         section-5.bo
+	SKB        section-5.bo
+	SOT        section-5.bo
+	TCHR       section-5.bo
+	TERM       section-5.bo
+	TERR       section-5.bo
+	TPL        section-5.bo
+	VALU       section-5.bo
+	VERR       section-5.bo
+	WORD       section-5.bo
+	WRD1       section-5.bo
+	WRD2       section-5.bo
+	XERR       section-5.bo
+	ADDR       section-5.bo
+	B8         section-5.bo
+	BCHR       section-5.bo
+	CCHR       section-5.bo
+	CC         section-5.bo
+	CHR        section-5.bo
+	CNTR       section-5.bo
+	DC         section-5.bo
+	DERR       section-5.bo
+	DLY1       section-5.bo
+	DUPM       section-5.bo
+	EERR       section-5.bo
+	GET        section-5.bo
+	IC         section-5.bo
+	IFLG       section-5.bo
+
+File:  section-6.bo  Load Address: 04174
+Relocatable:
+	CHR         00000    04174
+	EDCT        00001    04175
+	ALN         00002    04176
+	DWC         00003    04177
+	EDW         00010    04204
+	ICW         00015    04211
+	LBUF        00022    04216
+	EREF1       00025    04221
+	EREF2       00026    04222
+	CBUF        00032    04226
+	TBFE        00046    04242
+	CBFE        00056    04252
+	DLY1        00056    04252
+	ERRC        00071    04265
+	EDC         00100    04274
+	EDS         00121    04315
+	OUTP        00153    04347
+	READ        00457    04653
+	FLD         00470    04664
+	GET         00501    04675
+	GET2        00515    04711
+	TCHR        00522    04716
+	EDIT        00532    04726
+	EDTV        00545    04741
+	EDTL        00561    04755
+	EDE         00566    04762
+	FLDC        00660    05054
+
+ Absolute:
+	CW          00002
+
+
+ Unsatisfied Refs:
+	LOC        section-6.bo
+	M1         section-6.bo
+	MLOC       section-6.bo
+	PMOD       section-6.bo
+	PRNT       section-6.bo
+	SKB        section-6.bo
+	STYP       section-6.bo
+	UERR       section-6.bo
+	VERR       section-6.bo
+	WMOD       section-6.bo
+	WORD       section-6.bo
+	WRD1       section-6.bo
+	WRD2       section-6.bo
+	WRITR      section-6.bo
+	Z          section-6.bo
+	ADDR       section-6.bo
+	CNTR       section-6.bo
+	CTT        section-6.bo
+	CTYP       section-6.bo
+	INPUT      section-6.bo
+
+File:  section-7.bo  Load Address: 05121
+Relocatable:
+	POPR        00004    05125
+	POPI        00015    05136
+	EOD         00154    05275
+	EOM         00155    05276
+	SKSEOD      00156    05277
+	EODI        00157    05300
+	DPWR        00164    05305
+	INST        00165    05306
+	INDB        00166    05307
+	AB          00167    05310
+	NAB         00170    05311
+	ADDR        00171    05312
+	FORCEO      00172    05313
+	XMSK        00173    05314
+	MT          00174    05315
+	MTE         01167    06310
+
+ Unsatisfied Refs:
+	LBL1P1     section-7.bo
+	LBL1P2     section-7.bo
+	LBL1       section-7.bo
+	LIN2       section-7.bo
+	LIN3       section-7.bo
+	LINE       section-7.bo
+	LOC        section-7.bo
+	LSYM       section-7.bo
+	M1         section-7.bo
+	OCTF       section-7.bo
+	OCTW       section-7.bo
+	OPD1       section-7.bo
+	OPD        section-7.bo
+	ORG        section-7.bo
+	P14        section-7.bo
+	PAGE       section-7.bo
+	PASS       section-7.bo
+	PMOD       section-7.bo
+	PZE        section-7.bo
+	SCAN       section-7.bo
+	SKB        section-7.bo
+	SPAC       section-7.bo
+	TERM       section-7.bo
+	TERR       section-7.bo
+	TEXT       section-7.bo
+	TEXT1      section-7.bo
+	VALU       section-7.bo
+	WORD       section-7.bo
+	WRD2       section-7.bo
+	XFLG       section-7.bo
+	AORG       section-7.bo
+	B0         section-7.bo
+	BCD        section-7.bo
+	BCIF       section-7.bo
+	BSS        section-7.bo
+	CHR        section-7.bo
+	CTT        section-7.bo
+	DATA       section-7.bo
+	DC         section-7.bo
+	DECW       section-7.bo
+	DED        section-7.bo
+	DLBL       section-7.bo
+	DPW        section-7.bo
+	EDIT       section-7.bo
+	END        section-7.bo
+	EQU        section-7.bo
+	FORM       section-7.bo
+	FRM4       section-7.bo
+	IERR       section-7.bo
+	INR1       section-7.bo

@@ -1,0 +1,172 @@
+
+                             1  *                                                                               
+                             2  * BP1 SET- SINGLE CHARACTER MODE.                                               
+                             3  * BP2 SET- ENTIRE CHARACTER SET.                                                
+                             4  * BP3 SET- VERIFY MODE                                                          
+                             5  *                                                                               
+     00000  0 76 00203       6  START  LDA     DM64                                                             
+     00001  0 35 00226       7         STA     DONE                                                             
+     00002  0 40 20400       8         BPT     1                                                                
+     00003  0 01 00010       9         BRU     TEST1                                                            
+     00004  0 40 20200      10         BPT     2                                                                
+     00005  0 01 00015      11         BRU     TEST2                                                            
+     00006  0 00 00000      12         HLT                                                                      
+     00007  0 01 00000      13         BRU     START                                                            
+                            14  *                                                                               
+     00010  0 46 30003      15  TEST1  CLR                         INITIALIZE SINGLE                            
+     00011  0 71 00202      16         LDX     DM20                CHARACTER TEST                               
+     00012  2 35 00254      17         STA     IMAGE+20,2                                                       
+     00013  0 41 00012      18         BRX     *-1                                                              
+     00014  0 01 00027      19         BRU     COM1                                                             
+                            20  *                                                                               
+     00015  0 71 00201      21  TEST2  LDX     DM16                INITIALIZE CHARACTER                         
+     00016  0 76 00207      22         LDA     CSTAR               SET TEST                                     
+     00017  2 35 00250      23         STA     IMAGE+16,2                                                       
+     00020  0 55 00206      24         ADD     CADD4                                                            
+     00021  0 41 00017      25         BRX     *-2                                                              
+     00022  0 71 00175      26         LDX     DM4                                                              
+     00023  0 76 00207      27         LDA     CSTAR                                                            
+     00024  2 35 00254      28         STA     IMAGE+20,2                                                       
+     00025  0 55 00206      29         ADD     CADD4                                                            
+     00026  0 41 00024      30         BRX     *-2                                                              
+                            31  *                                                                               
+     00027  0 40 20100      32  COM1   BPT     3                                                                
+     00030  0 01 00110      33         BRU     VERIFY                                                           
+     00031  0 76 00200      34         LDA     DM12                                                             
+     00032  0 35 00225      35         STA     CARD                                                             
+     00033  0 40 20200      36         BPT     2                   OMIT BIT 13-TEST 2                           
+     00034  0 01 00037      37         BRU     *+3                                                              
+     00035  0 40 12046      38         SKS     12046               BIT 13-PUNCH BUF RDY                         
+     00036  0 01 00035      39         BRU     *-1                                                              
+     00037  0 40 14046      40         SKS     14046               BIT 12-PUNCH RDY                             
+     00040  0 01 00037      41         BRU     *-1                                                              
+     00041  0 71 00202      42  COM2   LDX     DM20                                                             
+     00042  0 02 00646      43         EOM     646                 SELECT PUNCH                                 
+     00043  2 12 00254      44         MIW     IMAGE+20,2                                                       
+     00044  0 40 20010      45         BETW                                                                     
+     00045  0 01 00006      46         BRU     START+6                                                          
+     00046  0 41 00043      47         BRX     *-3                                                              
+     00047  0 02 14000      48         TOPW                        COMPLETE ROW                                 
+     00050  0 40 21000      49         BRTW                                                                     
+     00051  0 01 00050      50         BRU     *-1                                                              
+     00052  0 40 20200      51         BPT     2                   OMIT BIT 13-TEST 2                           
+     00053  0 01 00056      52         BRU     *+3                                                              
+     00054  0 40 12046      53         SKS     12046               BIT 13-PUNCH BUF RDY                         
+     00055  0 01 00054      54         BRU     *-1                                                              
+     00056  0 61 00225      55         MIN     CARD                                                             
+     00057  0 53 00225      56         SKN     CARD                                                             
+     00060  0 01 00062      57         BRU     *+2                                                              
+     00061  0 01 00041      58         BRU     COM2                PUNCH NEXT ROW                               
+     00062  0 43 00071      59         BRM     ROTATE                                                           
+     00063  0 61 00226      60         MIN     DONE                                                             
+     00064  0 53 00226      61         SKN     DONE                TEST FOR DONE                                
+     00065  0 01 00067      62         BRU     *+2                                                              
+     00066  0 01 00031      63         BRU     COM1+2                                                           
+     00067  0 00 00000      64  COM5   HLT                                                                      
+     00070  0 01 00000      65         BRU     START                                                            
+                            66  *                                                                               
+     00071  0 00 00000      67  ROTATE PZE                         CHANGE CARD IMAGE                            
+     00072  0 71 00202      68         LDX     DM20                                                             
+     00073  0 76 00175      69         LDA     DM4                                                              
+     00074  0 35 00224      70         STA     X2                                                               
+     00075  2 76 00254      71         LDA     IMAGE+20,2                                                       
+     00076  0 55 00204      72         ADD     1B5                                                              
+     00077  0 67 20006      73         LCY     6                                                                
+     00100  0 61 00224      74         MIN     X2                                                               
+     00101  0 53 00224      75         SKN     X2                                                               
+     00102  0 01 00104      76         BRU     *+2                                                              
+     00103  0 01 00076      77         BRU     *-5                                                              
+     00104  2 36 00254      78         STB     IMAGE+20,2                                                       
+     00105  0 41 00073      79         BRX     ROTATE+2                                                         
+     00106  0 02 20001      80         ROV                                                                      
+     00107  0 51 00071      81         BRR     ROTATE                                                           
+     00110  0 71 00202      82  VERIFY LDX     DM20                                                             
+     00111  0 40 12006      83         SKS     12006               CARD READER READY                            
+     00112  0 01 00111      84         BRU     *-1                                                              
+     00113  0 02 02606      85         RCDW    1,4                                                              
+     00114  0 75 00210      86         LDB     ONES                                                             
+     00115  0 32 00227      87         WIM     TEMP                                                             
+     00116  0 76 00227      88         LDA     TEMP                                                             
+     00117  2 70 00254      89         SKM     IMAGE+20,2          COMPARE WORD                                 
+     00120  0 01 00134      90         BRU     ERROR                                                            
+     00121  0 41 00115      91         BRX     *-4                                                              
+     00122  0 43 00071      92         BRM     ROTATE                                                           
+     00123  0 61 00226      93         MIN     DONE                                                             
+     00124  0 53 00226      94         SKN     DONE                TEST FOR DONE                                
+     00125  0 01 00127      95         BRU     *+2                                                              
+     00126  0 01 00110      96         BRU     VERIFY              READ NEXT CARD                               
+     00127  0 02 02641      97         TYPW    1,4                 DONE MESSAGE                                 
+     00130  0 71 00177      98         LDX     DM6                                                              
+     00131  2 12 00217      99         MIW     MSG1+6,2                                                         
+     00132  0 41 00131     100         BRX     *-1                                                              
+     00133  0 01 00067     101         BRU     COM5                                                             
+     00134  2 75 00254     102  ERROR  LDB     IMAGE+20,2          PRINT ERROR MSG                              
+     00135  0 02 02641     103         TYPW    1,4                                                              
+     00136  0 71 00176     104         LDX     DM5                                                              
+     00137  2 12 00224     105         MIW     MSG2+5,2                                                         
+     00140  0 41 00137     106         BRX     *-1                                                              
+     00141  0 01 00067     107         BRU     COM5                                                             
+                           108  *                                                                               
+                           109  * CARD PUNCH SERVICE ROUTINE.                                                   
+                           110  * ENTER BY BRU 342                                                              
+                           111  * EXIT BY BRU 200                                                               
+                           112  * SET IMAGE IN A REGISTER BEFORE STARTING                                       
+                           113  * SET BP1 TO STOP TEST                                                          
+                           114  *                                                                               
+     00142  0 71 00202     115  SERV   LDX     DM20                                                             
+     00143  2 35 00254     116         STA     IMAGE+20,2                                                       
+     00144  0 41 00143     117         BRX     *-1                                                              
+     00145  0 71 00200     118  SERV1  LDX     DM12                                                             
+     00146  0 37 00225     119         STX     CARD                                                             
+     00147  0 40 12046     120         SKS     12046               BIT 13-PUNCH BUF RDY                         
+     00150  0 01 00147     121         BRU     *-1                                                              
+     00151  0 40 14046     122         SKS     14046               BIT 12-PUNCH RDY                             
+     00152  0 01 00151     123         BRU     *-1                                                              
+     00153  0 71 00202     124  SERV2  LDX     DM20                                                             
+     00154  0 02 00646     125         EOM     646                 SELECT PUNCH                                 
+     00155  2 12 00254     126         MIW     IMAGE+20,2                                                       
+     00156  0 41 00155     127         BRX     *-1                                                              
+     00157  0 02 14000     128         TOPW                                                                     
+     00160  0 40 21000     129         BRTW                                                                     
+     00161  0 01 00160     130         BRU     *-1                                                              
+     00162  0 40 12046     131         SKS     12046               BIT 13-PUNCH BUF RDY                         
+     00163  0 01 00162     132         BRU     *-1                                                              
+     00164  0 61 00225     133         MIN     CARD                                                             
+     00165  0 53 00225     134         SKN     CARD                                                             
+     00166  0 01 00170     135         BRU     *+2                                                              
+     00167  0 01 00153     136         BRU     SERV2                                                            
+     00170  0 40 20400     137         BPT     1                                                                
+     00171  0 01 00173     138         BRU     *+2                                                              
+     00172  0 01 00145     139         BRU     SERV1                                                            
+     00173  0 00 00000     140         HLT                                                                      
+     00174  0 01 00142     141         BRU     SERV                                                             
+                           142  *                                                                               
+     00175  77777774       143  DM4    DEC     -4                                                               
+     00176  77777773       144  DM5    DEC     -5                                                               
+     00177  77777772       145  DM6    DEC     -6                                                               
+     00200  77777764       146  DM12   DEC     -12                                                              
+     00201  77777760       147  DM16   DEC     -16                                                              
+     00202  77777754       148  DM20   DEC     -20                                                              
+     00203  77777700       149  DM64   DEC     -64                                                              
+     00204  01000000       150  1B5    DEC     1B5                                                              
+     00205  01010101       151  CADD   OCT     01010101                                                         
+     00206  04040404       152  CADD4  OCT     04040404                                                         
+     00207  00010203       153  CSTAR  OCT     00010203                                                         
+     00210  77777777       154  ONES   OCT     77777777                                                         
+     00211  52525252       155  MSG1   OCT     52525252                                                         
+     00212  65255131       156         BCI     4,VERIFY  COMPLETE                                               
+     00213  26701212            
+     00214  23464447            
+     00215  43256325            
+     00216  52525252       157         OCT     52525252                                                         
+     00217  52525252       158  MSG2   OCT     52525252                                                         
+     00220  65255131       159         BCI     3,VERIFY ERROR                                                   
+     00221  26701225            
+     00222  51514651            
+     00223  52525252       160         OCT     52525252                                                         
+     00224  0 00 00000     161  X2     PZE                                                                      
+     00225  0 00 00000     162  CARD   PZE                                                                      
+     00226  0 00 00000     163  DONE   PZE                                                                      
+     00227  0 00 00000     164  TEMP   PZE                                                                      
+     00230  0 00 00000     165  IMAGE  PZE                                                                      
+            00000067       166         END     COM5                                                             

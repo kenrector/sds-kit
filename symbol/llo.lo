@@ -1,0 +1,69 @@
+
+                             1                                                                                  
+                             2                                                                                  
+                             3  *       A:XL                                                                    
+     00000                   4  $LLO    RES     0                                                               
+            00000000         5  S9300   EQU     0                                                               
+            00000000         6  X0      EQU     S9300                                                           
+            00000002         7  X2      EQU     2-S9300                                                         
+     00000  0 00 00000       8  $PRNT   PZE     0                                                               
+     00001  0 40 12060       9  PRN1    SKS     012060      SKIP IF BUFFERED PRINIER                            
+     00002  0 01 00001      10          BRU     PRN1                                                            
+     00003  0 02 10460      11          EOM     010460      STEP ONE LINE BEFORE PRINTING                       
+     00004  0 43 00021      12  PRST    BRM     LINEP       PRINT VARIABLE LENGTH LINE                          
+     00005  0 40 20010      13          BETW                                                                    
+     00006  0 01 00020      14          BRU     PERRP                                                           
+     00007  0 71 00055      15  PRN2    LDX     =00200000-8,X0                                                  
+     00010  0 76 00056      16          LDA     =060606060                                                      
+*    00011  2 35 00000      17  SBLK    STA     CBUF,X2     STORE BLANKS IN 1ST 32 POSNS                        
+     00012  0 41 00011      18          BRX     SBLK,X0                                                         
+*    00013  0 77 00000      19          EAX     LBUF,X0                                                         
+*    00014  0 37 00000      20          STX     EDW,X0                                                          
+     00015  0 76 00057      21          LDA     =8                                                              
+*    00016  0 35 00000      22          STA     EDCT                                                            
+     00017  0 51 00000      23          BRR     PRNT        *EX1T*                                              
+                            24  *                                                                               
+                            25  *                                                                               
+     00020  0 00 00000      26  PERRP   HLT                                                                     
+                            27  * REPLACE PREVIOUS LINE WITH RESTART PROCEDURE                                  
+                            28  *              PRINT ONE VARIABLE LENGTH LINE                                   
+     00021  0 00 00000      29  LINEP   PZE                 ENTRY                                               
+     00022  0 40 11060      30          SKS     011060      SKIP IF NO PRINTER FAULT                            
+     00023  0 00 00000      31          HLT                 **HALT-PRINTER FAULT**                              
+*    00024  0 76 00016      32          LDA     EDCT        NUMBER OF WORDS TO PRINT                            
+     00025  0 55 00042      33          ADD     DPTWI       PLUS ORIGIN OF PRINT BUFFER                         
+     00026  0 35 00043      34          STA     DPTW        INDEXED INDIRECT ADDRESS                            
+     00027  0 76 00060      35          LDA     =00200000                                                       
+*    00030  0 54 00024      36          SUB     EDCT                                                            
+*    00031  0 35 00030      37          STA     EDCT                                                            
+*    00032  0 71 00031      38          LDX     EDCT,X0                                                         
+     00033  0 02 02660      39          EOM     02660                                                           
+     00034  0 12 40043      40          MIW     *DPTW                                                           
+     00035  0 41 00034      41          BRX     $-1,X0                                                          
+     00036  0 02 14000      42          TOP                                                                     
+     00037  0 40 21000      43          BRTW                                                                    
+     00040  0 01 00037      44          BRU     $-1                                                             
+     00041  0 51 00021      45          BRR     LINEP                                                           
+                            46  *                                                                               
+*    00042  2 00 00013      47  DPTWI   PZE     LBUF,X2                                                         
+*    00043  2 00 00042      48  DPTW    PZE     LBUF,X2                                                         
+                            49  *                                                                               
+                            50  *               HOME PAPER SUOROUTI6E                                           
+     00044  0 00 00000      51  $HOME   PZE     0                                                               
+     00045  0 40 12060      52          SKS     012060      SKIP IF BUFFERED PRINTER READY                      
+     00046  0 01 00045      53          BRU     $-1                                                             
+     00047  0 02 11460      54          EOM     011460      RESTORE PAGE OR 'HOME' PAPER                        
+     00050  0 02 02660      55          EOM     02660       START BUFFERED PRINTER NR 1                         
+     00051  0 02 14000      56          EOM     014000                                                          
+     00052  0 40 21000      57          BRTW                                                                    
+     00053  0 01 00052      58          BRU     $-1                                                             
+     00054  0 51 00044      59          BRR     HOME        EXIT                                                
+                            60          END                                                                     
+     00055  00177770            
+     00056  60606060            
+     00057  00000010            
+     00060  00200000            
+     00043  LBUF                
+     00011  CBUF                
+     00032  EDCT                
+     00014  EDW                 

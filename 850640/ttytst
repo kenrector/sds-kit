@@ -1,0 +1,17 @@
+; command file to run tty test (850640-84)
+;
+;
+; usage:  do ttytst 
+;    set bp and type c to continue after halt 207
+;    set break point 1 to echo a single character input in infinte loop
+;    set break point 2 to echo 4 character input in infinite loop
+;    set break point 3 to type all 64 characters in infinite loop
+; 
+set log /users/admin/sds/simlog
+set debug /users/admin/sds/simdebug
+
+att cr 850640-84
+set cpu history=2000
+
+
+boot cr

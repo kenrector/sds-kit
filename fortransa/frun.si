@@ -1,0 +1,1739 @@
+*       S D S  F O R T R A N  I I  R U N T I M E
+*
+*            D E C E M B E R  O ,  1 O 6 3
+*
+*
+*     PUNCH OUT RUNTIME FROM 1 TO 1,T   1, TO 15T.
+*     AND FROM 250 TO FOLLONING ADDRESS:
+PUNCH2 EQU     LAST
+*
+*
+*
+        BORG    1
+        BRU     SYSINI          SYSTEM INITIALIZE
+        BORG    76
+FPONE   DEC     1
+TAGBIT  OCT     20000000        TAG BIT
+*
+*      P R O G R A M M E D  O P E R A T O R S
+*
+        BRU     XSDPOP      100     FIXED SET UF DUMMY
+        BRU     FSDPOP      101     FLBATING SETUP DUMMY
+        BRU     *           102     (SKR - O10)
+        BRU     *           103     (SKE - O10)
+        BRU     XSTPOP      104     FIX AND STORE
+        BRU     FSTPOP      105     FLOAT AND STORE
+        BRU     *           106     (XMA - O10)
+        BRU     STDPOP      107     STORE DOUBLE PRECISION
+        BRU     DOXPOP      110     DO FIXED
+        BRU     DOFPOP      111     DO FLOATING
+        BRU     AGXPOP      112     ASSIGNED GO TO FIXED
+        BRU     AGFPOP      113     ASSIGNED GO TO FLOATING
+        BRU     XFAPOP      114     FIXED FIRST ARGUMENT
+        BRU     FFAPOP      11S     FLOATING FIRST ARGUMENT
+        BRU     XNAPOP      116     FIXED NEXT ARGUMENT
+        BRU     FNAPOP      11T     FLOATING NEXT ARGUMENT
+        BRU     XIOPOP      120     FIXED INPUT/OUTPUT
+        BRU     FIOPOP      121     FLOATING INPUT/OUT *UT
+        BRU     LTFPOP      122     LBAD THEN FLAT
+        BRU     LTXPOP      123     LBAD THEN FIX
+        BRU     *           124     (MUL + O1D)
+        BRU     LDPPOP      125     LOAD DOUBLE PRECISION
+        BRU     FTAPOP      126     FLOAT THEN ADD
+        BRU     *           12T     (DIY - 910)
+        BRU     *           130     (SKB - 910)
+        BRU     FLAPOP      131     FLOATING ADD
+        BRU     FTSPOP      132     FLOAT THEN SUBTRACT
+        BRU     *           133     IADM 10)
+        BRU     *           134     (CA( + O1)
+        BRU     FLSPOP      135     FLOATING SUBTRACT
+        BRU     FTMPOP      136     FLOAT THEN MULTIPLY
+        BRU     *           13T     (CXA - 910)
+        BRU     XMPPOP      140     FIXED MULTIPLY
+        BRU     FLMPOP      141     FLOATING MULTIPLY
+        BRU     FTDPOP      142     FLOAT THEN DIVIDE
+        BRU     *           143     (STE - 910)
+        BRU     XDVPOP      144     FIXED DIVIDE
+        BRU     FLDPOP      145     FLOATING DIVIDE
+        BRU     *           146     (CHA - 910)
+        BRU     FLNPOP      147     FLOATING NEGATE
+        BRU     ALXPOP      150     ASSIQN LABEL TO FIXED
+        BRU     ALFPOP      151     ASSIQN LABEL TO FLOATING
+        BRU     *           152     (LDE - 91O)
+        BRU     DPSPOP      153     DOUBLE PRECISION SUBTRACT
+        BRU     DPAPOP      154     DOUBLE PRECISION ADD
+        BRU     DPMPOP      155     DOUBLE PRECISION MULTIPLY
+        BRU      *          156     (CBX - 910)
+        BRU      *          157     (CXB - 910)
+        PAGE
+        BORG    250
+*DEC 24
+DEC24   DEC     24
+*FOUR
+FOUR    DEC     4
+*S 14 BIT
+S14BIT  OCT     1000
+*LIVE SKS MOP
+SKSMOP  SKS     20000               20000
+*FLOAT IND
+FLIND   OCT     1000000
+*END FIELD CHAR
+ENDFLD  EQU     *
+*CAR RETURN
+CARRET  OCT     52000000
+*CHAR 4 MASK
+CH4MSK OCT     77
+        DEC     -20
+        OCT     00000052
+*DEC 79
+DEC79   DEC     79
+        DEC     131
+*LIVE BRU MOP
+BRUMOP  BRU     0
+        HLT     LNIOR           LINE IN/OUT AND RETURN
+*ERROR LINK
+ERRLNK  HLT     ERROR           ERROR
+*FIX SPROG LINK
+FIXL    HLT     FXBNDA          FIX BANDA
+*FLOAT SPROG LINK
+FLOATL  HLT     FLOATA          FLOAT A
+*UNDEFINED LABEL
+UNDEF   BRM*    ERRLNK          ERRR LINK
+        BCI     1,LABL
+        BRU     UNDEF           UNDEFINED LABEL
+*COUNT TEST LINK
+CNTTLN  HLT
+*ONE AND TAG BIT
+TAGONE  OCT     20000001
+        HLT     STIFOK          STO IO CHAR IF OK
+        HLT     DBLXMP          DOUBLE FIXED MULT
+        BRU     CNTTST          COUNT TEST
+*IO BUFFER
+IOBUF   BSS     33
+*END BUFFR
+ENDBUF  EQU     *
+*CHARACTERISTIC
+CHARIS  HLT
+*WIDTH
+WDTH    HLT
+*4 IF E OUT
+4IFEOT  HLT
+*INPUT WORD 1
+INWRD1  HLT
+*INPUT WORD2
+INWRD2   HLT
+*END FIELD FLAG
+ENDFFL  HLT
+*CENTRAL 1
+CENRL1  HLT
+*CENTRAL2
+CENRL2  HLT
+*THREE
+THREE DEC 3
+*BLANK
+BLANK   OCT     12000000
+*PERI3D
+PERIOD  BCI     1,.000
+*LARGEST POS MANTISA
+BIGP    EQU     *
+*ALL BUT S
+ALBUTS  OCT     37777777
+*CHARIS UPPER POS LIMIT
+OCT377  EQU     *
+*POS LIMIT
+        OCT     00000377
+*M ARG ADR
+MARGAD   HLT
+*MINUS 5
+MINUS5  OCT     77777773
+        BCI     1,LOAD
+        OCT     31452712
+        BCI     1,COMP
+        BCI     1,LETE
+        OCT     12121252
+        PAGE
+*SYSTEM INITIALIZE
+SYSINI  CLA
+        STA     SENSLW          SENSE LIGHT WORD
+        STA     OVFIND          OVERFLOW IND
+        DIR                     20004
+        TYPW    1,4             EOM 2641
+        LDX     MINUS5          MINUS 5
+Q1      MIW     SYSINI,2        SYSTEM INITIALIZE
+        BRX     Q1              $1
+        TOPW                    14000
+        HLT
+        NOP     4096,2          10000
+        BRU     MNPRST          MAIN PROG START
+*ERROR
+ERROR   HLT
+        STA     Q2              $1
+        LDA     NEGBEX          NEG EXP BIT
+        SKA*    ERROR           ERROR
+        LDA     NOPMOP          LIV NOP MOP
+        XMA     Q2              $1
+        MIN     ERROR           ERROR
+        TYPW    1,4             EOM 2641
+        MIW     Q4              $3
+        MIW*    ERROR           ERROR
+        MIW     Q5              $4
+        TOPW
+Q2      HLT
+Q3      BRTW                    21000
+        BRU     Q3              $2
+        BRR     ERROR           ERROR
+Q4      BCI     1,ERR
+Q5      OCT     12121252
+FLAPOP  STX     XREG
+        STA     TEMPA           A,B NON ZERO
+        CXA
+        STB     ZM              B
+        STE
+        STX     ZE              SIGN EXTENDED EXP(A,B)
+        ADD     XREG            DOUBLE X
+        AXC
+        EAX*    0               PROCURE ARGUMENT ADDRESS
+        SKE     1,2
+        BRU     Q5B
+        CLR                     M=ZERO
+        BRU     FLAD
+Q5B     SKE     TEMPA
+        BRU     Q5A
+        CLR                     A,B=ZERO
+        BRU     FLAC
+Q5A     CXA                     M NON ZERO
+        LDB     0,2
+        STE                     EXTEND SIGN OF EXP (4) 20S
+        XXA
+        SUB     ZE              EXP (M)-EXP(A)
+        SKG     ONES
+        BRU     FLAGM           /A/ .GR. /M/
+        SKA     M770            /A/ .LE. /M/
+        LDA     39D             MAX SHIFT = 39
+        XMA     TEMPA
+        LDB     ZM
+        RSH*    TEMPA           ALIGN FRACTIONS
+        XAB
+FLAC    SKN     FLAG            FLAG NEGATIVE IFF FLS
+        BRU     Q5C             FLA
+        MRG     0777            FLS
+        SUB     0,2
+        EOR     0777
+        XAB
+        SUC     1,2
+        BRU     FLAF
+Q5C     RCH     101             CLA(E)
+        ADD     0,2
+        XAB
+        ADC     1,2
+FLAF    STE
+FLAOVT  OVT
+        BRU     OFSET           RIGHT NORMALIZE
+        NOD     38              LEFT NORMALIZE
+        SKA     ONES
+        BRU     FLANZ
+        CLX
+FLANZ   XXA
+        SKG     M2570           TEST FOR EXPONENT UNDERFLOW
+FLAOF   BRR     FLAOF,4
+FLAOK   XXA
+FLAX    LDE     0,2             LDE,CLX
+        STX     FLAG            RESET FLA/FLS FLAG
+        LDX     XREG
+        OVT
+        BRU     OFLO
+        BRR     0
+FLAGM   CNA                     FORCE EXP DIFF POSITIVE
+        SKA     M770            SKIP IF LESS THAN 64
+        LDA     39D
+        LDX     1,2
+        XXA
+        RSH     0,2             ALIGN FRACTIONS
+        RCH     102
+FLAD    SKN     FLAG
+        BRU     Q5D             FLA
+        XMA     TEMPA           FLS
+        XAB
+        XMA     ZM
+        SUB     ZM
+        XAB
+        SUC     TEMPA
+        BRU     FLAF
+Q5D     XAB                     FLA
+        ADD     ZM
+        XAB
+        ADC     TEMPA
+        BRU     FLAF
+OFSET   RSH     1               RIGHT NORMALIZE
+        EOR     MINUS
+        BRX     FLAX
+        XXA
+        SKG     255D            CHECK FOR OVERFLOW
+        BRU     FLAOK
+        BRR     FLAOF
+DIVOF   LDA     TEMPA
+        EOR     1,2             DETERMINE SIGN OF QUOTIENT
+        BRU     Q5E             OVERFLOW
+OFLO    STE
+        BRX     Q5E             OVERFLOW
+        CLR                     UNDERFLOW
+        LDX     XREG
+        BRR     0
+Q5E     LDX     SIGN            SET OVERFLOW INDICATOR
+        STX     OFFLAG
+        EOR     MINUS
+        RSH     39
+        EOR     MINUS
+        EAX     255
+        BRU     FLAX
+FLSPOP  STA     FLAG
+        SKA     MINUS
+        BRU     FLAPOP
+        EOR     ONES
+        XMA     FLAG
+        BRU     FLAPOP
+FLAG    PZE     0
+FLMPOP  STX     XREG
+        STA     TEMPA           AH
+        CXA
+        STE                     EXTEND EXP (A,B)
+        STX     ZE
+        BXC
+        LCY     1               DOUBLE X
+        XXA
+        EAX*    0
+        LGR     2                   FORCE +
+       MUL     1,2
+       STA     ZM                  AL * MH
+       LDA     0,2
+       CXB
+       AXCE                        AXC(E)   KENR
+       XXA                         EXTEND EXP (M)
+       ADM     ZE                  AE+ME = EXP (BSSULT)
+       BXAC                        CXA, BXC
+       LGR     2                   FORCE +
+       MUL     TEMPA               AH * ML
+       ADD     ZM                  AH * ML + AL * MH
+       MUL     TWO                 SCALE
+       STB     ZM
+       XMA     TEMPA
+       MUL     1,2                 AH * MH
+       XAB
+       ADD     ZM
+       XAB
+       ADC     TEMPA
+       LDX     ZE                  EXP (BSSULT)
+       SKA     MAXPOS
+       BRU     FLCOM               ALL RIGHT TO NORMALIZE
+       SKB     MLONES
+       BRU     FLCOM               NOT -1 OR 0
+       SKE     MINUS               SEPARATE -1 FROM 0
+       BRU     FLMX                0, EXIT
+       RCY     1                   -1, RIGHT NORMALIZE
+       BRX     FLCOM
+       BRU     FLCOM
+FLDPOP STX    XREG
+       STA     TEMPA
+       CXA
+       STE                         EXTEND EXP (A,B)
+       STX     ZE
+       BXC
+       LCY     1                   (AH+AL)/(MH+ML)=
+       LDB     TEMPA               ((AH+AL)/MH)*(1-ML/MH)=
+       AXBA                        (Q+R/MH)*(1-ML/MH)=
+       EAX*    0                   Q+(R-Q*ML)/MH
+       RSH     2
+       DIV     1,2
+       OVT
+       BRU     DIVOF               OVERFLOW IFF DIVISOR =0
+       STA     ZM                  SINGLE PRECISION QUOTIENT=Q
+       BAC
+       RSH     1
+       STA     TEMPA               REMAINDER =  R
+       LDB     0,2
+       CXA
+       STE                         EXTEND EXP (M)
+       XXA
+       CNA                         EXP(BSSULT)=EXP(A)+2-EXP(M)
+       ADD     TWO
+       ADM     ZE
+       BAC
+       RCY     2
+       CNA                         -ML
+       MUL     ZM                  Q
+       ADD     TEMPA               R- Q*ML
+       DIV     1,2                 (R-Q*ML)/MH
+       MUL     TWO                 SCALE
+       ADD     ZM                  Q+(R-Q*ML)/MH
+       LDX     ZE                  EXP(BSSULT)
+       SKA     ONES
+       BRU     FLCOM
+       BRU     FLMX
+FLNPOP STX    XREG
+       SKB     MLONES
+       BRU     FLNA                LESS SIG. HALF NON  zero
+       CNA
+       SKE     ZERO
+       SKA     QQQ1S
+       BRR     0
+       STE
+       SKE     MINUS           PLACE SIGN BIT IN B
+       BRU     FLCOM
+       RCY     1               SIGN BIT TO A
+       BRX     Q5F
+FLCOM  NOD     4               NORMALIZE RESULT
+Q5F    XXA
+       SKG     255D            CHICK FOR EXPONENT
+       SKG     M2570           OVERFLOW/UNDERFLOW
+       BRU     FLAOF
+       XXA
+FLNB   LDE
+FLMX   LDX     XREG
+       BRR     0
+FLNA   STE
+       XAB
+       CNA
+       XAB
+       EOR     ONES
+       BRU     FLNB
+*DPM POP
+DPMPOP STX    XREG
+       EAX*    0
+       STA     XM
+       BAC
+       RCY     2
+       MUL     1,2
+       STA     ZM
+       LDA     0,2
+       LGR     2
+       MUL     XM
+       ADD     ZM
+       MUL     TWO
+       STB     ZM
+       XMA     XM
+       MUL     1,2
+       XAB
+       ADD     ZM
+       XAB
+       ADC     XM
+       LDX     XREG
+       SKG     MINUS
+Q28    SKB     ONES
+       BRR     0
+       BRR     Q29                 *2
+Q29    HLT     Q28
+*LTX POP
+LTXPOP LDA    0
+       STA     EXIT
+       LDP*    EXIT
+       BRM     FXBNDA              FIX BANDA
+       BRR     EXIT
+*XMP POP
+XMPPOP MUL*   0                   0
+       RSH     1                   1
+       XAB                         NO
+       BRR     0                   0
+*XDV POP
+XDVPOP MUL     RTSH23              RT SHIFTER 23
+       DIV*    0                   0
+       BRR     0                   0
+*XST POP
+XSTPOP STX     REG
+       LDX     0
+       STX     EXIT
+       BRM     FXBNDA              FIX B AND A
+       LDX     REG
+       STA*    EXIT
+       BRR     EXIT
+*FST POP
+FSTPOP LDB     0
+       STB     EXIT
+       CLB
+       BRM     FLOATA              FLOAT A
+       STD*    EXIT
+       BRR     EXIT
+*FIX BANDA
+FXBNDA HLT
+       STX     FXBAXR              FIX BANDA XREG
+       STA     FIXTP2              FIX TEMP 2
+       LDX     0                   0
+       SKA     SIGN                 SIGN
+       FLN
+       STX     0                    0
+       SKB     NEGBEX               NEG EXP BIT
+       BRU     Q31
+       SKB     EXB78                EXP BITS 7AND8
+       BRU     Q31
+       STE
+       STA     FIXTMP               FIX TEMP
+       CXA
+       CNA
+       ADD     OCT27                OCT27
+       SKG     SMALNG               SMALLEST NEGATIVE
+       BRU     Q32
+       CAX
+       LDA     FIXTMP               FIX TEMP
+       RSH     0,2
+       BRU     Q33                  $4
+Q31    CLR
+       BRU     Q33
+Q32    CNA
+       CAX
+       LDA     FIXTMP
+       LSH     0,2
+Q33    SKN     FIXTP2               FIX TEMP 2
+       BRU     Q34                  $5
+       CNA
+Q34    LDX     FXBAXR               FIX BANDA XREG
+       BRR     FXBNDA
+*LTF POP
+LTFPOP LDA*   0
+       BRM    FLOATA              FLOAT A
+       BRR     0                   0
+*FLOAT A
+FLOATA HLT
+       STX     FLAXRG              FLOAT A XREG
+       CLB
+       EAX     23
+       NOD     23                  27
+       LDE
+       LDX     FLAXRG              FLOAT A XREG
+       BRR     FLOATA              FLOAT A
+*FTA POP
+FTAPOP STB    PART1
+       STA     PART2
+       LDA     0                   0
+       STA     EXIT
+       LDA*    0                   0
+       BRM    FLOATA              FLOAT A
+       FLA     PART1
+       BRR     EXIT
+* FTS POP
+FTSPOP STB     PART1
+       STA     PART2
+       LDA     0                    0
+       STA     EXIT
+       LDA*    0                    0
+       BRM     FLOATA               FLOAT A
+       STD     FLTEMP
+       LDP     PART1
+       FLS     FLTEMP
+       BRR     EXIT
+*FTM POP
+FTMPOP STB    PART1
+       STA     PART2
+       LDA     0
+       STA     EXIT
+       LDA*    0
+       BRM    FLOATA              FLOAT A
+       FLM     PART1
+       BRR     EXIT
+*FTD POP
+FTDPOP STB     PART1
+       STA     PART2
+       LDA     0
+       STA     EXIT
+       LDA*    0                    0
+       BRM     FLOATA               FLOAT A
+       STD     FLTEMP
+       LDP     PART1
+       FLD     FLTEMP
+       BRR     EXIT
+*DOX POP
+DOXPOP LDB    0                   0
+       STB     DOXTEM              DOX TEMP
+       MIN     0                   0
+       ADM*    0                   O
+       SKA     SIGNBT              SIGN BIT
+       BRU     Q35                 $1
+       LDA*    0                   O
+       SKG*    DOXTEM              DOX TEMP
+       MIN     0                   0
+       BRR     0                   0
+Q35    LDA*    DOXTEM              DOX TEMP
+       SKG*    0                   O
+       MIN     0                   0
+       BRR     0                   O
+*DOF POP
+DOFPOP STA    DOFTEM              DOF TEMP
+       LDA     0                   0
+       STA     DOFTAD              DOF TEMP ADR
+       ADD     ONE                 ONE
+       STA     DOFXIT              DOF EXIT
+       LDA     DOFTEM              DOF TEMP
+       FLA*    DOFXIT              DOF EXIT
+       STD*    DOFXIT              DOF EXIT
+       SKN     DOFTEM              DOF TEMP
+       BRU     Q36                 *1
+       LDP*    DOFTAD              DOF TEMP ADR
+       FLS*    DOFXIT              DOF EXIT
+       SKG     ZERO                ZERO
+       MIN     DOFXIT              DOF EXIT
+       BRR     DOFXIT              DOF EXIT
+Q36    FLS*    DOFTAD              DOF TEMP ADR
+       SKG     ZERO                ZERO
+       MIN     DOFXIT              DOF EXIT
+       BRR     DOFXIT              DOF EXIT
+*XSD POP
+XSDPOP CLA
+       BRU     Q37                 *1
+*FSD POP
+FSDPOP LDA    FLIND               FLOAT IND
+Q37    LDB     FLIND               FLOAT IND
+       STX     XREG                XREG
+       EAX*    0                   0
+       SKM*    EADR2               EADR 2
+       BRU     Q39                 *2
+Q38    MRG*    EADR2               EADR 2
+       MIN     EADR2               EADR 2
+       STA     0,2                 0
+       MRG     TAGBIT              TAG BIT
+       STA     1,2                 1
+       LDX     XREG                XREG
+       BRR     0                   0
+Q39    BRM*    ERRLNK              ERROR LINK
+       BCI     1,ARGM
+       BRU     Q38
+*FFA POP
+FFAPOP BRM    DBLXRG              DOUBLE XREG
+       LDA     FLIND               FLOAT IND
+       BRU     Q40                 *1
+*XFA POP
+XFAPOP CLA
+       STX     XREG                XREG
+Q40    LDB     EOADR               EO ADR
+       STB     EADR1               EADR 1
+       LDB     EOSIZE              EO SIZE
+       STB     EOSIZE              EO SIZE TEMP
+       SKR     EOSIZE              EO SIZE TEMP
+       BRU     Q41                 $2
+       BRM*    ERRLNK              ERROR LINK
+       BCI     1,SIZE
+       BRU     Q41
+*FNA POP
+FNAPOP BRM   DBLXRG                DOUBLE XREG
+       LDA     FLIND               FLOAT IND
+       BRU     Q41                 *2
+*XNA POP
+XNAPOP CLA
+       STX     XREG                XREG
+Q41    STA*    EADR1               EADR 1
+       EAX*    0                   0
+       CXA
+       ETR     ADRMSK              ADR MASK
+       ADM*    EADR1               EADR 1
+       MIN     EADR1               EADR 1
+       LDX     XREG                XREG
+       SKR     E0SIZT              E0 SIZE TEMP
+       BRR     0                   0
+       BRM*    ERRLNK              ERROR LINK
+       BCI     1,SIZE
+       BRR     0                   0
+*DOUBLE XREG
+DBLXRG HLT
+       STX     XREG                XREG
+       STA     TEMPA               TEMPA
+       RCH     61                  XXB+CLA
+       LCY     1
+       XXB
+       LDA     TEMPA               TEMPA
+       BRR     DBLXRG              DOUBLE XREG
+*ALF POP
+ALFPOP BRM     DBLXRG              DOUBLE XREG
+       BRU     Q42                 $1
+*ALX POP
+ALXPOP STX     XREG                XREG
+Q42    LDA     0                   0
+       ETR     ADRMSK              ADR MASK
+       STA*    0                   0
+       LDX     XREG                XREG
+       MIN     0                   0
+       BRR     0                   0
+*AGF POP
+AGFPOP BRM     DBLXRG              DOUBLE XREG
+       BRU     Q43                 *3
+*AGX POP
+AGXPOP STX     XREG                XREG
+Q43    LDX*    0                   0
+       LDA     0,2                 0
+       LDB     POPADR              POP ADR MASK
+       SKM     APOPCD              ASN POP CODE
+       BRU     Q45                 *1
+Q44    STX     AGTTP1              AGT TEMP 1
+       LDX     XREG                XREG
+       BRR     AGTTP1              AGT TEMP 1
+Q45    BRM*    ERRLNK              ERROR LINK
+       BCI     1,AGTO
+       BRU     Q44                 *2
+*XIO POP
+XIOPOP LDB     FOUR                 FOUR
+       BRU     Q46                  $1
+*FIO POP
+FIOPOP LDB     EIGHT                EIGHT
+Q46    STB     8OR4                 8 IF DOUBLE ELSE 4
+       STX     MSAVEX               M SAVE XR
+       LDA     0                    0
+       STA     MRETAD               M RETURN ADR
+       LDA     TWO                  TWO
+       MRG     NOARGF               NO ARG FLAG
+       STA     NOARGF               NO ARG FLAG
+       STX     MARGAD               M ARG ADR
+       CXA
+       ADD     MARGAD               M ARG ADR
+       XAB
+       SKG     FOUR                 FOUR
+       LDB     MARGAD               M ARG ADR
+       CBX
+       EAX*    0                    0
+       CXA
+       ETR     ADRMSK               ADR MASK
+       STA     MARGAD               M ARG ADR
+       LDP*    MARGAD               M ARG ADR
+       STD     INWRD1               INPUT WORD 1
+       BRU     CNTTLN               COUNT TEST LINK
+*LDP POP
+LDPPOP STX     DPTMP1
+       CXA
+       ADD     DPTMP1
+       CAX
+       EAX*    0                   0
+       LDA     1,2                 1
+       LDB     0,2                 0
+       LDX     DPTMP1
+       BRR     0                   0
+*STDPOP
+STDPOP STX     DPTMP1
+       STA     STDT2
+       CXA
+       ADD     DPTMP1
+       CAX
+       LDA     STDT2
+       EAX*    0                   0
+       STA     1,2                 1
+       STB     0,2                 0
+       LDX     DPTMP1
+       BRR     0                   0
+*DPA POP
+DPAPOP STX     DPTMP1
+       EAX*    0                   0
+       XAB
+       ADD     0,2                 0
+       XAB
+       ADC     1,2                 1
+       LDX     DPTMP1
+       BRR     0                   0
+*DPS POP
+DPSPOP STX     DPTMP1
+       EAX*    0                   0
+       XAB
+       SUB     0,2                 0
+       XAB
+       SUC     1,2                 1
+       LDX     DPTMP1
+       BRR     0                   0
+       PAGE
+*NEXT  SKN
+NXCHAR BRM    INSCAN               INT SCAN
+       STB   COUNT                 COUNT
+       SKR   COUNT                 COUNT
+       NOP
+       LDX    M14                  MINUS 14
+       LDA    CHAR                 CHAR
+Q47    SKE    CHTABL,2             CHAR TABLE
+       BRX    Q47                  $1
+       STX    CHXSAV               CHAR INDEX SAVE
+       BRU    BRUITB,2             BRUI TABLE
+*HAVE L PAREN
+HAVELP LDA    COUNT                COUNT
+       STA    GROUPC               GROUP COUNT
+       MIN    PARENC               PAREN COUNT
+       LDA    PARENC               PAREN COUNT
+       SKA    TWO                  TWO
+       BRU    BRUITB               BRUI TABLE
+       STA    PRENCS               PAREN COUNT SAVE
+       LDA    FSCANX               F SCAN X
+       STA    SCANXS               SCAN X SAVE
+       BRU    NXCHAR               NEXT CHAR
+*HAVE P
+HAVEP  STB    PEXPSV               P EXP SAVE
+       SKN    PMINFG               P MINUS FLAG
+       BRU    NXCHAR               NEXT CHAR
+       CLA
+       STA    PMINFG               P MINUS FLAG
+       SUB    PEXPSV               P EXP SAVE
+       STA    PEXPSV               P EXP SAVE
+       BRU    NXCHAR               NEXT CHAR
+*HAVE R PAREN
+HAVERP SKR    GROUPC               GROUP COUNT
+       BRU    Q48                  $3
+       BRU    Q49                  $2
+Q48    LDA    SCANXS               SCAN X SAVE
+       STA    FSCANX               F SCAN X
+       BRU    NXCHAR               NEXT CHAR
+Q49    SKR    PARENC               PAREN COUNT
+       BRU    NXCHAR               NEXT CHAR
+       LDA    NOARGF               NO ARG FLAG
+       SKE    TWO                  TWO
+       BRU    Q50                  $4
+       BRM*   ERRLNK               ERROR LINK
+Q50    SKN    PIFEND               PLUS IF END LIST
+       BRU    LASTLN               LAST LINE OUT
+       BRM    LNIOR                LINE IN/OUT AND RETURN
+       LDA    PRENCS               PAREN COUNT SAVE
+       STA    PARENC               PAREN COUNT
+       BRU    Q48                  $3
+*HAVE EFIAOG
+HAVEEF LDA    ONE                  ONE
+       MRG    NOARGF               NP ARG FLAG
+       STA    NOARGF               NO ARG FLAG
+       BRM    INSCAN               INT SCAN
+       STB    WDTH                 WDTH
+       CLA
+       STA    DECPNT               DEC PNT
+       STA    PEXP                 P EXP
+       STA    4IFEOT               4 IF E OUT
+       STA    PMINFG               P MINUS FLAG
+       LDA    CHAR                 CHAR
+       SKE    PERIOD               PERIOD
+       BRU    Q51                  $4
+       BRM    INSCAN               INT SCAN
+       STB    DECPNT               DEC PNT
+       LDA    PEXPSV               P EXP SAVE
+       STA    PEXP                 P EXP
+Q51    SKR    FSCANX               F SCAN X
+*IO TEST
+IOTEST LDX    CHXSAV               CHAR INDEX SAVE
+       SKN    IOFLAG               IO FLAG
+       EAX    -8,2                 -10
+       STX    CHXSAV               CHAR INDEX SAVE
+       STX    NOCOMA               NO COMMA FLG
+       BRU    BRU2TB,2             BRU2 TABLE
+*COUNT TEST
+CNTTST LDA    SIGNBT               SIGN BIT
+       STA    NOCOMA               NO COMMA FLAGTLG
+*COUNT TEST NO SET
+CNTTNS LDX    CHXSAV               CHAR INDEX SAVE
+       SKR    COUNT                COUNT
+       BRU    BRU2TB,2             BRU2 TABLE
+       BRU    NXCHAR               NEXT CHAR
+*HAVE MINUS
+HAVEMI LDA    SIGNBT               SIGN BIT
+       STA    PMINFG               P MINUS FLAG
+       BRU    NXCHAR               NEXT CHAR
+       PAGE
+*DLR IN
+DLRIN  BRM    GNFCIB               GET NEXT FOR CHAR INCL BLNK
+       SKE    DLR                  DLR
+       BRU    Q52                  $1
+       BRU    NXCHAR               NEXT CHAR
+Q52    SKR    FSCANX               F SCAN X
+       BRM    GNICIC               GET NEXT IO CHAR INCL COMMA
+       SKE    DLR                  DLR
+       BRU    Q53                  $2
+       LDA    BLANK                BLANK
+Q53    BRM    STOFCH               STO FOR CHAR
+       BRU    DLRIN                DLR IN
+*DLROUT
+DLROUT BRM    GNFCIB               GET NEXT FOR CHAR INCL BLNK
+       SKE    DLR                  DLR
+       BRU    Q54                  $1
+       BRU    NXCHAR               NEXT CHAR
+Q54    BRM    STOICH               STO IO CHAR
+       BRU    DLROUT               DLR OUT
+*X IN
+XIN    BRM    GNICIC               GET NEXT ICHAR INGLCOMMA 44
+       BRU    CNTTNS               COUNT TEST NO SET
+*X OUT
+XOUT   LDA    BLANK 5LANX
+       BRM    STOICH               STO IO CHAR
+       BRU    CNTTNS               COUNT TEST NO SET
+*HIN
+HIN    BRM    GNICIC               GET NEXT IO CHAR INCL COMMA
+       BRM    STOFCH               STO FOR CHAR
+       BRU    CNTTNS               COUNT TE3T NO SET
+*H OUT
+HOUT   BRM    GNFCIB               GET NEXT FOR CHAR INCL BLNK
+       BRM    STOICH               STO IO CHAR
+       BRU    CNTTNS               COUNT TEST NO SET
+*AOUT
+AOUT   SKN    PIFEND               PLUS IF END LIST
+       BRU    LASTLN               LAST LINE OUT
+       LDA    WDTH                 WDTH
+       SKG    8OR4                 8 IF DOUBLE ELSE 4
+       BRU    Q55                  $1
+       LDA    8OR4                 8 IF DOUBLE ELSE 4
+Q55    STA    OUTFSZ               OUTPUT FIELD SIZE
+       LDA    WDTH                 WDTH
+       ADD    RSCANX               R SCAN X
+       STA    RSCNXF               R SCAN X LIMIT FIELD
+       LDP    INWRD1               INPUT WORD 1
+       LCY    18                   22
+       STD    CENRL1               CENTRAL 1
+Q56    LDP    CENRL1               CENTRAL 1
+       LCY    6
+       STD    CENRL1               CENTRAL 1
+       BRM    STIFOK               STO IO CHAR IF OK
+       SKN    ENDFFL               END FIELD FLAG
+       BRU    Q56                  $2
+       BRU    RETMPR               RETURN TO MAIN PROG
+*AIN
+AIN    SKN    PIFEND               PLUS IF END LIST
+       BRU    RETMPR               RETURN TO MAIN PROG
+       LDA    8OR4                 8 IF DOUBLE ELSE 4
+       STA    AINTP1               A IN TEMP 1
+       SKG    WDTH                 WDTH
+       BRU    Q57                  $1
+       LDA    WDTH                 WDTH
+Q57    STA    AINTP2               A IN TEMP 2
+       LDA    WDTH                 WDTH
+       SUB    8OR4                 8 IF DOUBLE ELSE 4
+       SKA    SIGNBT               SIGN BIT
+       CLA
+       ADM    RSCANX               R SCAN X
+       BRU    Q60                  $3
+Q58    LDA    BLANK                BLANK
+       SKR    AINTP2               A IN TEMP 2
+       BRM    GNICIC               GET NEXT IO CHAR INCL COMMA
+       SKE    CARRET               CAR RETURN
+       BRU    Q59                  $2
+       LDA    BLANK                BLANK
+Q59    STA    AINTP3               A IN TEMP 3
+       LDP    CENRL1               CENTRAL1
+       ETR    CH234                CHAR234 MASK
+       MRG    AINTP3               A IN TEMP 3
+       LCY    6
+       STD    CENRL1               CENTRAL 1
+Q60    SKR    AINTP1               A IN TEMP 1
+       BRU    Q58                  $4
+       LDX    MARGAD               M ARG ADR
+       STB    0,2                  0
+       CAB
+       LDA    FIVE                 FIVE
+       SKG    8OR4                 8 IF DOUBLE ELSE 4
+       BRU    Q61                  $5
+       BRU    RETMPR               RETURN TO MAIN PROG
+Q61    CBA
+       XMA    0,2                  0
+       STA    1,2
+       BRU    RETMPR               RETURN TO MAIN PROG
+*EFGIN
+EFGIN  SKN    PIFEND               PLUS IF END LIST
+       BRU    RETMPR               RETURN TO MAIN PROG
+       BRM    CONSCN               CONST SCAN
+       BRM    FLCMKL               FL CONST MAKER LINK
+       LDX    MARGAD               M ARG ADR
+       LDP    CENRL1               CENTRAL 1
+       STD*   MARGAD               M ARG ADR
+       BRU    RETMPR               RETURN TO MAIN PROG
+*I IN
+IIN    SKN    PIFEND               PLUS IF END LIST
+       BRU    RETMPR               RETURN TO MAIN PROG
+       BRM    CONSCN               CONST SCAN
+       BRM*   FLCMKL               FL CONST MAKER LINK
+       BRM    FIX                  FIX
+       LDX    MARGAD               M ARG ADR
+       STA    0,2
+       BRU    RETMPR               RETURN TO MAIN PROG
+*I OUT
+IOUT   SKN    PIFEND               PLUS IF END LIST
+       BRU    LASTLN               LAST LTNE OUT
+       LDA    INWRD1               INPUT WORD 1
+       BRM*   FLOATL               FLOAT SPROG LINK
+       STD    INWRD1               INPUT WORD 1
+       LDA    MINUS1               MINUS ONE
+       STA    DECPNT               DEC PNT
+*F OUT
+FOUT   SKN    PIFEND               PLUS IF END LIST
+       BRU    LASTLN               LAST LINEUT
+       BRM*   CONV3W               CONV TO 3 WORDS LINK
+       BRM*   BCDLNK               BIN TO BCD CONV LINK
+       BRU    RETMPR               RETURN TO MAIN PPROG
+*E OUT
+EOUT   SKN    PIFEND               PLUS IF END LIST
+       BRU    LASTLN               LAST LINE OUT
+       BRM*   CONV3W               CONV TO 3 WORDS LINK
+       LDA    FOUR                 FOUR
+       STA    4IFEOT               4 IF E OUT
+       LDA    CENRL1               CENTRAL1
+       MRG    CENRL2               CENTRAL2
+       SKE    ZERO                 ZERO
+       BRU    Q62                  $5
+       BRU    Q63                  $6
+Q62    LDA    CHARIS               CHARACTERISTIC
+       SUB    PEXP                 P EXP
+       ADD    ONE                  ONE
+Q63    STA    EEXP                 E EXP
+       LDA    MINUS1               MINUS ONE
+       STA    CHARIS               CHARACTERISTIC
+       BRM*   BCDLNK              BIN TO BCD CONV LINK
+       LDA    FOUR                 FOUR
+       STA    OUTFSZ               OUTPUT FIELD SIZE
+       ADM    RSCNXF               R SCAN X LIMIT FIELD
+       LDA    E                    E
+       BRM    STIFOK               STO IO CHAR IF OK
+       LDA    BLANK                BLANK
+       SKN    EEXP                 E EXP
+       BRU    Q64                  $1
+       LDA    EEXP                 E EXP
+       CNA
+       STA    EEXP                 E EXP
+       LDA    MINUS                MINUS
+Q64    BRM    STIFOK               STO IO CHAR IF OK
+       LDA    EEXP                 E EXP
+       SKG    NINE                 NINE
+       BRU    Q65                  $2
+       SKG    DEC99                DEC 99
+       BRU    Q66                  $3
+       BRM    ERROR
+       BCI    1,OEXP
+       CLA
+       BRU    Q66                  $3
+Q65    CLA
+       BRU    Q67                  $4
+Q66    ABC
+       LSH    1
+       DIV    TEN                  TEN
+       STB    EEXP                 EEXP
+       LSH    18                   22
+Q67    BRM    STIFOK               STO IO CHAR IF OK
+       LDA    EEXP                 E EXP
+       LSH    18                   22
+       BRM    STIFOK               STO IO CHAT IF OK
+       BRU    RETMPR               RETURN TO MAIN PROG
+       PAGE
+*GET NEXT CHAR
+GNCHAR HLT
+       STX    SAVEX                SAVE X
+       LDA*   SCANX                SCAN X
+       SKG*   SCANXL               SCAN X LIMIT
+       BRU    Q68                  $1
+       LDA    ENDFLD               END FIELD CHAR
+       STA    CHAR                 CHAR
+       BRR    GNCHAR               GET NEXT CHAR
+Q68    RCY    2
+       AXC
+       LCY    2
+       MUL    THREE                THREE
+       LDA*   TAGST                TAGGED START ADR
+       CBX
+       LSH    0,2
+       ETR    CH1MSK               CHAR1 MASK
+       SKE    IBMBLNK              IBM BLANK
+       BRU    Q69                  $2
+       LDA    BLANK                BLANK
+Q69    STA    CHAR                 CHAR
+       MIN*   SCANX                SCAN X
+       LDX    SAVEX                SAVE X
+       SKE    CARRET               CAR RETURN
+       BRR    GNCHAR               GET NEXT CHAR
+       SKR*   SCANX                SCAN X
+       BRR    GNCHAR               GET NEXT CHAR
+*GET NEXT FOR CHAR
+GNFRCH HLT
+Q70    BRM    GNFCIB               GET NEXT FOR CHAR INCL BLNK
+       SKE    BLANK                BLANK
+       BRR    GNFRCH               GET NEXT FOR CHAR
+       BRU    Q70                  $1
+*GET NEXT FOR CHAR INCL BLNK
+GNFCIB HLT
+       CLB
+       BRM    INITSC               INITIALIZE SCANS
+       BRM    GNCHAR               GET NEXT CHAR
+       BRR    GNFCIB               GET NEXT FOR CHAR INCL BLANK
+*GET NEXT IO CHAR INCL BLNK
+GNICIB HLT
+Q71    LDA    ENDFLD               END FIELD CHAR
+       STA    CHAR                 CHAR
+       SKN    NOCOMA              NO COMMA FLAG
+       BRR    GNICIB               GET NEXT IO CHAR INCL BLNK
+       BRM    GNICIC               GET NEXT IO CHAR INVL COMMA
+       SKE    COMMA                COMMA
+       BRR    GNICIB               GET NEXT IO CHAR INCL BLNK
+       CLA
+       STA    NOCOMA               NO COMMA FLAG
+       BRU    Q71                  $1
+*GET NEXT IO CHAR
+GNIOCH HLT
+       LDA    RSCNXF               R SCAN X LIMIT FIELD
+       SKG    RSCANX               R SCAN X
+       BRU    Q72                  $1
+       BRU    Q73                  $2
+Q72    LDA    ENDFLD               ENDFIELD CHAR
+       BRU    Q74                  $3
+Q73    BRM    GNICIB               GET NET IO CHAR INCL BLNK
+       SKE    BLANK                BLANK
+       BRR    GNIOCH               GET NEXT IO CHAR
+       LDA    ONE                  ONE
+Q74    STA    CHAR                 CHAR
+       BRR    GNIOCH               GET NEX IO CHAR
+*GET NEXT IO CHAR INCL COMMA
+GNICIC HLT
+       LDB    THREE                THREE
+       BRM    INITSC               INITIALIZE SCANS
+       BRM    GNCHAR               GET NEXT CHAR
+       BRR    GNICIC               GET NEXT IO CHAR INCL COMMA
+       PAGE
+*STO CHAR
+STOCH  HLT
+       STA    ARGSAV               ARG SAVE
+       STX    SAVEX                SAVE X
+       LDA*   SCANX                SCANX
+       SKG*   SCANXL               SCAN X LIMIT
+       BRU    Q75                  $1
+       BRU    Q76                  $2
+Q75    RCY    2                    2
+       AXC                         401
+       LCY    2                    2
+       MUL    THREE                THREE
+       LDA*   TAGST                 TAGGED START AOR
+       STX    SCHT1                STO CHAR TEMP 1
+       CBX
+       LCY    0,2                  0
+       ETR    CH234                CHAR234 MASK
+       MRG    ARGSAV               ARG SAVE
+       RCY    0,2
+       LDX    SCHT1                STO CHAR TEMP 1
+       STA*   TAGST                TAGGED START ADR
+Q76    MIN*   SCANX                SCAN X
+       LDX    SAVEX                SAVE X
+       BRR    STOCH                STO CHAR
+*STO FOR CHAR
+STOFCH HLT
+       CLB
+       BRM    INITSC               INITIALIZE SCANS
+       BRM    STOCH                STO CHAR
+       BRR    STOFCH               STO FOR CHAR
+*STO IO CHAR
+STOICH HLT
+       LDB    THREE                THREE
+       BRM    INITSC               INITIALIZE SCANS
+       ETR    CH1MSK               CHAR 1 MASK
+       SKE    BLANK                BLANK
+       BRU    Q77                  $1
+       LDA    RSCNXL               R SCAN LIMIT
+       SKG    DEC79                DEC 79
+       BRU    Q77                  $2
+       LDA    IBMBLN               IBM BLANK
+       BRU    Q78                  $1
+Q77    LDA    BLANK                BLANK
+Q78    BRM    STOCH                STO CHAR
+       BRR    STOICH               STO 19 CHAR
+*STO IO CHAR IF OK
+STIFOK HLT
+       STA    SIFOK1               STO IF OK TEMP 1
+       CLA
+       STA    ENDFFL               END FIELD FLAG
+Q79    LDA    RSCANX               R SCAN X5,A (
+       ADD    ONE                  ONE
+       SKG    RSCNXF                P SCAN X LIMIT FIELD
+       BRU    Q80                  $1
+       LDA    SIGNBT               SIGN BIT
+       STA    ENDFFL               END FIELD FLAG
+       BRR    STIFOK               STO IO CHAR IF OK
+Q80    LDA    RSCANX               R SCAN X
+       ADD    OUTFSZ               OUTPUT FIELD SIZE
+       SUB    RSCNXF               R SCAN X LIMIT FIELD
+       SKA    SIGNBT               SIGN BIT
+       BRU    Q81                  $2
+       SKR    OUTFSZ               OUTPUT FIELD SIIE
+       SKE    ZERO                 ZERO
+       BRR    STIFOK               STO IO CHAR IF OK
+       LDA    SIFOK1               STO IF OK TEMP 1
+       BRM    STOICH               STO IO CHAR
+       BRR    STIFOK               STO IO CHAR IF OK
+Q81    LDA    BLANK                BLANK
+       BRM    STOICH               STO IO CHAR
+       BRU    Q79
+       PAGE
+*LINE IN/OUT AND RETURN
+LNIOR  HLT
+       LDB    LNIOR                LINE IN/OUT AND RETURN
+       LDA    DEC79                DEC 79
+       SKE    RSCNXL               R SCAN X LIMIT
+       BRM*   UNITAD               UNIT ADR
+       LDA    CARRET               CAR RETURN
+       BRM    STOICH               STO CHAR
+       CLA
+       STA    RSCANX               R SCAN X
+       SKN    IOFLAG               IO FLAG
+       BRU    Q95                  $3
+       BRM*   UNITAD               UNIT ADR
+Q82    BRM    GNCHAR               GET NEXT CHAR
+       MIW    CHAR                 CHAR
+       LDA    CHAR                 CHAR
+       SKE    CARRET               CAR RETURN
+       BRU    Q82                  $1
+       TOPW                        14000
+Q83    BRTW                        21000
+       BRU    Q83                  $4
+       BRU    Q89                  $2
+Q84    SKE    CODDEL               CODE DELETE
+       BRM    STOCH                STO CHAR
+       BRU    Q87                  $7
+Q85    LDX    DECM33               DEC -33
+       LDA    BLANKS               ALL BLANKS
+Q86    STA    ENDBUF,2             END SUFFER
+       BRX    Q86                  $5
+Q87    BRM*   UNITAD               UNIT ADR
+       BETW
+       BRU    Q90                  $8
+Q88    LDB    CHAR                 CHAR
+       CLA
+       RCY    6
+       SKE    CARRET               CAR RETURN
+       BRU    Q84                  $6
+       DISW
+Q89    CLA
+       STA    RSCANX               R SCAN X
+       BRR    LNIOR                LINE IN/OUT AND RETURN
+Q90    DISW
+       BRM*   ERRLNK               ERRR LINK
+       BCI    1,BRTY
+       BRU    Q88                  $9
+       PAGE
+*CONST SCAN
+CONSCN HLT
+       LDA    RSCANX               R SCAN X
+       ADD    WDTH                 WDTH
+       STA    RSCNXF               R SCAN X LIMIT FIELD
+       BRM    DIGCVI               DIGIT CONV INITIAL
+       CLA
+       STA    CHARIS               CHARACTERISTIC
+       STA    PERFLG               PERIOD FLAG
+       BRM    TSSIGN               TEST SIGN
+       STA    INPTWS               INPUT WORD SIGN
+       BRM    DIGCVS               DIGIT CONV SCAN
+       LDA    DIGSCT               DIGITS SCANNED CNT
+       STA    CHARIS               CHARACTERISTIC
+       LDA    CHAR                 CHAR
+       SKE    PERIOD               PERIOD
+       BRU    Q91                  $1
+       STA    PERFLG               PERIOD FLA
+       BRM    DIGCVS               DIGIT CONV SCAN
+Q91    CLA
+       SKE    PERFLG               PERIOD FLAG
+       BRU    Q92                  $3
+       SUB    DECPNT               DEC PNT
+Q92    ADD    CHARIS               CHARACTERISTIC
+       SUB    PEXP                 P EXP
+       SUB    DIGUCT               DIGITS USED CNT
+       STA    CHARIS               CHARACTERISTIC
+       LDA    CHAR
+       SKE    ENDFLD               END FIELD CHAR
+       BRU    Q93                  $2
+       BRR    CONSCN               CONST SCAN
+Q93    LDP    CENRL1               CENTRAL 1
+       STD    CENRL3               CENTRAL 3
+       LDA    CHAR                 CHAR
+       SKE    E                    E
+       SKR    RSCANX               R SCAN X
+       BRM    TSSIGN               TEST SIGN
+       STA    MXPOFG               MINUS XPON FLAG
+       BRM    DIGCVI               DIGIT CONV INITIAL
+       BRM    DIGCVS               DIGIT CONV SCAN
+       CLR
+       SKN    MXPOFG               MINUS XPON FLAG
+       BRU    Q94                  $6
+       DPS    CENRL1               CENTRAL 1
+       STB    CENRL1               CENTRAL 1
+Q94    LDA    CENRL1               CENTRAL 1
+Q95    ADD    CHARIS               CHARACTERISTIC
+       ADD    PEXP                 P EXP
+       STA    CHARIS               CHARACTERISTIC
+       LDP    CENRL3               CENTRAL 3
+       STD    CENRL1               CENTRAL 1
+       LDA    CHAR                 CHAR
+       SKE    ENDFLD               END FIELD CHAR
+       BRU    Q96                  $8
+       BRR    CONSCN               CONST SCAN
+Q96    BRM*   ERRLNK               ERROR LINK
+       BCI    1,ICHR
+       BRR    CONSCN               CONST SCAN
+*DIGIT CONV INITIAL
+DIGCVI HLT
+       CLR
+       STA    DIGSCT               DIGITS SCANNED CNT
+       STA    DIGUCT               DIQITS USED CNT
+       STD    CENRL1               CENTRAL 1
+       LDA    GNICHA               GET NEXT IO CHAR ADR
+       STA    GETFR                GET F OR R CHAR
+       BRR    DIGCVI               DIGIT CONV INITIAL
+*TEST SIGN
+TSSIGN HLT
+Q97    BRM    GNIOCH               GET NEXT IO CHAR
+       SKE    ONE                  (MEANS BLANK)
+       BRU    Q98                  $2
+       BRU    Q97                  $1
+Q98    SKE    MINUS                MINUS
+       BRU    Q99                  $3
+       BRR    TSSIGN               TEST SIGN
+Q99    SKE    PLUS                 PLUS
+       SKR    RSCANX               R SCAN X
+       CLA
+       BRR    TSSIGN               TEST SIGN
+*DIGIT CONV SCAN
+DIGCVS HLT
+Q100   BRM    TSDIG                TEST DIGIT
+       BRR    DIGCVS               DIGIT CONV SCAN
+       MUL    RTSH18               RIGHT SHIFTER 18
+       ETR    CH4MSK               CHAR 4 MASK
+       STA    DGCVT1               DIGIT CONV TEMP 1
+       MIN    DIGSCT               DIGITS SCANNED CNT
+       LDP    CENRL1               CENTRAL 1
+       SKA    TOP500               TOP 5 BITS ONE
+       BRU    Q100                 $1
+       LSH    4                    4
+       STD    CENRL1               CENTRAL 1
+       LDP    TENB4                TEN B4 EXACT
+       BRM    DBLXMP               DOUBLE FIXED MULT
+       DPA    DGCVT1               DIGIT CONV TEMP 1
+       STD    CENRL1               CENTRAL 1
+       MIN    DIGUCT               DIGITS USED CNT
+       BRU    Q100                 $1
+*TEST DIGIT
+TSDIG  HLT
+       BRM*   GETFR                GET R OR R CHAR
+       SKA    SIGNBT               SIGN BIT
+       BRR    TSDIG                TEST DIGIT
+       SKG    NINEAT               NINE AT TOP
+       MIN    TSDIG                TEST DIGIT
+       BRR    TSDIG                TEST DIGIT
+*INT SCAN
+INSCAN HLT
+       LDA    GNFCHA               GET NEXT FOR CHAR ADR
+       STA    GETFR                GET F OR R CHAR
+       CLR
+       STD    CENRL1               CENTRAL 1
+       BRM    DIGCVS               DIQIT CONV SCAN
+       LDB    CENRL1               CENTRAL 1
+       BRR    INSCAN INT SCAN
+*DOUBLE FIXED MULT
+DBLXMP HLT
+       STD    DFMPT1               DBL FX MPY TEMP 1
+       LDA    CENRL1               CENTRAL 1
+       CLB
+       RCY    1
+       MUL    DFMPT32              DBL FX MPY TEMP 2
+       RSH    23
+       STD    DFMPT3               DBL FX MPY TEMP 3
+       LDA    DFMPT1               DBL FX MPY TEMP 1
+       CLB
+       RCY    1                    1
+       MUL    CENRL2               CENTRAL 2
+       RSH    23                   27
+       DPA    DFMPT3               DBL FX MPY TEMP 3
+       STD    DFMPT3               DBL FX MPY TEMP 3
+       LDA    CENRL2               CENTRAL 2
+       MUL    DFMPT2               DBL FIX MPY TEMP 2
+       DPA    DFMPT3               DBL FIX MPY TEMP 3
+       BRR    DBLXMP               DOUBLE FIXED MULT
+       PAGE
+*LINE IN/OUT
+LNIO   BRM    LNIOR                LINE IN/OUT AND RETURN
+       BRU    CNTTST                COUNT TEST
+*LAST LINE OUT
+LASTLN SKN    IOFLAG               IOFLAG
+       BRU    RETMPR               RETURN TO MAIN PROG
+       BRM    LNIOR                LINE IN/OUT AND RETURN
+       BRU    RETMPR               RETURN TO MAIN PROG
+*RETURN TO MAIN PROG
+RETMPR OVT
+       NOP
+       LDX    MSAVEX               M SAVE XR
+       BRR    MRETAD               M RETURN ADR
+*INITIALIZE SCANS
+INITSC HLT
+       STA    ARGSAV              ARG SAVE
+       BAC
+       SKG    ONE                  ONE
+       BRU    Q101                 $1
+       LDA    RSCNXA               R SCAN X ADR
+       STA    SCANX                SCAN
+       LDA    RTAGST               R TAGGED START ADR
+       LDB    RSCXLA               R SCAN X LIMIT ADR
+       BRU    Q102                 $2
+Q101   LDA    FSCNXA               F SCAN X ADR
+       STA    SCANX                SCANX
+       LDA    FTAGST               F TAGGED START ADR
+       LDB    FSXLMA               F SCAN X LIMIT ADP
+Q102   STA    TAGST                TAGGED START ADR
+       STB    SCANXL               SCAN X LIMIT
+       LDA    ARGSAV               ARG SAVE
+       BRR    INITSC               INITIALIZE SCANS
+*FIX
+FIX    HLT
+       LDP    CENRL1               CENTRAL 1
+       BRM    FXBNDA               FIX BANDA
+       STA    CENRL1               CENTRAL 1
+       BRR    FIX                  FIX
+       PAGE
+       BRU    EFGIN                EFG IN               E
+       BRU    EFGIN                EFG IN               F
+       BRU    IIN                  I IN                 I
+       BRU    HIN                  H IN                 H
+       BRU    XIN                  X N                  X
+       BRU    LNIO                 LINE IN/OUT          /
+       BRU    DLRIN                DLR IN               $
+       BRU    AIN                  A IN                 A
+       BRU    EOUT                 E OUT                E
+       BRU    FOUT                 F OUT                F
+       BRU    IOUT                 I OUT                I
+       BRU    HOUT                 H OUT                H
+       BRU    XOUT                 X OUT                X
+       BRU    LNIO                 LINE INT/OUT         /
+       BRU    DLROUT               DLR OUT              $
+       BRU    AOUT                 A OUT                A
+*BRU2 TABLE
+BRU2TB BRU    NXCHAR               NEXT CHAR            +
+       BRU    HAVEMI               HAVE MINUS           -
+       BRU    HAVELP               HAVE L PAREN         (
+       BRU    NXCHAR               NEXT CHAR            .
+       BRU    HAVEP                HAVE P               P
+       BRU    HAVERP               HAVE R PAREN         )
+       BRU    HAVEEF               HAVE EFIAOG          E
+       BRU    HAVEEF               HAVE EFIAOG          F
+       BRU    HAVEEF               HAVE EFIAOG          I
+       BRU    IOTEST               IO TEST              H
+       BRU    IOTEST               IO TEST              X
+       BRU    IOTEST               IO TEST              /
+       BRU    IOTEST               IO TEST              $
+       BRU    HAVEEF               HAVE EFIAOG          A
+*BRUI TABLE
+BRUITB BRM*   ERRLNK               ERROR LINK
+       BCI    1,FCHR
+       BRU    NXCHAR               NEXT CHAR
+*PLUS
+PLUS   BCI    1,+000
+       BCI    1,-000
+       OCT    35000000                          L BRAKET
+*COMMA
+COMMA  BCI    1,,OOO
+       BCI    1,POOO
+       OCT    55000000                           R BRAKET
+*E
+E      BCI    1,E000
+       BCI    1,F000
+       BCI    1,I000
+       BCI    1,H000
+       BCI    1,X000
+       BCI    1,/000
+*DLR
+DLR    BCI    1,$000
+       BCI    1,A000
+*CHAR TABLE
+CHTABL EQU    *
+       PAGE
+*LIVE NOP MOP
+NOPMOP NOP    0,2
+*DEC 22
+DEC22  DEC    22
+*DEC 23
+DEC23  EQU    *
+*TWENTY THREE
+     DEC      23
+*IND BIT
+INDBIT HLT*
+*TEN B4 EXACT
+TENB4 OCT     00000000
+      OCT     24000000
+*GET NEXT IO CHAR ADR
+GNICHA HLT    GNIOCH               GET NEXT IO CHAR
+*RIGHT SHIFTER 18
+RTSH18 OCT    00000040
+*TOP 5 BITS ONE
+TOP500 OCT    76000000
+*ONE TENTH FULL SCALE
+1TENTH OCT    02314630
+*GET NEXT FOR CHAR ADR
+GNFCHA HLT GNFRCH                  GET NEXT FOR CHAR
+*TWO
+TWO    DEC    2
+*CODE DELETE
+CODDEL EQU    *
+*CHAR1 MASK
+CH1MSK OCT    77000000
+*CHAR234 MASK
+CH234  OCT    00777777
+*NINE
+NINE   DEC    9
+*DEC 99
+DEC99  DEC    99
+*FIVE
+FIVE   DEC    5
+*TEN
+TEN    DEC    10
+*NINE AT TOP
+NINEAT OCT    11000000
+*MINUS 14
+M14    DEC    -14
+*ONE HALF DOUBLE
+HALFDB OCT    0
+       OCT    20000000
+*EIGHT
+EIGHT  DEC    8
+39D    DEC    39
+M770   OCT    77777700
+LSB    OCT    1000
+*F SCAN X ADR
+FSCNXA HLT    FSCANX        F SCAN X ADR
+*F SCAN X LIMIT ADR
+FSXLMA HLT    FSXLIM        F SCANX LIMIT
+*R SCAN X ADR
+RSCNXA HLT    RSCANX        R SCAN X
+*R TAGGED START ADR
+RTAGST HLT    IOBUF,2       IO BUFFER
+*R SCAN X LIMIT ADR
+RSCXLA HLT    RSCNXL        R SCAN XLIMIT
+*F SCAN X LIMIT
+FSXLIM DEC    60000
+*DEC -33
+DECM33  DEC    -33
+*IBM BLANK
+IBMBLN OCT    60000000
+*ALL BLANKS
+BLANKS OCT    12121212
+*TAG BIT AND FLOAT IND
+TAGFLI OCT    21000000
+*NEG EXP BIT
+NEGBEX OCT    400
+*EXP BITS 7AND8
+EXB78  OCT    300
+*OCT 27
+OCT27  OCT 27
+*SMALLEST NEGATIYE
+SMALNG EQU    *
+*NEG LIMIT
+NEGLIM OCT    77777377
+*LOW 9 BITS
+LOW9   OCT    777
+*POP ADR MASK
+POPADR OCT    17600000
+*ASN POP CODE
+APOPCD OCT    15000000
+*DIGIT CONV TEMP 1
+DGCVT1 HLT
+*DIGIT CONV TEMP 2
+DGCVT2 DEC    0                           MUST STAY ZERO
+*EMASK
+EMASK OCT     700
+*MLONES
+MLONES OCT    77777000
+*NEG EXP LIMIT
+NEGEXL OCT    77777400
+*ALL BUT S1
+ALBTS1 OCT    17777777
+*             MEMORY USED FOR CODE
+LAST   EQU    *-1
+*
+*
+*
+*      T E M P O R A R Y  S T O R A G E
+*ERRO SAVE A
+ERSAVA HLT
+*NO COMMA FLAG
+NOCOMA HLT
+*X REGE
+XREG   HLT
+*TAGGED START ADR
+TAGST  HLT
+*SAVE X
+SAVEX  HLT
+*SCAN X LIMIT
+SCANXL HLT
+*E EXP
+EEXP   HLT
+*NUMBER DIGITS OUT -1
+NDIGM1 HLT
+*CHAR INDEX SAVE
+CHXSAV HLT
+*GROUP COUNT
+GROUPC HLT
+*SCAN X SAVE
+SCANXS HLT
+*PAREN COUNT SAVE
+PRENCS HLT
+*STO IF OK TEMP
+SIFOK1 HLT
+*NO ARG FLAG
+NOARGF HLT
+*FIX TEMP 2
+FIXTP2 HLT
+*
+* TOTAL MEMORY USED BT RUN-TIME
+USEDM  EQU    *
+XXX    EQU    *+1
+*MNPRST EQU    XXX/8*8
+MNPRST EQU    1678
+       PAGE   B O O L  D E F I N I T I O N S
+*IOTBLL
+IOTBLL BOOL   2
+*FIX TEMP 1
+FIXTP1 BOOL 3
+*DOF TEMP ADR
+DOFTAD BOOL   4
+*A IN TEMP 1
+AINTP1 BOOL   4
+*DBL FX MPY TEMP 1
+DFMPT1 BOOL 4
+*FIX TEMP
+FIXTMP BOOL   5
+*A IN TEMP 2
+AINTP2 BOOL   5
+*DBL FX MPY TEMP 2
+DFMPT2 BOOL   5
+*XE
+XE     BOOL   6
+*DBL FX MPY TEMP 3
+DFMPT3 BOOL   6
+*A IN TEMP 3
+AINTP3 BOOL   6
+*YE
+YE     BOOL   7
+*DBL FX MPY TEMP 4
+DFMPT4 BOOL   7
+*ZE
+ZE     BOOL   10
+*CENTRAL 3
+CENRL3 BOOL   10
+*XM
+XM     BOOL   11
+*CENTRAL M
+CENRL4 BOOL   11
+*TEMP A
+TEMPA  BOOL   12
+DPTMP1 BOOL   14                   DP TEMP 1
+*EADR 1
+EADR1  BOOL   15
+*EADR 2
+EADR2  BOOL   16
+*OVERFLOW IND
+OVFIND BOOL   17
+*YM
+YM     BOOL   20
+*DIGITS USED CNT
+DIGUCT BOOL   20
+*ZM
+ZM     BOOL   21
+*CHAR
+CHAR   BOOL   21
+STDT2  BOOL   22                   STD TEMP 2
+ZERO   BOOL   23
+ONE    BOOL   24
+RTSH23 BOOL   24                   RT SHIFTER 23
+SIGN   BOOL   25
+SIGNBT BOOL   25                   SIQN BIT
+NEGSGN BOOL   25                   NEG SIGN
+MINUS  BOOL   25
+ONES   BOOL   26                   ALL ONES
+MINUS1 BOOL   26                   MINUS ONE
+ADRMSK BOOL   27                   ADR MASK
+*E0 SIZE TEMP
+E0SIZT BOOL   34
+*ARG SAVE
+ARGSAV BOOL   34
+PART1  BOOL   35
+*STO CHAR TEMP 1
+SCHT1  BOOL   35
+PART2  BOOL   36
+*DIGITS SCANNED CNT
+DIGSCT BOOL   36
+*DOF TEMP
+DOFTEM BOOL   37
+*DOX TEMP
+DOXTEM BOOL   37
+*PERIOD FLAG
+PERFLG BOOL   37
+*IO FLAG
+IOFLAG BOOL   40
+*UNIT ADR
+UNITAD BOOL   40
+*M SAVE XR
+MSAVEX BOOL   41
+*M RETURN ADR
+MRETAD BOOL   42
+*R SCAN X LIMIT
+RSCNXL BOOL   43
+*F TAGGED START ADR
+FTAGST BOOL   44
+*COUNT
+COUNT  BOOL   45
+*F SCAN X
+FSCANX BOOL   46
+*R SCAN X
+RSCANX BOOL   47
+*P EXP SAVE
+PEXPSV BOOL   50
+*P MINUS FLAG
+PMINFG BOOL   51
+*PAREN COUNT
+PARENC BOOL   52
+*8 IF DOUBLE ELSE 4
+8OR4   BOOL   53
+*PLUS IF END LIST
+PIFEND BOOL   54
+FLTEMP BOOL   55
+*INPUT WORD SIGN
+INPTWS BOOL   55
+*MINUS XPON FLAG
+MXPOFG BOOL   57
+*DOF EXIT
+DOFXIT BOOL   60
+*FLOAT A XREG
+FLAXRG BOOL   61
+*FIX BANDA XREG
+FXBAXR BOOL   61
+REG    BOOL   62
+*GET F OR R CHAR
+GETFR  BOOL   62
+EXIT   BOOL   63
+*OUTPUT FIELD SIZE
+OUTFSZ BOOL   63
+*AGT TEMP 1
+AGTTP1 BOOL   64
+*R SCANX LIMIT FIELD
+RSCNXF BOOL   64
+*SCAN X
+SCANX  BOOL   65
+*DEC PNT
+DECPNT  BOOL  66
+*P EXP
+PEXP    BOOL    67
+EOADR   BOOL    71              E0 ADR
+EOSIZE  BOOL    72              E0 SIZE
+EOTAG   BOOL    73              EO+ ADR
+EOIND   BOOL    74              E0* ADR
+*SENSE LIGHT WORD
+SENSLW  BOOL    75
+RUNTOP  BOOL    76              RUN-TIME TOP MEMORY
+*BIN TO BCD CONV LINK
+BCDLNK  BOOL    236
+*FL CONST MAKER LINK
+FLCMKL  BOOL    237
+*CONV TO 3 WORDS LTNK
+CONV3W  BOOL    240
+MAXPOS  EQU     ALBUTS
+QQQ1S    EQU     ALBTS1
+255D    EQU     OCT377
+M2570   EQU     NEGLIM
+OFFLAG  EQU     OVFIND
+O777    EQU     LOW9
+AXC     OPD     04600401
+BXC     OPD     04600022
+LGR     OPD     04624000
+AXCE    OPD     04600501           AXC(E)  KENR
+BXAC    OPD     04600222
+AXBA    OPD     04600450
+CNAE    OPD     04601100           CNA(E)   KENR
+CLX     OPD     24600000
+DPA    OPD    10400000
+STD    OPD    10700000
+DOX    OPD    11000000
+DOF    OPD    11100000
+LDP    OPD    12500000
+FLN    OPD    14700000
+FLA    OPD    13100000
+FLS    OPD    13500000
+FLM    OPD    14100000
+FLD    OPD    14500000
+DPS    OPD    15300000
+       END

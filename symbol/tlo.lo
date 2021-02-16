@@ -1,0 +1,131 @@
+
+                             1                                                                                  
+                             2  * 6XXT                                                                          
+     00000                   3  $TLO    RES     0                                                               
+            00000000         4  S9300   EQU     0                                                               
+            00000000         5  X0      EQU     S9300                                                           
+            00000002         6  X2      EQU     2-S9300                                                         
+            00000000         7  CH      EQU     0                                                               
+            00000001         8  U       EQU     1                                                               
+            06000000         9  MMO     OPD     06000000                                                        
+     00000  0 00 00000      10  $PRNT   PZE     0                                                               
+     00001  0 76 00136      11          LDA     =060606060                                                      
+     00002  0 75 00137      12          LDB     =-1                                                             
+*    00003  0 60 00000      13  TYP     MMO     EDCT                                                            
+*    00004  0 71 00003      14          LDX     EDCT,X0                                                         
+*    00005  0 53 00004      15          SKN     EDCT                                                            
+*    00006  2 70 00000      16          SKM     LBUF,X2                                                         
+     00007  0 01 00011      17          BRU     TYPL1                                                           
+     00010  0 01 00003      18          BRU     TYP                                                             
+     00011  0 43 00107      19  TYPL1   BRM     LNCT            INCREMENT AND TEST LINE COUNT                   
+     00012  0 76 00137      20          LDA     =-1                                                             
+*    00013  0 54 00005      21          SUB     EDCT                                                            
+*    00014  0 35 00013      22          STA     EDCT                                                            
+     00015  0 73 00140      23          SKG     =-20                                                            
+     00016  0 76 00140      24          LDA     =-20                                                            
+     00017  0 35 00133      25          STA     TTMP                                                            
+     00020  0 76 00134      26          LDA     LLBUF                                                           
+     00021  0 43 00050      27          BRM     TYPE                                                            
+*    00022  0 76 00014      28          LDA     EDCT                                                            
+     00023  0 35 00133      29          STA     TTMP                                                            
+*    00024  0 53 00022      30          SKN     EDCT                                                            
+     00025  0 01 00035      31          BRU     PRN2                                                            
+                            32  * TYPE  LAST N-75 CHARACTERS ON NEXT LINE                                       
+     00026  0 61 00131      33  TYP2    MIN     CTR             INCREMENT LINE COUNTER                          
+     00027  0 76 00141      34          LDA     =052000000                                                      
+     00030  0 43 00077      35          BRM     TYCC            TYPE CARRIAGE RETURN                            
+     00031  0 76 00142      36          LDA     =072000000                                                      
+     00032  0 43 00077      37          BRM     TYCC            TYPE TAB                                        
+     00033  0 76 00135      38          LDA     LTBFE                                                           
+     00034  0 43 00050      39          BRM     TYPE            TYPE LAST N-75 CHARS OF LINE                    
+     00035  0 71 00143      40  PRN2    LDX     =00200000-8,X0                                                  
+     00036  0 76 00136      41          LDA     ='    '                                                         
+*    00037  2 35 00000      42          STA     CBUF,X2                                                         
+     00040  0 41 00037      43          BRX     $-1,X0                                                          
+*    00041  0 77 00006      44          EAX     LBUF,X0                                                         
+*    00042  0 37 00000      45          STX     EDW,X0                                                          
+     00043  0 76 00144      46          LDA     =8                                                              
+*    00044  0 35 00024      47          STA     EDCT                                                            
+     00045  0 76 00141      48          LDA     =052000000                                                      
+     00046  0 43 00077      49          BRM     TYCC                                                            
+     00047  0 51 00000      50          BRR PRNT                                                                
+                            51  *                                                                               
+                            52  * TYPE N CHARACTERS                                                             
+     00050  0 00 00000      53  TYPE    PZE                         ENTRY                                       
+*    00051  0 35 00042      54          STA     EDW                 ADDRESS OF 1ST CHAR TO TYPE                 
+*    00052  0 76 40051      55  TMIW    LDA    *EDW                                                             
+     00053  0 75 00145      56          LDB     =077                                                            
+     00054  0 54 00146      57  TMIW1   SUB     =060                                                            
+     00055  0 72 00145      58          SKA     =077                                                            
+     00056  0 55 00147      59          ADD     =046                                                            
+     00057  0 55 00150      60          ADD     =012                                                            
+     00060  0 66 20006      61          RCY     6                                                               
+     00061  0 72 00151      62          SKA     =077777700                                                      
+     00062  0 01 00054      63          BRU     TMIW1                                                           
+     00063  0 36 00132      64          STB     TMP                 STORE DATUM                                 
+     00064  0 02 02641      65          TYP     CH,U,4                                                          
+     00065  0 12 00132      66          MIW     TMP                                                             
+     00066  0 02 14000      67          TOP     CH                                                              
+     00067  0 40 21000      68  TBRT    BRTW                                                                    
+     00070  0 01 00067      69          BRU     TBRT                                                            
+*    00071  0 61 00052      70          MIN     EDW                                                             
+*    00072  0 61 00044      71          MIN     EDCT                                                            
+     00073  0 61 00133      72          MIN     TTMP                                                            
+     00074  0 53 00133      73          SKN     TTMP                                                            
+     00075  0 51 00050      74          BRR     TYPE                                                            
+     00076  0 01 00052      75          BRU     TMIW                                                            
+                            76  * TYPE CONTROL CHARACTER                                                        
+     00077  0 00 00000      77  TYCC    PZE                     ENTRY                                           
+     00100  0 35 00132      78          STA     TMP                                                             
+     00101  0 02 02041      79  TYC1    TYP     CH,U,1                                                          
+     00102  0 12 00132      80          MIW     TMP                                                             
+     00103  0 02 14000      81          TOP     CH                                                              
+     00104  0 40 21000      82  TYSS    BRTW                                                                    
+     00105  0 01 00104      83          BRU     TYSS                                                            
+     00106  0 51 00077      84          BRR     TYCC                EXIT                                        
+                            85  *                                                                               
+                            86  * LINE COUNT AND PAGE EJECT SUBROUTINE                                          
+     00107  0 00 00000      87  LNCT    PZE                                                                     
+     00110  0 61 00131      88          MIN     CTR                                                             
+     00111  0 76 00131      89          LDA     CTR                                                             
+     00112  0 73 00152      90          SKG     =50                                                             
+     00113  0 51 00107      91          BRR     LNCT                                                            
+     00114  0 43 00116      92          BRM     THOME               HOME PAGE                                   
+     00115  0 51 00107      93          BRR     LNCT                EXIT                                        
+     00116                  94  $HOME RES 0                                                                     
+     00116  0 00 00000      95  THOME   PZE     0                                                               
+     00117  0 76 00131      96          LDA     CTR                 L1NES TYPED                                 
+     00120  0 55 00153      97          ADD     =002000000-66                                                   
+     00121  0 35 00131      98          STA     CTR                                                             
+     00122  0 71 00131      99          LDX     CTR,X0                                                          
+     00123  0 76 00141     100  NPG     LDA     =052000000                                                      
+     00124  0 43 00077     101          BRM     TYCC                                                            
+     00125  0 41 00123     102          BRX     NPG,X0                                                          
+     00126  0 46 30003     103          CLR                                                                     
+     00127  0 35 00131     104          STA     CTR                                                             
+     00130  0 51 00116     105          BRR     THOME                                                           
+     00131  00000000       106  CTR     DATA    0                                                               
+     00132  0 00 00000     107  TMP     PZE                                                                     
+     00133  0 00 00000     108  TTMP    PZE                                                                     
+*    00134  0 00 00041     109  LLBUF   PZE     LBUF                                                            
+*    00135  0 00 00000     110  LTBFE   PZE     TBFE                                                            
+                           111          END                                                                     
+     00136  60606060            
+     00137  77777777            
+     00140  77777754            
+     00141  52000000            
+     00142  72000000            
+     00143  00177770            
+     00144  00000010            
+     00145  00000077            
+     00146  00000060            
+     00147  00000046            
+     00150  00000012            
+     00151  77777700            
+     00152  00000062            
+     00153  01777676            
+     00134  LBUF                
+     00135  TBFE                
+     00037  CBUF                
+     00072  EDCT                
+     00071  EDW                 

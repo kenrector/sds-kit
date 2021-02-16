@@ -1,0 +1,629 @@
+*               SYMBOL LOADER
+*
+        AORG    04000
+S9300   EQU     0
+X0      EQU     S9300
+X2      EQU     2-S9300
+CAB     OPD     04500004
+CBA     OPD     04600010
+CAX     OPD     04600400
+CXA     OPD     04600200
+CBX     OPD     04600020
+CNA     OPD     04601000
+SKE     OPD     05000000
+SKR     OPD     06000000
+MUL     OPD     06400000
+DIV     OPD     06500000
+ADM     OPD     06300000
+XMA     OPD     06200000
+SICT    RES     1
+BOCT    RES     1
+LOCT    RES     1
+ONEIO   RES     1
+ANYIO   RES     1
+SIC     RES     1
+PC      DATA    0
+PLC     DATA    0
+VCHR    DATA    '/'
+DCHR    DATA    057
+M3      DATA    02000000-3
+M6      DATA    00200000-6
+LSICT   DATA    SICT
+LLOCT   DATA    LOCT
+CR      DATA    052
+CHR     DATA    0
+DEVICE  DATA    'M','T','P','C','L'
+FNCS    DATA    'SI  ','BO  ','LO  '
+STRT    BRTW
+        BRU     STRT
+        RKB     0,1,1
+RESET   LDA     Z                   CLEAR I/O INDICATORS
+        STA     SICT
+        STA     BOCT
+        STA     LOCT
+        STA     MLOC
+        LDA     LSICT
+        STA     PC                  INITIALIIZE POINTER
+        LDB     P63
+CIN     WIM     CHR
+        LDA     CHR
+        SKM     DCHR                WAIT FOR DELTA
+        BRU     CIN
+NXTCHR  WIM     CHR
+        LDA     CHR
+        SKM     VCHR                RESET UPONSLASH
+        BRU     $+2
+        BRU     RESET
+        SKM     CR                  FINISH UPON CARRIAGE RETURN
+        BRU     $+2
+        BRU     LOADIO
+        ETR     P63
+        ABC
+        LDA     PC
+        SKG     LLOCT
+        STB     *PC
+        MIN     PC
+        LDB     P63
+        BRU     NXTCHR              GET NEXT CHARACTER
+LOADIO  DSC     0
+        LDB     M1                  COMPUTE MEMORY SIZE
+        LDA     BIGADR              18K FOR 900 SERIES, 34K FOR 9300
+M2K     SUB     B12                 SUBTRACT
+        STA     HIGH                2K
+        STA     *HIGH
+        SKM     *HIGH               SKIP WHEN F1N1SHED
+        BRU     M2K
+        BPT     1
+        BRU     EITHER
+*       BPT     2                   REMOVE ASTERISK FROM MAG TAPE LOAD
+*       BRU     EITHER              ROMOVE ASTERISK FOR MAG TAPE LOAD
+        BRU     LIO3
+EITHER  LDA     SETUP
+        BPT     2
+*       ADD     P                   REMDVE ASTERISK FROM MAG TAPE LOAD
+        STA     SETUP
+        LDX     M4,X0
+SETUP   LDA     CARDS+4,X2
+        STA     READY+4,X2
+        BRX     SETUP,X0
+        LDA     *SETUP
+        STA     BERROR
+LIO3    SKR     NEG
+        BRU     LIO                 910
+        LDX     LENGTH,X0
+        LDA     END920,X2
+        STA     END920-D,X2
+        BRX     $-2,X0
+        LDA     NEWEND
+        SKR     COMP93              TEST FOR 9300
+        LDA     ORG93               YES. ORIGIN I/O AT 3164
+        STA     BIAS                NO. ORIGIN I/O AT 0233
+        STA     NWBIAS
+LIO     BRM     READ                READ ONE RECORD (1ST EEXTRNAL DEFS)
+        LDA     N1                  RESET LOAD1NG INDICATORS
+        STA     ONEIO
+        STA     ANYIO
+        LDA     LDW1                INITIALIZE POINTER
+        STA     WD1
+        LDA     CT
+        STA     PC
+LOOK    LDX     WD1,X0
+        LDA     0,X2                ACESS EXTERNAL DEF
+        LDB     1,X2
+        RSH     18
+        ETR     P63                 MOST SIGNIFICANT CHARACTER IN A
+        XAB                         2ND,3RD CHARACTERS LEFT JUST, IN A
+        LDX     M4,X0
+        STB     CHR
+        LDB     N1
+        BRX     $+2,X0              EXHAUST CHECK AFTER 3 ATTEMPTS
+        BRU     NEXTL
+        SKM     FNCS+3,X2           CHECK FOR SI,BO OR LO.
+        BRU     $-3                 NO
+        LDA     CHR                 YES
+        SKM     SICT+3,X2           CHECK FOR COINCIDENCE OF 1ST CHAR
+        BRU     NOLOAD              NO
+        LDA     Z                   YES
+        LDX     WD1,X0              DEF HAS SERVED ITS PURPOSE
+        STA     0,X2                CLEAR
+        MIN     ONEIO               FLAG TO LOAD
+        LDA     CHR
+NOLOAD  LDX     M6,X0               DETERMINE WHETHER 1ST CHAR COINCIDES
+        BRX     $+2,X0              WITH ANY LEGITIMATE 1ST CHAR
+        BRU     NEXTL
+        SKM     DEVICE+5,X2
+        BRU     $-3
+        MIN     ANYIO               IF SO, MAKE INDICATOR POSITIVE
+NEXTL   LDA     P3                  ADYANCE POINTER TO NEXT EXTERNAL DEF
+        ADD     WD1
+        STA     WD1
+        LDA     PC                  CHECK FOR END OF RECORD
+        SUB     P3
+        STA     PC
+        SKG     Z
+        BRU     $+2                 YES
+        BRU     LOOK                NO, ACCESS NEXT DEF
+        SKN     ANYIO               IF ANYIO STILL NEG, RECORD NOT I/O
+        BRU     $+3                 STILL I/O
+        BRU      FINIO
+READIO  BRM     READ
+        SKN     ONEIO               DO NOT LOAD IF ONEIO STILL NEGATIVE
+        BRM     LOAD
+        LDA     CW                  CHECK FOR END RECORD
+        SKA     P2B21
+        BRU     LIO
+        BRU     READIO              NO
+FINIO   LDA     SICT
+        SKM     DEVICE+1            T
+        BRU     $+2                 CHECK FOR PAPER TAPE
+        BRU     STEOM               OR TYPEWR1TER INPUT
+        SKM     DEVICE+2            P
+        BRU     LAP+1
+        LDA     RPT
+        BRU     $+2
+STEOM   LDA     RKB
+        STA     *NWBIAS
+        MIN     NWBIAS
+        LDA     P2                  DETERMINE CYCLE TIME OF MACHINE
+        RSH     64                  FOR PAER TAPE READ DELAY
+        LDB     SLOW
+        SKG     Z
+        LDB     FAST
+        STB     *NWBIAS
+        BRU     LAP+1
+CARDS   CRT     0,1
+        BRU     READY
+        NOP
+        RCB     0,1,4
+        BRU     P1
+        TRT     0,0
+        BRTW
+        BRU     READY
+        RTB     0,0,4
+*       BRU    RECOV               REMOVE ASTERISK FOR MAG TAPE LOAD
+P5      DATA    5
+M4      DATA    00200000-4
+LENGTH  DATA    00200000-END920+POP920
+NEG     DATA    -1
+NEWEND  HLT     END920-D
+NWBIAS  HLT     ENDPOP
+COMP93  HLT     S9300
+RPT     RPT     0,1,1
+RKB     RKB     0,1,1
+FAST    DATA    00140000
+SLOW    DATA    00170000
+ORG93   HLT     Z+1
+BIGADR  DATA    040000*/S9300+2047
+B12     DATA    2048
+        AORG    1
+        BRU     STRT
+CW      RES     1
+DW1     RES     26
+TMP1    RES     1
+IWD     RES     1
+RCTR    RES     1
+CTR     RES     1
+WDCT    RES     1
+CT      RES     1
+LOC     RES     1
+MLOC    RES     1
+ALFA    RES     1
+BETA    RES     1
+CHAIN   RES     1
+WD1     RES     1
+BIAS    HLT     ENDPOP
+LAP     BRM     READ
+        BRM     LOAD
+        BRU     LAP
+*               READ ONE RECORD FROM PAPER TAPE AND VER1FY
+*
+READ    HLT                         ENTRY
+*       LDX     M10,X0              REMOYE ASTERISK FROM MAGT LOAD
+*       STX     WD1,X0              REMOVE ASTERISK FROM MAGT LOAD
+READY   NOP
+        NOP
+        NOP
+        RPT     0,1,4
+        WIM     CW                  READ RECORD CONTROL WORD
+        BRTW
+        BRU     $+2
+        BRU     BERROR
+        LDA     CW
+        RSH     15
+        ETR     P63
+        SUB     P2
+        STA     WDCT                STORE WORD COUNT LESS 2
+        STA     CT
+        LDA     LDW1
+        STA     WDAD
+        LDA     CW
+READ3   WIM     *WDAD               PEAD ONE WORD
+        EOR     *WDAD               ACCUMULATE CHECKSLM
+        SKR     WDCT
+        MIN     WDAD
+        SKN     WDCT
+        BRU     READ3
+        WIM     TMP1                EXHAUST RECORD
+        BRTW
+        BRU     $-2
+        BETW
+BERROR  BRU     P1
+        STA     TMP1
+        RSH     12
+        EOR     TMP1
+        LDB     O7777
+        SKM     WDCT
+        BRU     BERROR
+        BRR READ
+*REINSTATE FOLLOWIN CODE FOR MAG TAPE LOAD
+*RECV   TRT     0,0
+*       BRTW
+*       BRU     $-2
+*       SRB     0,0,4
+*       BRTW
+*       BRU     $-1
+*       LDX     WD1,X0
+*       BRX     READ+1,X0
+P1      HLT     1               *STOP* (delta)W BUFFER ERROR
+        BRU     READ+1          REREAD
+*M10    DATA    0020000-10      REMOVE ASTERISK FOR MAG TAPE
+*               PROCESS VERIFIED RECORDS
+LOAD    HLT                     ENTRY
+        LDA     LDW1
+        STA     WD1
+        LDA     CW
+        SKA     P2B21
+        BRU     END
+        SKA     P1B21
+        BRU     EXT
+LTO     BRU     DATA            USED AS CONSTANT
+END     LDA     CT
+        SKA     N1              TRANSFER ADDRESS
+        BRU     NOPS            YES
+        LDA     DW1             NO
+        SKA     P1B15
+        ADD     BIAS
+        ETR     MADR
+        STA     LOC             MAX LOCATION+1, CURRENT PR0GRAM
+        STA     BIAS
+        BRR     LOAD
+P63     DATA    077
+P1B15   DATA    0100000
+P2B18   DATA    02000000
+P1B21   DATA    010000000
+P2B21   DATA    020000000
+N1      DATA    077777777
+ADDR    EQU     1*/(14+S9300)-1
+HIGH    RES     1               MUST BE AT ASME LOC(0154) AS FOR ASSM
+MADR    DATA    ADDR
+MRDA    DATA    -1--ADDR
+TL      DATA    00200000-3
+Z       DATA    0
+B0      DATA    040000000
+M1      DATA    -1
+M23     DATA    -23
+MMO     OPD     06000000
+POP910  RES     0
+        BRU     CAB
+        BRU     CBA
+        BRU     CAX
+        BRU     CXA
+        BRU     CBX
+        BRU     CNA
+        BRU     SKE
+        BRU     SKR
+        BRU     MUL
+        BRU     DIV
+        BRU     ADM
+        BRU     XMA
+CAB     STA     T
+        BRU     SKE1
+CBA     STB     T
+        BRU     CXA1
+MUL     LDB     Z
+        BRM     SIGN
+        ABC
+MUL1    RCY     1
+        STA     T+2
+        LCY     1
+        SKN     T+2
+        BRU     $+2
+        ADD     T+1
+        RSH     1
+        ETR     RSL4
+        BRX     MUL1
+        SKN     5
+        BRU     MUL2
+        BRM     DPN
+MUL2    LDX     T
+        BRR     0
+DIV     BRM     SIGN
+        SKG     T+1
+        BRU     $+2
+        BRR     $,4
+DIV2    LCY     1
+        SUB     T+1
+        EOR     B0
+        SKA     B0
+        BRU     DIV1
+        EOR     B0
+        ADD     T+1
+DIV1    BRX     DIV2
+        LCY     1
+        STB     T+1
+        ETR     RSL4
+        RSH     25
+        LDA     T+1
+        SKN     S
+        BRU     MUL2
+        EOR     M1
+        SUB     M1
+        XAB
+        EOR     M1
+        SUB     M1
+        XAB
+        BRU     MUL2
+SIGN    HLT     0
+        STA     T+2
+        EOR     *0
+        STA     S
+        EOR     T+2
+        SKN     *0
+        BRU     SIGN1
+        EOR     M1
+        SUB     M1
+SIGN1   STA     T+1
+        LDA     T+2
+        SKN     T+2
+        BRU     SIGN2
+        BRM     DPN
+SIGN2   STX     T
+        LDX     M23
+        BRR     SIGN
+DPN     HLT     0
+        XAB
+        EOR     M1
+        SUB     M1
+        STA     T+3
+        STB     T+4
+        ABC
+        LDA     M1
+        SKA     T+3
+        BRU     DPN1
+        LDA     Z
+DPN1    SUB     T+4
+        BRR     DPN
+CXA     STX     T
+CXA1    LDA     T
+        BRR     0
+CAX     STA     1
+CAX1    LDX     T
+        BRR     0
+CBX     STB     1
+        BRU     CAX1
+CNA     EOR     M1
+        SUB     M1
+        BRR     0
+XMA     STA     T+1
+        LDA     *0
+        STA     T
+        LDA     T+1
+XMA1    STA     *0
+        LDA     T
+        BRR     0
+ADM     STA     T
+        ADD     *0
+        BRU     XMA1
+SKE     STB     T
+        LDB     M1
+        SKM     *0
+        BRU     $+2
+        MIN     0
+SKE1    LDB     T
+        BRR     0
+SKR     MMO     *0
+        NOP
+        SKN     *0
+        BRR     0
+        MIN     0
+        BRR     0
+RSL4    DATA    037777777
+S       RES     1
+T       RES     5
+ENDPOP  RES     0
+POP920  RES     0
+D       EQU     POP920-POP910
+        BRU     CAB920+D
+        BRU     CBA920+D
+        BRU     CAX920+D
+        BRU     CXA920+D
+        BRU     CBX920+D
+        BRU     CNA920+D
+        BRU     SKE920+D
+        BRU     SKR920+D
+        BRU     MUL920+D
+        BRU     DIV920+D
+        BRU     ADM920+D
+        BRU     XMA920+D
+CAB920  CAB
+        BRR     0
+CBA920  CBA
+        BRR     0
+CAX920  CAX
+        BRR     0
+CXA920  CXA
+        BRR     0
+CBX920  CBX
+        BRR     0
+CNA920  CNA
+        BRR     0
+SKE920  SKE     *0
+        BRR     0
+SKIP2   MIN     0
+        BRR     0
+SKR920  SKR     *0
+        BRR     0
+        BRU     SKIP2-D
+MUL920  MUL     *0
+        BRR     0
+DIV920  DIV     *0
+        BRR     0
+ADM920  ADM     *0
+        BRR     0
+XMA920  XMA     *0
+        BRR     0
+END920  RES     0
+        RORG    07567
+        RORG    07566
+F       FORM    3,6,15
+        TEXT    8,Z
+        F       4,0,Z
+TO      RES     0
+*               PROCESS DATA RECORD
+DATA    LDX     CT,X0
+        CLR
+        LDA     DW1
+        SKA     P2B18
+        LDB     DW1,X2
+        SKA     P2B18
+        SKR     CT              SUBTRACT RELOCATION WORD
+        SKA     P1B15
+        ADD     BIAS
+        ETR     MADR
+        STA     LOC             STORE MODIFIED LOAD ADDRESS
+*               PROCESS DATA WORDS
+        SKR     CT              (CT) = NO. DATA WDRDS - 1
+        LDA     LDW2
+        STA     IWD
+*
+LLDA    LDA     *IWD            (A) = CURRENT DATA WORD
+        STB     ALFA
+        SKN     ALFA
+        BRU     $+2
+        ADD     BIAS
+        STA     *LOC
+        MIN     LOC             INCREMENT LOAD ADDRESS
+        MIN     IWD             INCREMENT DATA WORD ADDRESS
+        SKR     CT
+        LSH     1
+        SKN     CT
+        BRU     LLDA
+*
+        LDA     MLOC
+        SKG     LOC
+        LDA     LOC
+        STA     MLOC            STORE CURRENT MAXIMUM LOAD ADDRESS +1
+        BRR     LOAD            EXIT
+*
+*               ROUTINES FOR PROCESSING EXTERNAL REFS AND DEFS
+*               (RECORD TYPE 1)
+*               MATCH1NG TABLE ENTRY WAA A DEF
+SRCH2   LDA     ALFA
+SRCH3   BRX     $+1,X0
+        BRX     SRCH1,X0
+NSRT    LDA     TL
+        SUB     P3
+        STA     TL
+        LDX     TL,X0
+        ADD     LTO
+        ETR     MADR
+        SKG     MLOC
+P3      DATA    3
+        LDA     ALFA
+        STA     TO,X2
+        LDB     BETA
+        STB     TO+1,X2
+        LDA     LOC
+        STA     TO+2,X2
+NEXT1   LDA     P3
+        ADD     WD1
+        STA     WD1
+        LDA     CT
+        SUB     P3
+        STA     CT              REDUCE WORD COUNT
+        SKG     Z               SKIP IF AT LEAST 3 MORE MORD
+        BRR     LOAD            EXIT
+*
+*               PROCESS NEXT ITEM, HEREAFTER CALLED 'C'
+EXT     LDX     WD1,X0          (X0) = LOC, OF 1ST WORD OF LABEL
+        LDA     2,X2            (B) = CHAINWORD OR VALUE WORD
+        SKA     P1B15
+        ADD     BIAS
+        STA     LOC
+        LDA     0,X2
+        SKA     M1              TEST FOR SPECIAL I/O IDENTIFIER
+        BRU     $+2             NO
+        BRU     NEXT1           YES, IGNORE
+        LDB     1,X2            (AB) = 8 CHAR LABEL OF C
+*
+*               PROCESS EXTERNAL DEF OR REF
+        LDX     TL,X0           SEARCH SYMBOL TABLE
+        STA     ALFA
+        STB     BETA
+        LDB     N1
+SRCH1   SKM     TO,X2
+        BRX     SRCH3,X0        NO MATCH
+        LDA     BETA            TENTATIVE MATHC
+        SKM     TO+1,X2
+        BRX     SRCH2,X0
+        LDA     LOC
+        SKN     TO+2,X2
+        BRU     $+2
+        BRU     TXDR            X IS A DEF
+        SKN     LOC
+        BRU     TXRR            C IS A REF
+        LDB     TO+2,X2
+        XAB
+        STB     TO+2,X2
+TXDR    ETR     MADR
+TXRD1   STA     CHAIN           ADDR OF A REF
+        LDA     *CHAIN
+        EOR     TO+2,X2
+        ETR     MRDA
+        EOR     TO+2,X2
+        LDB     *CHAIN
+        XAB
+        STB     *CHAIN
+        SKA     MADR
+        BRU     TXDR
+        BRU     NEXT1           EXIT 1
+*               X AND C ARE BOTH REFS
+TXRR    ETR     MADR            ADDRESS OF 1ST REF IN NEW CHAIN
+TXRR1   STA     CHAIN
+        LDA     *CHAIN
+        ETR     MADR
+        SKA     MADR
+        BRU     TXRR1
+        LDA     LOC             NEW 1ST LINK
+        LDB     TO+2,X2
+        XAB
+        STB     TO+2,X2
+        ETR     MADR            REMOVE REF FLAG FROM OLD 1ST LINK
+        ADD     *CHAIN
+        STA     *CHAIN
+        BRU     NEXT1           EXIT 3
+NOPS    NOP
+        LDB     NOPS
+        LDX     TL,X0           BE TO I/O ROUTINES
+        EAX     2,X2
+POINT   SKN     TO,X2
+        BRU     $+3             REF
+ADV     BRX     NOPS+3,X0       DEF
+        BRU     CW+2            FINISHED. BRANCH TO START
+        LDA     POINT
+        STA     ALFA
+STEP    STA     BETA            NOP REF CHAIN
+        LDA     *BETA
+        ETR     MADR
+        STA     ALFA
+        STB     *BETA
+        LDA     ALFA
+        SKA     MADR            CHECK FOR END OF CHAIN
+        BRU     STEP            NO
+        BRU     ADV             ES
+O7777   DATA    07777
+LDW1    HLT     DW1
+P2      DATA    2
+WDAD    HLT     DW1
+LDW2    HLT     DW1+1
+        END     STRT

@@ -1,0 +1,2242 @@
+***************************************************************                 
+*      'REGEN'                        PROGRAM                                   
+*      THIS PROGRAM WILL GENERATE A LISTING AND/OR A PSEUDO-SYMBOLIC            
+*              DECK FOR ANY PROGRAM IN THE SDS STANDARD BINARY LANGUAGE         
+*      IT IS WRITTEN TO ACCEPT INPUT/OUTPUT ASSIGNMENTS THROUGH                 
+*              MONARCH                                                          
+*      _ASSIGN X1=SCRATCH MAG TAPE                                              
+*      _ASSIGN SO=SYMBOLIC OUTPUT MEDIUM                                        
+*      _ASSIGN LO=LIST OUTPUT MEDIUM                                            
+*      _ASSIGN BI=SOURCE MEDIUM FOR REGEN                                       
+*      _LOAD 0 GO                                                               
+*      SET BPT 1 TO PAUSE BETWEEN LOADING AND EXECUTION                         
+*              OR BETWEEN PROGRAMS                                              
+*      SET BPT 4 AT ININTIALIZATION TO BYPASS SYMBOLIC OUTPUT                   
+*      SET BPT 3 AT INITIALIZATION TO BYPASS LIST OUTPUT                        
+*                                                                           
+    
+***************************************************************                 
+*      SUBPROGRAMS USED                                                         
+*              MTAPE                                                            
+*              CDRP                                                             
+*              PTYIO                                                            
+*              PRINT                                                            
+*      POPS USED                                                                
+*              NONE                                                             
+*      MEMORY REQUIRED                                                          
+*              AT LEAST 6K                                                      
+*              PROGRAM OCCUPIES 4K                                              
+*              REMAINDER IS DYNAMIC LISTS                                       
+*      TAPES REQUIRED                                                           
+*              ONE:  X1                                                         
+       PAGE                                                                     
+       RORG    0200
+$REGEN EQU     $                   ROUTINE FOR SYMBOLIC REGENERATION            
+*      OF PSEUDO SYMBOLIC DECKS FROM SDS STANDARD BINARY LANGUAGE               
+       BRM     ASGNM               ASSIGN MEMORY TO LISTS                       
+STRT   BRM     INIT                                                             
+PAS1   BRM     READBI                                                           
+       BRU     $-1                 TRY AGAIN ON READ ERROR                      
+PAS1B  BRM     CKSUM                                                            
+       BRU     PAS1C               FAIL EXIT                                    
+       BRM     WRTX                WRITE ALL LEGAL RECORDS ON X1                
+       BRM     READ                                                             
+PAS1C  LDA     WDCNT               =WORDS IN PHYSICAL RECORD                    
+       SUB     CNT                  WORDS IN LOGICAL RECORD                     
+       STA     WDCNT                WORDS LEFT                                  
+       SKA     =1*/23                                                           
+       BRU     $+3                                                              
+       SKA     =-1                 SKIP IF ZERO
+       BRU     PAS1B                                                            
+       SKN     END                 HAS END RECORD BEEN HIT                      
+       BRU     PAS1                NO                                           
+*  PAS1 COMPLETE                                                                
+       MIN     END                                                              
+       SKN     REFTOP              ARE THERE ANY EXTERNAL REFERENCES            
+PAS2Y  BRM     FRFOT               YES, ARE THERE ANY WITH OPEN TAILS           
+       BRU     PAS2X               NO                                           
+PAS2   BRM     BKRDX                                                            
+       BRM     READ2                                                            
+       BRU     PAS2                FAIL EXIT, NOT DATA                          
+       BRU     $+3                 YES,PROCESS IT                               
+PAS2B  BRM     NRFOT               GET NET OPEN TAIL                            
+       BRU     PAS2Y               THIS RECORD'S DONE DO NEXT                   
+PAS2C  LDA     C3                  GET TAIL                                     
+       ETR     =0337777            GET MODE/ADDRESS ONLY
+       SKG     PROGP2              TOP OF RECORD                                
+       SKG     PROGP1              BOTTOM OF RECORD -1                          
+       BRU     PAS2B               NOT IN THIS RECORD, MOVE ON                  
+       BRM     GADR                GET ADDRESS POINTED TO                       
+       STA     C3                  SAVE, IT MAY BE IN SAME RECORD               
+       BRM     IRFLST              INSERT IT ON REFERENCE LIST                  
+       BRM     DADLST              DELET IT FROM ADDRESS LIST                   
+       BRU     PAS2C               CHEDK THIS TAIL                              
+PAS2X  BRM     RWNDX               REWIND SCRATCH                               
+       MIN     PASS                                                             
+       BRM     SORTAD              SORT OUT THE ADDRESS LIST                    
+       BRM     BLKSET              AUGMENT BLOCKS TO INCLUDE ALL DEFS           
+PAS3   BRM     RDX                 READ X1                                      
+       BRM     READ                                                             
+       SKN     END                 DID WE PROCESS THE END RECORD                
+       BRU     PAS3                NO
+       BRM     FINISH                                                           
+       BRU     STRT                                                             
+P      PROC                                                                     
+PRNT   NAME                                                                     
+PRINT  NAME                                                                     
+       LDA     =P(1)                                                            
+       STA     ADRLO                                                            
+       LDA     =P(2)                                                            
+       STA     CNTLO                                                            
+       EXU     CALLLO                                                           
+       SKS     FDTLO                                                            
+*      END
+P      PROC                                                                     
+TYPE   NAME                                                                     
+       BRTW                                                                     
+       BRU     $-1
+       TYP     *0,1,4                                                           
+       POT     =P(2)*/14+P(1)                                                   
+*      END
+P      PROC                                                                     
+JAT    NAME    0                                                                
+JAF    NAME    1                                                                
+       SKN     ANS                                                              
+       DO      P(0)                                                             
+       BRU     $+2                                                              
+       BRU     P(1)                                                             
+*      END
+P      PROC                                                                     
+OCT    NAME                                                                     
+       ETR     =-1--(-1*/(3*P(1)))                                              
+       BRM     BINOCT                                                           
+*      END
+*      ROUTINE TO ASSIGN MEMORY AND PERIPHERAL DEVICES                          
+ASGNM  PZE                                                                      
+       NOP                         BRR ASGNM AFTER EXECUTION                    
+       STB     BEGMEM                                                           
+       LDA     1                   MONARCH BOOT                                 
+       ETR     =037700                                                          
+       STA     ENDMEM                                                           
+       LDA     QSYST               X1                                           
+       BRM     CALL                                                             
+       MRG     =01000              BINARY MODE                                  
+       STA     EOMX                                                             
+       STB     CALLX                                                            
+       ETR     =0107               CHANNEL/UNIT                                 
+       MRG     =04014010           FILE PROJECT TEST                            
+       STA     $+1                                                              
+       NOP
+       BRM     FPTERR              X1 IS FILE PROTECTED                         
+       LDA     QSYSU               SO                                           
+       BRM     CALL                                                             
+       STA     EOMSO                                                            
+       STB     CALLSO                                                           
+       LDA     QSYMO               LO                                           
+       BRM     CALL                                                             
+       STA     EOMLO                                                            
+       STB     CALLLO                                                           
+       LDA     QBINO               BO/CHANGE TO BI IF USED AS SYS ROUTIN        
+       BRM     CALL                                                             
+       MRG     =01000              BINARY MODE                                  
+       STB     CALLBI                                                           
+       STA     EOMBI                                                            
+       LDA     $+2                                                              
+       STA     ASGNM+1
+       BRR     ASGNM                                                            
+FPTERR PZE                                                                      
+       TYPE    FILEMS,5                                                         
+       HLT                                                                      
+       SKR     FPTERR                                                           
+       NOP                                                                      
+       BRU     *FPTERR             REDO THE TEST                                
+FILEMS BCD     <X1 FILE PROTECTED  !>                                           
+CALL   PZE                         BUILD IO CALL FROM UAT ENTRY IN A            
+       RSH     18                                                               
+       ETR     =077                BUILD EOM IN A                               
+       SKB     =1*/21              CHECK                                        
+       MRG     =0100               Y                                            
+       MRG     =0200600            EOM, 4CCTR/WORD                              
+       SKA     =020                BUILD ROUTINE CALL IN B                      
+       BRU     ASGNERR
+       LDB     CALC                ASSUME CARD READER                           
+       SKA     =04                 CARD IS 6 OR 7                               
+       BRU     $+2                                                              
+       LDB     CALT                TYPEWRITER                                   
+       SKA     =02                                                              
+       BRU     $+2                                                              
+       LDB     CALT                OR PAPER TAPE                                
+       SKA     =010                                                             
+       LDB     CALM                MTAPE                                        
+       SKA     =040                                                             
+       BRU     $+2                 PRINTER                                      
+       BRR     CALL                                                             
+       SKA     =016                THESE BITS MUST BE ZERO                      
+       BRU     ASGNERR                                                          
+       LDB     CALP                                                             
+       BRR     CALL                                                             
+CALT   BRM     PAPR                SPECIAL PTYIO LINK                           
+CALC   BRM     CDRP                                                             
+CALM   BRM     MTAPE                                                            
+CALP   BRM     PRTR                SPECIAL PRINT ROUTINE LINK                   
+ASGNERR EQU    $                                                                
+       TYPE    ASIGNM,5                                                         
+       BRU     1                                                                
+ASIGNM BCD     <ASSIGNMENT ERROR   !>                                           
+*      ROUTINE TO INITIALIZE LISTS, FLAGS, AND POINTERS                         
+INIT   PZE                                                                      
+       CLA                                                                      
+       STA     END                                                              
+       LDA     =0300000            ILLEGAL ORG 0                                
+       STA     PROGP                                                            
+       LDA     ='    '             CARD NO. 0
+       STA     CARD1
+       STA     CARD2                                                            
+       LDA     BEGMEM                                                           
+       STA     LSTBOT                                                           
+       STA     LSTNXT                                                           
+       STA     LSTTOP                                                           
+       LDA     =-1                                                              
+       LDX     =0200000-25                                                      
+       STA     *LSTTOP                                                          
+       MIN     LSTTOP                                                           
+       BRX     $-2                 ALLOW 12 BLOCKS                              
+       CLA                                                                      
+       STA     *LSTTOP                                                          
+       MIN     LSTTOP                                                           
+       STA     *LSTTOP             TWO ZEROS TO TIE THIS OFF                    
+       LDA     LSTTOP
+       ADD     =1                                                               
+       STA     ADRBOT                                                           
+       ADD     =1                                                               
+       STA     ADRTOP                                                           
+       LDA     ENDMEM                                                           
+       SUB     =1                                                               
+       STA     DEFTOP                                                           
+       SUB     =1                                                               
+       STA     DEFBOT                                                           
+       LDA     =-1                                                              
+       STA     REFTOP              REFERENCE LIST NOT OPEN                      
+       STA     PASS                PASS NO.1                                    
+       BRU     $+2                                                              
+       HLT     040                 PAUSE FOR THE OPERATOR                       
+       BPT     1                                                                
+       BRU     $-2
+       BRM     RWNDX                                                            
+       LDA     =-1                                                              
+       BPT     3                                                                
+       CLA                         NO LIST OUTPUT IF 3 SET                      
+       STA     LOFLG                                                            
+       LDA     =-1                                                              
+       BPT     4                                                                
+       CLA                         NO SYMBOLIC OUTPUT IF 4 SET                  
+       STA     SOFLG                                                            
+       BRR     INIT                                                             
+*      ROUTINE TO READ INPUT RECORDS BLOCKED UP TO 400 WDS/RECORD               
+READBI PZE                                                                      
+       EXU     CALLBI                                                           
+       HLT     FDTBI                                                            
+       LDA     FDTBI                                                            
+       SKA     =1*/22              SKIP IF NO ERROR
+       BRM     BIERR                                                            
+       SUB     ADRBI                                                            
+       ETR     =037777             NUMBER OF WORDS READ IN                      
+       STA     WDCNT                                                            
+       LDX     =0                                                               
+       LDA     BUFF                                                             
+       LDB     =077770000          BLOCKING MODE MASK                           
+       SKM     =030000             SKIP IF BLOCKED                              
+       BRU     $+4                                                              
+       EAX     1,2                 POINT BEYOND BLOCKING HEADER                 
+       SKR     WDCNT                                                            
+       LDA     BUFF,2              TEST SECOND WORD FOR TYPE ETC                
+       LDB     =070000                                                          
+       SKM     =050000             STD BINARY RECORD                            
+       BRU     MODERR              NO                                           
+       RSH     2                   YES/MAYBE
+       SKA     =1*/23                                                           
+       EOR     =062000000          CHANGE 5 TO 4, 7 TO 6                        
+       SKG     =011777777          SKIP IF NOT T 0, 1, 2, 3, 5                  
+       BRU     $+2                                                              
+       BRU     MODERR                                                           
+       MIN     READBI              EXIT TRUE                                    
+       BRR     READBI                                                           
+MODERR LDA     BUFF                                                             
+       LDB     =077000000                                                       
+       SKM     ='_XXX'             TRY FOR DELTA RECORD                         
+       BRU     NODEL                                                            
+       PRNT    BUFF,20                                                          
+       BRU     READBI+1            TRY NEXT RECORD                              
+NODEL  LDB     =017777760                                                       
+       SKM     =03200000           TRY A BOOTSTRAP                              
+       BRU     NOREC
+       PRNT    BOOTM,4                                                          
+       BRU     READBI+1                                                         
+NOREC  TYPE    ILRM,4                                                           
+       HLT                                                                      
+       NOP     7,6                                                              
+       BRU     READBI+1                                                         
+       BRR     READBI              EXIT FALSE                                   
+BIERR  PZE                                                                      
+       TYPE    BIEMSG,5                                                         
+       HLT                                                                      
+       NOP     077,6                                                            
+       BRU     READBI+1                                                         
+       BRR     BIERR                                                            
+BIEMSG BCD     <INPUT READ ERROR   !>                                           
+ILRM   BCD     <ILLEGAL FORMAT !>                                               
+FDTBI  PZE
+ADRBI  PZE     BUFF                                                             
+CNTBI  DATA    400                                                              
+EOMBI  RTB     0,0,4                                                            
+CALLBI BRM     MTAPE                                                            
+CKSUM  PZE                         COMPUTE CHECKSUM                             
+       LDA     BUFF,2                                                           
+       RSH     15                                                               
+       ETR     =077                GET COUNT OF THIS RECORD                     
+       STA     CNT                                                              
+       SUB     =1                                                               
+       STA     CSCNT                                                            
+       STX     CSX                                                              
+       LDB     =070000             CHECK FOR LEGAL RECORD                       
+       LDA     =050000                                                          
+       SKM     BUFF,2                                                           
+       BRU     CSMODE
+       CLA                         START CHECKSUM                               
+       EOR     BUFF,2              BUILD CHECKSUM                               
+       EAX     1,2                                                              
+       SKR     CSCNT                                                            
+       BRU     $-3                                                              
+       STA     CSCNT                                                            
+       RSH     12                  FOLD                                         
+       EOR     CSCNT               FINISH                                       
+       LDB     HLT7                AND                                          
+       SKM     HLT7                TEST                                         
+       BRU     CSERR                                                            
+       MIN     CKSUM               RETURN TRUE                                  
+       LDX     CSX                 SAVE ORIGINAL POINTER                        
+       BRR     CKSUM                                                            
+CSERR  TYPE    CSMSG,4                                                          
+HLT7   HLT     07777
+       NOP     07777                                                            
+       LDA     CNT                                                              
+       ADD     CSX                 MOVE BEYOND RECORD                           
+       CAX                                                                      
+       BRR     CKSUM               RETURN FALSE                                 
+CSMODE LDA     WDCNT                                                            
+       STA     CNT                 SET COUNT PAST GARBAGE WORDS                 
+       BRR     CKSUM               EXIT FALSE                                   
+*      SCRATCH TAPE HANDLING ROUTINES                                           
+WRTX   PZE                         WRITE ONE SCRATCH MARK                       
+       CXA                         X POINTS TO BEGINNING WORD OF RECORD         
+       EAX     BUFF,2              ADD BUFFER BASE                              
+       STX     ADRSX                                                            
+       CAX                                                                      
+       LDA     CNT
+       STA     WDSX
+       BRM     MTAPE                                                            
+       SKS     FDTX                                                             
+       LDA     FDTX                                                             
+       SKA     =02*/21             SKIP IF NO ERROR                             
+       HLT                                                                      
+       BRR     WRTX                                                             
+RWNDX  PZE                         REWIND SCRATCH TAPE                          
+       BRM     MTAPE                                                            
+       EOM     FDTX                                                             
+       BRR     RWNDX                                                            
+XTMPX  RES     1                                                                
+FDTX   PZE                         FILE TABLE FOR SCRATCH TAPE                  
+ADRSX  PZE                                                                      
+WDSX   PZE                                                                      
+EOMX   RTB     0,0,4                                                            
+CALLX  BRM     MTAPE                                                            
+BKRDX  PZE                         READ SCRATCH TAPE BACKWARDS                  
+       LDA     =-2                                                              
+       BRM     MTAPE                                                            
+       YIM     FDTX                                                             
+       ETR     =037777                                                          
+       SKE     =2                  DID IT SPACE BY 2                            
+       HLT                         NO                                           
+       BRM     RDX                                                              
+       BRR     BKRDX                                                            
+RDX    PZE                         READ ONE SCRATCH MARK                        
+       LDA     =BUFF                                                            
+       STA     ADRSX                                                            
+       LDA     =40                                                              
+       STA     WDSX                                                             
+       BRM     MTAPE
+       HLT     FDTX                                                             
+       LDA     FDTX                                                             
+       SKA     =2*/21              SKIP IF NO ERROR                             
+       HLT                                                                      
+       SUB     ADRSX               GET NO OF WORDS                              
+       CLX                         POINT TO START OF RECORD                     
+       ETR     =037777                                                          
+       BRR     RDX                                                              
+*      SUBROUTINE TO MOVE INPUT RECORDS TO LISTS AND BUILD OUTPUT IMAG          
+READ   PZE                                                                      
+       LDB     BUFF,2                                                           
+       CLA                                                                      
+       LCY     3                   MOVE TYPE TO A                               
+       STA     RDCNT                                                            
+       CLA                                                                      
+       LCY     6                   MOVE COUNT TO A
+       SUB     =1                  LESS 1 FOR SKR                               
+       XMA     RDCNT               STORE COUNT,TYPE TO A                        
+       XXA                         TYPE TO X, WORD NO TO A                      
+       BRU     JTABL,2                                                          
+JTABL  BRU     DATA                A CONTAINS POINTERS AS ROUTINES ENTER        
+       BRU     REFDEF                                                           
+       BRU     POPS                                                             
+       BRU     ENDREC                                                           
+       BRU     ILLEGAL                                                          
+       BRU     SDATA                                                            
+       BRU     ILLEGAL                                                          
+       BRU     ILLEGAL                                                          
+ILLEGAL EQU    $                                                                
+       ADM     RDCNT               MOVE POINTER BEYOND ILLEGAL RECORD           
+       BRU     $+2                                                              
+       BRU     ILLEG1
+       PRINT   ILRM,4                                                           
+ILLEG1 LDX     RDCNT               RE POSITION POINTER IN X                     
+       SKN     PASS                                                             
+         EAX      1,2                                                           
+         HLT                                                                    
+         NOP      *030707                                                       
+         BRR      READ                                                          
+REFDEF   EQU      $                                                             
+         SKN      PASS                                                          
+       BRU     BYEREC                                                           
+       CAX                         RESTORE POINTER                              
+       EAX     1,2                                                              
+       SKR     RDCNT               1ST ITEM HAD BEEN REMOVED                    
+RDLOP  LDA     BUFF,2                                                           
+       STA     C1                                                               
+       LDA     BUFF+1,2
+       STA     C2                                                               
+       LDA     BUFF+2,2                                                         
+       LDB     =060000000          TEST FOR ADDEND ITEM                         
+       SKM     =060000000                                                       
+       BRU     $+3                                                              
+       EAX     1,2                                                              
+       SKR     RDCNT                                                            
+       SKA     =060000000          SKIP IF SUBTYPE 0                            
+       BRU     $+2                                                              
+       BRU     BLENGT                                                           
+       STA     C3                                                               
+       SKA     =020000000                                                       
+       BRU     $+3                                                              
+       BRM     SDFLST                                                           
+       BRU     $+2                                                              
+       BRM     SRFLST
+       EAX     3,2                 WEVE MOVED BY 3 ITEMS                        
+       LDA     =-3                                                              
+       ADM     RDCNT                                                            
+       SKN     RDCNT                                                            
+       BRU     RDLOP                                                            
+       BRR     READ                                                             
+BLENGT LDA     ='COM '             COMMON LENGTH DEFINITION                     
+       LDB     =0200000                                                         
+       SKB     C3                  SKIP IF NOT PROGRAM LENGTH                   
+       LDA     ='PRO '             PROGRAM LENGTH DEFINITION                    
+       STA     C0                                                               
+       STX     C3                                                               
+       PRINT   C0,3                                                             
+       LDX     C3                                                               
+       EAX     3,2                                                              
+       LDA     =-3
+       ADM     RDCNT                                                            
+       SKN     RDCNT                                                            
+       BRU     RDLOP                                                            
+       BRR     READ                                                             
+POPS   EQU     $                                                                
+       SKN     PASS                                                             
+       BRU     BYEREC              BYPASS RECORD ON PASS 2                      
+       CAX                                                                      
+       EAX     1,2                                                              
+       SKR     RDCNT               FIRST ITME HAS BEEN REMOVED                  
+POPLOP LDA     BUFF,2                                                           
+       STA     C1                                                               
+       LDA     BUFF+1,2                                                         
+       STA     C2                                                               
+       LDA     BUFF+2,2                                                         
+       STA     C3
+       RSH     16                  SET IT ON THE OP CODE LIST                   
+       ETR     =077                                                             
+       XXA                                                                      
+       LDB     C1                                                               
+       STB     POPT1,2                                                          
+       LDB     C2                                                               
+       STB     POPT2,2                                                          
+       CAX                                                                      
+       LDA     C3                                                               
+       SKA     =020000000          SKIP IF NOT REFERENCE                        
+       BRU     POPS1                                                            
+       ETR     =060137777          ADDRESS, RELOC, + TYPE                       
+       MRG     =010000000          POP FLAG                                     
+       STA     C3                                                               
+       BRM     SDFLST              SET IT ON THE DEF LIST                       
+POPS1  EQU     $
+       EAX     3,2                                                              
+       LDA     =-3                                                              
+       ADM     RDCNT                                                            
+       SKN     RDCNT                                                            
+       BRU     POPLOP                                                           
+       BRR     READ                                                             
+SDATA  EQU     $                   DATA STATEMENT CAN'T BE DONE                 
+       SKN     PASS                                                             
+       BRU     BYEREC                                                           
+       CAX                         DUMP IT ON FIRST PASS                        
+       SKR     RDCNT                                                            
+       EAX     1,2                                                              
+       LDA     ='DATA'                                                          
+       STA     LINE                                                             
+       LDA     BUFF,2                                                           
+       OCT     5
+       LDA     C1                                                               
+       ADD     =' A 0'                                                          
+       STA     LINE+1                                                           
+       LDA     C2                                                               
+       STA     LINE+2                                                           
+       LDA     BUFF,2                                                           
+       LRSH    9                                                                
+       STA     C0                                                               
+       EAX     1,2                 MOVE TO NEXT WORD                            
+       SKR     RDCNT                                                            
+       LDA     BUFF,2              PICK UP HIGH INCREMENT COUNT                 
+       ETR     =07700000                                                        
+       MRG     C0                                                               
+       RSH     6                   LOCATE AS INTEGER                            
+       OCT     5
+       LDA     C1
+       ADD     =' I 0'                                                          
+       STA     LINE+3                                                           
+       LDA     C2                                                               
+       STA     LINE+4                                                           
+       LDA     BUFF,2              GET REPEAT COUTN                             
+       OCT     5                                                                
+       LDA     C1                                                               
+       ADD     =' R 0'                                                          
+       STA     LINE+5                                                           
+       LDA     C2                                                               
+       STA     LINE+6                                                           
+       LDA     ='    '                                                          
+       STA     LINE+7                                                           
+       CAB                                                                      
+       SKN     BUFF,2              IS THERE A LABEL                             
+       BRU     NODLAB              NO                                           
+       EAX     1,2                 YES, MOVE IT TO THE PRINT LINE               
+       SKR     RDCNT                                                            
+       LDA     BUFF,2                                                           
+       EAX     1,2                                                              
+       SKR     RDCNT                                                            
+       LDB     BUFF,2                                                           
+NODLAB STA     LINE+7                                                           
+       STB     LINE+8                                                           
+       PRNT    LINE,9                                                           
+*   OCTAL DUMP THE REST OF THE WORDS                                            
+DLDAT  LDA    =LINE                                                             
+       STA     BUFF                AT LEAST 3 LOCS OF BUFF ARE OK               
+       LDA     =7                                                               
+       STA     BUFF+1                                                           
+DLDOP  LDA     BUFF,2
+       OCT     8                                                                
+       LDA     ='    '                                                          
+       STA     *BUFF                                                            
+       MIN     BUFF                                                             
+       LDA     C1                                                               
+       STA     *BUFF                                                            
+       MIN     BUFF                                                             
+       LDA     *C2                                                              
+       STA     BUFF                                                             
+       SKR     BUFF+1                                                           
+       BRU     DLNEX                                                            
+       PRNT    LINE,24                                                          
+       EAX     1,2                 MOVE POINTER ON                              
+       SKR     RDCNT               MORE WORDS TO COME                           
+       BRU     DLDAT               YES, DO NEXT LINE                            
+       BRR     READ                MIRACLES, ITS EVEN
+DLNEX  EAX     1,2                 MOVE POINTER                                 
+       SKR     RDCNT               ANYTHING LEFT                                
+       BRU     DLDOP               YES, ADD TO LINE                             
+       LDA     =7                  NO SEE HOW LONG THE LINE IS                  
+       SUB     BUFF+1                                                           
+       MUL     =3                  3 WORDS PER DATA WORD                        
+       RSH     1                                                                
+       STB     CNTLO                                                            
+       LDA     =LINE                                                            
+       STA     ADRLO                                                            
+       EXU     CALLLO                                                           
+       SKS     FDTLO                                                            
+       BRR     READ                                                             
+BYEREC ADM     RDCNT                                                            
+       LDX     RDCNT                                                            
+       EAX     1,2                 REPOSITION POINTER BEYOND RECORD
+       BRR     READ                                                             
+ENDREC EQU     $                                                                
+       CAX                         RETURN POINTER TO X                          
+       SKR     RDCNT                                                            
+       EAX     1,2                 MOVE TO NEXT ITEM                            
+       LDA     PROGP                                                            
+       ETR     =0300000            MODE BITS                                    
+       MRG     BUFF,2                                                           
+       STA     RELOC                                                            
+       SKN     BUFF,2              IS THERE A NAME LIST                         
+       BRU     $+3                 NO                                           
+       SKR     RDCNT               YES, MOVE PAST IT                            
+       EAX     1,2                                                              
+       ETR     =0337777                                                         
+       BRM     PSET                SET P-REG TO PROG END                        
+       SKN     PASS
+       BRU     ENDR1               PASS 2, DON'T STORE BLOCKEND                 
+       STA     *BLKNXT                                                          
+       MIN     BLKNXT              MOVE ON                                      
+       EAX     1,2                                                              
+       LDA     =-1                                                              
+       STA     END                                                              
+       SKR     RDCNT                                                            
+       BRU     $+2                                                              
+       BRR     READ                NO TRANSFER OR MODIFIER WORDS                
+       LDA     BUFF,2                                                           
+       LDB     RELOC                                                            
+       ETR     =037777             TAKE ADDRESS ONLY                            
+       SKB     =02000000           SKIP IF NO LOAD RELOC                        
+       MRG     =0100000                                                         
+       SKB     =04000000           SKIP IF NOT COMMON RELOC                     
+       MRG     =0200000
+       BRM     SADLST              SET ON ADDRESS LIST                          
+       BRR     READ                                                             
+ENDR1  BRM     ADRESS                                                           
+       BRM     BLNKOP                                                           
+       LDA     ='    '                                                          
+       STA     C1                                                               
+       STA     C2                                                               
+       CLA                                                                      
+       STA     C3                                                               
+       BRM     LABCRD                                                           
+       LDA     ='END '                                                          
+       STA     C1                                                               
+       LDA     ='    '                                                          
+       STA     C3                                                               
+       LDA     =3                                                               
+       STX     ENDTX
+       EAX     LINE+9                                                           
+       BRM     PACK                                                             
+       LDX     ENDTX                                                            
+       EAX     1,2                                                              
+       LDA     =-1                                                              
+       STA     END                                                              
+       SKR     RDCNT                                                            
+       BRU     ENDR2                                                            
+       LDA     ='    '             NO TRANSFER ADDRESS                          
+       STA     C1                                                               
+ENDR3  LDA     =3                                                               
+       STX     ENDTX                                                            
+       EAX     LINE+11                                                          
+       BRM     PACK                                                             
+       BRM     BLNKLN              BLANK REST OF LINE                           
+       BRM     OUTPUT
+       LDX     ENDTX                                                            
+       BRR     READ                                                             
+ENDR2  LDA     BUFF,2                                                           
+       ETR     =037777                                                          
+       LDB     RELOC                                                            
+       EAX     1,2                                                              
+       SKR     RDCNT               MOVE PAST THIS RECORD                        
+       BRU     $-2                                                              
+       SKB     =02000000           SKIP IF NOT LOAD RELOC                       
+       MRG     =0100000                                                         
+       SKB     =04000000           SKIP IF NOT COMMON RELOC                     
+       MRG     =0200000                                                         
+       BRM     CDFLST              IS IT ON EXTEND LIST                         
+       BRM     MAKLAB              NO, MAKE A LABEL OF IT                       
+       LDA     ='    '                                                          
+       STA     C3
+       BRU     ENDR3                                                            
+DATA   CAX                                                                      
+       ADD     RDCNT               POINT TO END OF BUFFER                       
+       STA     DNTX                STORE FOR TEMP                               
+       EAX     1,2                 WEVE TAKEN ONE WORD                          
+       SKR     RDCNT                                                            
+       LDB     BUFF,2                                                           
+       EAX     1,2                                                              
+       SKR     RDCNT                                                            
+       STX     DTX                 PUT POINTER ASIDE FOR NOW                    
+*              PROCESS RELOCATION WORDS                                         
+       LDX     DNTX                POINT TO LAST WORD                           
+       CLA                                                                      
+       SKB     =010*/19            IO RELOCATION                                
+       BRU     $+2                                                              
+       BRU     $+4
+       LDA     BUFF,2                                                           
+       EAX     -1,2                WE'VE TAKEN ONE FROM TAIL                    
+       SKR     RDCNT                                                            
+       STA     IOREL                                                            
+       CLA                                                                      
+       SKB     =04*/19             POP RELOCATION                               
+       BRU     $+2                                                              
+       BRU     $+4                                                              
+       LDA     BUFF,2                                                           
+       EAX     -1,2                                                             
+       SKR     RDCNT               ONE OFF THE TAIL                             
+       STA     POPR                                                             
+       CLA                                                                      
+       SKB     =02*/19             COMMON RELOC                                 
+       BRU     $+2
+       BRU     $+4
+       LDA     BUFF,2                                                           
+       EAX     -1,2                ONE OFF THE TAIL                             
+       SKR     RDCNT                                                            
+       STA     COMR                                                             
+       CLA                                                                      
+       SKB     =01*/19             LOAD RELOCATION                              
+       BRU     $+2                                                              
+       BRU     $+3                                                              
+       LDA     BUFF,2                                                           
+       SKR     RDCNT               ONE MORE OFF, DONE WITH X                    
+       STA     RELOC                                                            
+       LDX     DTX                 POINT TO FIRST DATA WORD                     
+       CBA                                                                      
+       ETR     =0337777            GET ADDRESS + MODE                           
+       BRM     PSET                                                             
+       BRU     DATL+1                                                           
+DATL   BRM     CYRFLG              CYCLE RELOCATION WORDS                       
+       LDA     BUFF,2                                                           
+       BRM     INSTST                                                           
+       SKN     PASS                                                             
+       BRU     DAT2                SECOND PASS                                  
+       JAT     DAT1C               JUMP IF ITS AN INSTRUCTION                   
+       LDA     ANS                 DATA OR FORM                                 
+       SKA     =0377               MULTIFIELD MENS FORM                         
+       BRU     DAT1C               FORM  SET ADDRESS                            
+       BRU     DAT1B               DATA                                         
+DAT1C  LDA     ADRP                ADDRESS POINTEC TO                           
+       SKN     INS3                DON'T LIST IF IT'S DEMANDS OCTAL             
+       BRM     SADLST                                                           
+DAT1B  MIN     PROGP                                                            
+       EAX     1,2
+       SKR     RDCNT                                                            
+       BRU     DATL                                                             
+       LDX     DNTX                POINT TO NEXT RECORD                         
+       EAX     1,2                                                              
+       BRR     READ                                                             
+CYRFLG PZE                                                                      
+       LDA     IOREL                                                            
+       LDB     POPR                                                             
+       LCY     1                                                                
+       STA     IOREL                                                            
+       STB     POPR                                                             
+       LDA     COMR                                                             
+       LDB     RELOC                                                            
+       LCY     1                                                                
+       STA     COMR                                                             
+       STB     RELOC
+       BRR     CYRFLG                                                           
+DAT2   STX     DTX                                                              
+       BRM     ADRESS                                                           
+       LDA     PROGP                                                            
+       BRM     CDFLST                                                           
+       BRU     DAT2B               NOT DEFINED                                  
+       LDA     C3                                                               
+       SKA     =010000000          IS IT A POPD                                 
+       BRU     DAT2C               YES                                          
+       BRU     DAT2F               NO                                           
+DAT2B  BRM     CADLST              CHECK IF WE'RE ADDRESSED                     
+       BRU     DAT2E               NO                                           
+       BRM     MAKLAB              YES, GENERATE PSEUDO LABEL                   
+       BRU     DAT2F                                                            
+DAT2C  BRM     BLNKOP              BLANK OPERATIONS CODE                        
+       BRM     LABCRD              SET LABEL AND CARD NO.
+       LDA     ='POPD'                                                          
+       STA     C1                                                               
+       LDA     ='    '                                                          
+       STA     C2                                                               
+       STA     C3                                                               
+       LDA     =3                  SET INSTRUCTION MEMONIC                      
+       EAX     LINE+9                                                           
+       BRM     PACK                                                             
+       LDA     ='$   '                                                          
+       STA     C1                                                               
+       LDA     =3                  SET OPERAND FIELD                            
+       EAX     LINE+11                                                          
+       BRM     PACK                                                             
+       BRM     BLNKLN                                                           
+       BRM     OUTPUT                                                           
+DAT2E  LDA     ='    '             GENERATE BLANK LABEL
+       STA     C1                                                               
+       STA     C2                                                               
+       CLA                                                                      
+       STA     C3                                                               
+DAT2F  BRM     LABCRD              SET LABEL + CARD NO.                         
+*      ADDRESS, LABEL, + CARD NO. COMPLETE, SET OP MNEMONIC                     
+       LDA     INS1                                                             
+       STA     C1                                                               
+       LDA     INS2                                                             
+       STA     C2                                                               
+       LDA     ='    '                                                          
+       STA     C3                                                               
+       LDA     =3                                                               
+       EAX     LINE+9                                                           
+       BRM     PACK                                                             
+*      SET UP CODE LISTING
+       JAF     DAT2G                                                            
+       LDA     INS3                                                             
+       OCT     2                                                                
+       LDA     C2                                                               
+       RSH     12                                                               
+       LDA     ='    '                                                          
+       RSH     6                                                                
+       LDA     TAG                                                              
+       ETR     =-1*/1              CLEAR OUT POP BIT IF THERE                   
+       XMA     TAG                                                              
+       RSH     6                                                                
+       STB     LINE+3                                                           
+DAT2K  LDA     ADRP                                                             
+       SKN     STAR                                                             
+       MRG     =040000             INDIRECT BIT                                 
+       OCT     5
+       LDA     C1                                                               
+       MRG     ='   0'             BLANK TOP 3 CCTRS                            
+       LDB     C2                                                               
+       LCY     12                                                               
+       STA     LINE+4                                                           
+       STB     LINE+5                                                           
+       BRU     DAT2H                                                            
+DAT2G  CLA                                                                      
+       XMA     TAG                 THIS IS LAST USE FOR TAG CLEAR AS FLA        
+       OCT     8                                                                
+       LDA     =0377               IS IT A MULTIFIELD NO.                       
+       SKA     ANS                                                              
+       BRU     DAT2J               YES                                          
+       LDA     C1                                                               
+       STA     LINE+3              DATA TO LINE IMAGE                           
+       LDA     C2
+       STA     LINE+4                                                           
+       LDA     ='    '                                                          
+       STA     LINE+5                                                           
+       BRU     DAT2H                                                            
+DAT2J  LDA     C2                                                               
+       STA     LINE+3                                                           
+       BRU     DAT2K                                                            
+*      SET UP OPERAND FIELD                                                     
+DAT2H  LDA     =3                                                               
+       STA     LINCC                                                            
+       EAX     LINE+11                                                          
+       STX     LINXP                                                            
+       JAF     DAT2M                                                            
+       SKN     STAR                                                             
+       BRU     $+2                                                              
+       BRU     DAT2L
+       LDA     ='*   '                                                          
+       STA     C1                                                               
+       LDA     ='    '                                                          
+       STA     C2                                                               
+       STA     C3                                                               
+DAT2Z  LDA     LINCC                                                            
+       LDX     LINXP                                                            
+       BRM     PACK                                                             
+       STA     LINCC                                                            
+       STX     LINXP                                                            
+       BRU     DAT2L                                                            
+DAT2M  LDA     =0377               IS THING MULTIFIEDED                         
+       SKA     ANS                                                              
+       BRU     DAT2P               NO                                           
+       CLA                                                                      
+       LDB     LINE+3
+       RSH     6                   GUARANTEE LEAD ZERO                          
+       STB     C1                                                               
+       LDA     LINE+3                                                           
+       LDB     LINE+4                                                           
+       RSH     6                                                                
+       STB     C2                                                               
+       LDB     LINE+4                                                           
+       LDA     ='    '                                                          
+       RCY     6                                                                
+       BRU     DAT2Q+1                                                          
+       BRU     DAT2Q                                                            
+DAT2P  LDA     LINE+3              F1014                                        
+       LDB     =',  0'             COMMA TO C2                                  
+       RCY     6                                                                
+       STA     C1                  NO. IN OCTAL TO C1
+       STB     C2                  COMMA TO C2
+       BRU     DAT2Z               STASH IT ON LINE AND PROCEED                 
+DAT2L  SKN     INS3                                                             
+       BRU     DAT2R                                                            
+       LDA     ADRP                                                             
+       OCT     5                   GENERATE OCTAL FOR ADDRESS FIELD             
+       LDA     C1                                                               
+       MRG     ='  00'             TOP TWO CCTRS GET BLANDS                     
+       LDB     C2                                                               
+       LCY     12                                                               
+       STA     C1                                                               
+       STB     C2                                                               
+       BRU     DAT2Q                                                            
+DAT2R  LDA     PROGP                                                            
+       BRM     CRFLST              ARE WE ON EXTEDN REFERENCE                   
+       BRU     $+2                 NO, BUILD LABEL                              
+       BRU     DAT2Q                                                            
+       LDA     ADRP                                                             
+       BRM     CDFLST              IS THIS DEFINED                              
+       BRM     MAKLAB              NO, MAKE ONE UP                              
+DAT2Q  LDA     ='    '                                                          
+       STA     C3                  LAST CCTR IS BLANK                           
+       LDA     LINCC                                                            
+       LDX     LINXP                                                            
+       BRM     PACK                MOVE THIS ONTO LINE IMAGE                    
+       STA     LINCC                                                            
+       STX     LINXP                                                            
+       LDA     TAG                                                              
+       SKA     =07                                                              
+       BRU     $+2                                                              
+       BRU     DAT2S               NO TAG FIELD                                 
+       LDB     ='    '
+       STB     C2                                                               
+       STB     C3                                                               
+       RSH     6                                                                
+       LDA     ='   ,'                                                          
+       RSH     6                                                                
+       STB     C1                                                               
+       LDA     LINCC                                                            
+       LDX     LINXP                                                            
+       BRM     PACK                                                             
+DAT2S  BRM     BLNKLN              BLANK REMAINDER OF LINE                      
+       BRM     OUTPUT              OUTPUT LINE IMAGE                            
+       LDX     DTX                                                              
+       MIN     PROGP                                                            
+       EAX     1,2                                                              
+       SKR     RDCNT                                                            
+       BRU     DATL
+       LDX     DNTX                POINT TO NEXT RECORD                         
+       EAX     1,2                                                              
+       BRR     READ                                                             
+*      BACKWARDS READING SPECIAL ROUTINE                                        
+READ2  PZE                                                                      
+       STX     RDTX                                                             
+       LDB     BUFF                                                             
+       SKB     =070000000          SKIP IF TYPE ZERO                            
+       BRR     READ2               RETURN FALSE                                 
+       MIN     READ2               INCREMENT RETURN                             
+       CLA                                                                      
+       LCY     9                   COUNT                                        
+       SUB     =1                  DOWN 1 FOR HEADER                            
+       LDX     =1                                                               
+       LDB     BUFF,2                                                           
+       CAX                         POINT TO END OF RECORD
+       CLA                                                                      
+       SKB     =010*/19            IO RELOC                                     
+       BRU     $+2                                                              
+       BRU     $+3                                                              
+       LDA     BUFF,2                                                           
+       EAX     -1,2                                                             
+       STA     IOREL                                                            
+       CLA                                                                      
+       SKB     =04*/19             POP RELOCATION                               
+       BRU     $+2                                                              
+       BRU     $+3                                                              
+       LDA     BUFF,2                                                           
+       EAX     -1,2                                                             
+       STA     POPR                                                             
+       CLA                                                                      
+       SKB     =02*/19             COMMON RELOC
+       BRU     $+2                                                              
+       BRU     $+3                                                              
+       LDA     BUFF,2                                                           
+       EAX     -1,2                                                             
+       STA     COMR                                                             
+       CLA                                                                      
+       SKB     =01*/19             LOAD RELOC                                   
+       BRU     $+2                                                              
+       BRU     $+3                                                              
+       LDA     BUFF,2                                                           
+       EAX     -1,2                                                             
+       STA     RELOC                                                            
+       CXA                         RESULTANT WORD COUNT TO A                    
+       ETR     =077                DELETE ANY INDEX GARBAGE                     
+       SUB     =1                                                               
+       STA     RDCNT               COUNT OF NO. INSTRUCTION IN RECORD
+       CBA                         MODE/ADDRESS WORD                            
+       ETR     =0337777                                                         
+       STA     PROGP               FIRST LOC OF RECORD                          
+       SUB     =1                                                               
+       STA     PROGP1              ONE BELOW RECORD                             
+       ADD     RDCNT                                                            
+       STA     PROGP2              END OF RECORD                                
+       LDX     RDTX                                                             
+       BRR     READ2                                                            
+*      ROUTINE TO MODIFY P-COUNTER, CALLED WITH NEW ADDRESS AND MODE            
+*              IN A-REG.                                                        
+PSET   PZE                                                                      
+       SKE     PROGP                                                            
+       BRU     $+2                                                              
+       BRR     PSET                P-COUTNER OK, NO WORK                        
+       LDB     =0300000
+       SKM     PROGP               IS MODE UNCHANGED                            
+       BRU     PSET1               NO,FIX IT                                    
+       SKN     PASS                                                             
+       BRU     $+3                 PASS 2                                       
+       STA     PROGP               PASS 1                                       
+       BRR     PSET                                                             
+       SKG     PROGP               IS IT FORWD OR BACKWARD                      
+       BRU     $+3                 BACKWARD ()ORG                               
+       BRM     PSETB                                                            
+       BRR     PSET                                                             
+       STA     PROGP               RESET PROGRAM COUNTER                        
+       BRM     ORGLIN              ORIGIN LINE                                  
+       BRR     PSET                                                             
+PSET1  SKN     PASS                                                             
+       BRU     PSET2               PASS 2                                       
+       XMA     PROGP
+       STA     *BLKNXT             NEXT AVAILABLE BLOCK BIT CELL                
+       MIN     BLKNXT                                                           
+       SKN     *BLKNXT             IS NEXT PAIR OPEN                            
+       BRM     MEMOV               NO                                           
+       LDA     PROGP                                                            
+       STA     *BLKNXT                                                          
+       MIN     BLKNXT              MOVE TO CLOSURE CELL                         
+       BRR     PSET                                                             
+PSET2  STA     PSTMPA                                                           
+       LDA     *BLKNXT             GET END OF PRESENT BLOCK                     
+       MIN     BLKNXT              MOVE TO NEXT START                           
+       SKE     =-1                 TEST FOR ERRORS                              
+       BRU     $+2                                                              
+       BRM     MEMOV                                                            
+       SKE     PROGP                                                            
+       BRM     PSETB
+       LDA     *BLKNXT             GET START OF NEXT BLOCK                      
+       MIN     BLKNXT                                                           
+       STA     PROGP                                                            
+       BRM     ORGLIN                                                           
+       LDA     PSTMPA                                                           
+       SKE     PROGP                                                            
+       BRM     PSETB                                                            
+       BRR     PSET                                                             
+PSETB  PZE                                                                      
+       STA     PSBTA                                                            
+       STX     PSBTX
+PSETB9 CLA                                                                      
+       STA     RESVE                                                            
+       BRM     ADRESS                                                           
+       BRM     BLNKOP                                                           
+       LDA     PROGP
+       BRM     CDFLST              ARE WE DEFINED                               
+       BRU     $+2                 NOT DEFINED                                  
+       BRU     PSETB1                                                           
+       BRM     CADLST              ARE WE ADDRESSED                             
+       BRU     $+3                 NO                                           
+       BRM     MAKLAB              YES, MAKE A LABEL                            
+       BRU     PSETB1                                                           
+       LDA     ='    '                                                          
+       STA     C1                  GENERATE BLANK LABEL                         
+       STA     C2                                                               
+       CLA                                                                      
+       STA     C3                                                               
+PSETB1 BRM     LABCRD              LABEL AND CARD NO.                           
+       LDA     ='RES '             RESERVE ORDER                                
+       STA     C1
+       LDA     ='    '
+       STA     C2                                                               
+       STA     C3                                                               
+       LDA     =3                                                               
+       EAX     LINE+9                                                           
+       BRM     PACK                                                             
+PSETB2 MIN     RESVE                                                            
+       MIN     PROGP                                                            
+       LDA     PROGP                                                            
+       SKE     PSBTA                                                            
+       BRU     $+2                                                              
+       BRU     PFLUSH                                                           
+       BRM     CDFLST              ARE WE DEFINED                               
+       BRU     $+2                 NO                                           
+       BRU     PFLUSH              YES                                          
+       BRM     CADLST              ARE WE ADDRESSED                             
+       BRU     PSETB2              NO,MOVE ON                                   
+PFLUSH LDA     RESVE               NO. CELLS RESERVED                           
+       OCT     5                   MAKE AN OCTAL NO.                            
+       LDA     C1                                                               
+       MRG     ='  00'             BLANK TOP TWO                                
+       LDB     C2                                                               
+       LCY     12                                                               
+       STA     C1                                                               
+       STB     C2                                                               
+       LDA     ='    '                                                          
+       STA     C3                                                               
+       LDA     =3                                                               
+       EAX     LINE+11                                                          
+       BRM     PACK                                                             
+       BRM     BLNKLN              BLANK REST OF LINE                           
+       BRM     OUTPUT              PRINT LINE IMAGE
+       LDA     PROGP                                                            
+       SKE     PSBTA               IS THIS LOOP DONE                            
+       BRU     PSETB9              NO,GO AROUND AGAIN                           
+       LDX     PSBTX                                                            
+       BRR     PSETB                                                            
+ORGLIN PZE                                                                      
+       LDA     ='    '                                                          
+I      DO      6                                                                
+       STA     LINE+I-1            BLANK LIST BITS                              
+       STA     C1                                                               
+       STA     C2                  BLANK LABEL                                  
+       CLA                                                                      
+       STA     C3                                                               
+       BRM     LABCRD                                                           
+       LDA     PROGP                                                            
+       RSH     15                  MODE TO INTEGER
+       ETR     =3                                                               
+       STX     ORGTX                                                            
+       CAX                                                                      
+       LDA     ORGLS,2                                                          
+       STA     C1                                                               
+       LDA     ='    '                                                          
+       STA     C3                                                               
+       LDA     =3                                                               
+       EAX     LINE+9                                                           
+       BRM     PACK                                                             
+       LDA     PROGP                                                            
+       OCT     5                                                                
+       LDA     C1                                                               
+       MRG     ='  00'             BLANK TOP TWO                                
+       LDB     C2                                                               
+       LCY     6
+       STA     C1                                                               
+       STB     C2                                                               
+       LDA     =3                                                               
+       EAX     LINE+11                                                          
+       BRM     PACK                                                             
+       BRM     BLNKLN                                                           
+       BRM     OUTPUT                                                           
+       LDX     ORGTX               RETRIEVE ENTERING INDEX                      
+       BRR     ORGLIN                                                           
+ORGTX  RES     1                                                                
+ORGLS  DATA    'AORG'                                                           
+       DATA    'RORG'                                                           
+       DATA    'CORG'                                                           
+       DATA    'IORG'              ILLEGAL                                      
+*      SUBROUTINE INSTST INSTRUCTION TEST                                       
+*      X,A SAVE OVER ROUTINE
+*      INTERFACE CELL LABELS ARE AS FOLLOWS:                                    
+*      ANS 0 IF TRUE, NEG IF FALSE, FIELD NO. IN LOW BITS                       
+*      STAR NEG IF NOT INDIRECTLY ADDRESSED                                     
+*      TAG -TAG IF TRUE, COUNT OR DATA IF FALSE                                 
+*      INS1, INS2, INS3 8 CHARACTER INSTRUCTION OP CODE BITS, NEG IF            
+*              OCTAL ADDRESS DEMANDED                                           
+*      ADRP ADDRESS POINTED TO, OR 0                                            
+*      POPT1, POPT2 TABLES OF POP NAMES, WORDS1 AND WORD2                       
+*      POPR    POP RELOCATION                                                   
+*      RELOC   LOAD RELOCATION                                                  
+*      COMR    COMMON RELOCATION                                                
+*      IOREL   I/O RELOCATION                                                   
+*      FORT NEG. IF FORTRAN OPCODES NEEDED                                      
+INSTST PZE                                                                      
+       STA     ITA                                                              
+       STX     ITX
+       CLB                                                                      
+       EOR     =040000             CHANGE * BIT                                 
+       RSH     15                                                               
+       STB     STAR                                                             
+       SKA     =0100               POP BIT                                      
+       BRU     POPMB                                                            
+       ETR     =077                                                             
+       SKE     =02                 IS IT EOM                                    
+       BRU     $+2                                                              
+       MRG     =1*/23                                                           
+       SKE     =040                IS IT SKS                                    
+       BRU     $+2                                                              
+       MRG     =1*/23                                                           
+       SKE     =046                IS IT RCH                                    
+       BRU     $+2                                                              
+       MRG     =1*/23
+       STA     INS3                                                             
+       CAX                                                                      
+       LDA     INST1,2                                                          
+       SKE     =-1                                                              
+       BRU     $+2                                                              
+       BRU     NOINS                                                            
+       STA     INS1                                                             
+       LDA     ='    '                                                          
+       STA     INS2                                                             
+SETTRU CLA                         SET ANSWER TRUE                              
+       STA     ANS                                                              
+       LDB     ITA                                                              
+       CLA                                                                      
+       LSH     3                                                                
+       STA     TAG                                                              
+SETADR LDA     ITA
+       ETR     =037777             TAKE ADDRESS ONLY                            
+       MRG     =03*/15             BOTH COMMON AND LOAD                         
+       SKN     RELOC                                                            
+       EOR     =01*/15             DELETE LOAD BIT                              
+       SKN     COMR                                                             
+       EOR     =02*/15             DELETE COMMON BIT                            
+       STA     ADRP                                                             
+       LDA     ITA                                                              
+       LDX     ITX                                                              
+       BRR     INSTST                                                           
+POPMB  EQU     $                                                                
+       SKN     POPR                                                             
+       BRU     FORTMB                                                           
+       ETR     =077                                                             
+       STA     INS3                                                             
+       CAX
+       LDA     POPT1,2                                                          
+       STA     INS1                                                             
+       LDA     POPT2,2                                                          
+       STA     INS2                                                             
+       BRU     SETTRU                                                           
+FORTMB SKN     FORT                                                             
+       BRU     NOINS                                                            
+       ETR     =077                                                             
+       CAX                                                                      
+       LDA     FORT1,2                                                          
+       SKE     =-1                                                              
+       BRU     $+2                                                              
+       BRU     NOINS                                                            
+       STA     INS1                                                             
+       LDA     ='    '                                                          
+       STA     INS2
+       BRU     SETTRU                                                           
+NOINS  LDB     =1*/23+0            MEG + 1 FIELD                                
+       STB     ANS                                                              
+       STB     STAR                CANNOT BE INDIR ECT                          
+       SKN     RELOC                                                            
+       BRU     $+2                                                              
+       BRU    IFORM                F1014 IF RELOCATABLE                         
+       SKN     COMR                                                             
+       BRU     $+2                                                              
+       BRU     IFORM                                                            
+       SKN     IOREL                                                            
+       BRU     IDATA               DATA WORD                                    
+IFORM  MIN     ANS                 SET TO 2 FIELDS                              
+       LDA     ='F101'                                                          
+       STA     INS1
+       LDA     ='4   '
+       STA     INS2                                                             
+       CLA                                                                      
+       STA     INS3                                                             
+       LDB     ITA                                                              
+       LSH     10                                                               
+       STA     TAG                                                              
+       BRU     SETADR                                                           
+IDATA  CLA                                                                      
+       STA     ADRP                                                             
+       LDA     ='DATA'                                                          
+       STA     INS1                                                             
+       LDA     ='    '                                                          
+       STA     INS2                                                             
+       LDA     ITA                                                              
+       STA     TAG                                                              
+       LDX     ITX                                                              
+       BRR     INSTST                                                           
+INST1  DATA    'HLT '              0                                            
+       DATA    'BRU '              1                                            
+       DATA    'EOM '              2                                            
+       DATA    -1                  3                                            
+       DATA    -1                  4                                            
+       DATA    -1                  5                                            
+       DATA    -1                  6                                            
+       DATA    -1                  7                                            
+       DATA    'MIY '              10                                           
+       DATA    -1                  11                                           
+       DATA    'MIW '              12                                           
+       DATA    'POT '              13                                           
+       DATA    'ETR '              14                                           
+       DATA    -1                  15
+       DATA    'MRG '              16                                           
+       DATA    'EOR '              17                                           
+       DATA    'NOP '              20                                           
+       DATA    -1                  21                                           
+       DATA    -1                  22                                           
+       DATA    'EXU '              23                                           
+       DATA    -1                  24                                           
+       DATA    -1                  25                                           
+       DATA    -1                  26                                           
+       DATA    -1                  27                                           
+       DATA    'YIM '              30                                           
+       DATA    -1                  31                                           
+       DATA    'WIM '              32                                           
+       DATA    'PIN '              33                                           
+       DATA    -1                  34                                           
+       DATA    'STA '              35
+       DATA    'STB '              36                                           
+       DATA    'STX '              37                                           
+       DATA    'SKS '              40                                           
+       DATA    'BRX '              41                                           
+       DATA    -1                  42                                           
+       DATA    'BRM '              43                                           
+       DATA    -1                  44                                           
+       DATA    -1                  45                                           
+       DATA    'RCH '              46                                           
+       DATA    -1                  47                                           
+       DATA    'SKE '              50                                           
+       DATA    'BRR '              51                                           
+       DATA    'SKB '              52                                           
+       DATA    'SKN '              53                                           
+       DATA    'SUB '              54                                           
+       DATA    'ADD '              55
+       DATA    'SUC '              56                                           
+       DATA    'ADC '              57                                           
+       DATA    'SKR '              60                                           
+       DATA    'MIN '              61                                           
+       DATA    'XMA '              62                                           
+       DATA    'ADM '              63                                           
+       DATA    'MUL '              64                                           
+       DATA    'DIV '              65                                           
+       DATA    'RSH '              66                                           
+       DATA    'LSH '              67                                           
+       DATA    'SKM '              70                                           
+       DATA    'LDX '              71                                           
+       DATA    'SKA '              72                                           
+       DATA    'SKG '              73                                           
+       DATA    'SKD '              74                                           
+       DATA    'LDB '              75
+       DATA    'LDA '              76                                           
+       DATA    'EAX '              77                                           
+FORT1  EQU     $                                                                
+FORT   DATA    0                   NO FORTRAN OPTION                            
+$POPT1 RES     64                                                               
+$POPT2 RES     64                                                               
+CADLST PZE                         CHECK IF ON ADDRESS LIST                     
+       STX     ADTMPX                                                           
+       LDB     =0337777                                                         
+       LDX     ADRTOP                                                           
+CAD1   XXA                                                                      
+       SUB     =1                                                               
+       SKG     ADRBOT                                                           
+       BRU     ADNF                EXIT FALSE                                   
+       XXA                                                                      
+       SKM     0,2
+       BRU     CAD1                NOT THIS, TRY ANOTHER                        
+       MIN     CADLST              JMP IF FOUND                                 
+       STX     C0                  TRUE POINTER TO C0                           
+       LDX     ADTMPX                                                           
+       BRR     CADLST                                                           
+ADNF   CXA                         RETURN SEARCH ITEM TO A                      
+       LDX     =-1                                                              
+       STX     C0                  SET C0 NEGATIVE                              
+       LDX     ADTMPX              RETRIEVE ENTRY INDEX                         
+       BRR     CADLST                                                           
+SADLST PZE                         ROUTINE TO ADD TO ADDRESS LIST               
+       BRM     CADLST              IS IT THERE ALREADY                          
+       BRU     ADTOP1              NO                                           
+       LDX     C0                                                               
+       MRG     =010000000          SECOND REFERENCE FLAG                        
+       XMA     0,2                 STORE IT AND GET ORIGINAL VERSION
+       LDX     ADTMPX              GET X FROM WHERE CADLST PUT IT               
+       BRR     SADLST                                                           
+ADTOP1 LDX     ADRTOP              GET POINTER TO NEXT AVAILABLE                
+       MIN     ADRTOP                                                           
+       STA     0,2                                                              
+       XXA                                                                      
+       ADD     =2                                                               
+       SKG     DEFBOT              CHECK FOR MEMORY OVERFLOW                    
+       BRU     $+2                 OK                                           
+       BRM     MEMOV               SORRY, PROG TOO BIG                          
+       CXA                                                                      
+       LDX     ADTMPX              GET X FROM WHERE CADLST PUT IT               
+       BRR     SADLST                                                           
+*      ROUTINE TO DELETE AN ITEM FROM ADDRESS LIST                              
+DADLST PZE                                                                      
+       BRM     CADLST              FIND IT
+       HLT                         ERROR                                        
+       LDX     C0                                                               
+       LDA     =0337777            BOTH MODES UP, TOP MEM                       
+       XMA     0,2                                                              
+       SKA     =010000000          SKIP IF ONLY 1 REFERENCE                     
+       STA     0,2                 RESTORE THE REFERENCE                        
+       LDX     ADTMPX                                                           
+       BRR     DADLST                                                           
+*      CHECK REFERENCE LIST AN OPEN CHAIN ENDS WITH ALL 0'S A CLOSED O          
+*              WITH TAG 2=1                                                     
+CRFLST PZE                                                                      
+       STX     RFTMPX                                                           
+       LDB     =0337777                                                         
+       LDX     REFTOP                                                           
+CRF1   XXA                                                                      
+       SUB     =3
+       SKG     REFBOT                                                           
+       BRU     RFNF                REFERENCE NOT FOUND                          
+       STA     C0                                                               
+       XXA                                                                      
+CRF2   SKM     0,2                                                              
+       BRU     CRF3                NOT THIS ONE, TRY AGAIN                      
+       LDB     0,2                 FOUND IT, GET TYPE BITS                      
+       STB     C3                                                               
+       XXA                                                                      
+       XMA     C0                  SWITCH TO FIRST POINTER                      
+       XXA                                                                      
+       LDB     2,2                 PICK UP LABEL                                
+       STB     C2                                                               
+       LDB     1,2                                                              
+       STB     C1                                                               
+       MIN     CRFLST              EXIT TRUE
+       LDX     RFTMPX              SAVE X                                       
+       BRR     CRFLST                                                           
+CRF3   SKB     0,2                 IS THIS A CLOSING ENTRY                      
+       BRU     $+2                 NO                                           
+       BRU     CRF1                YES, MOVE OVER LABEL                         
+       EAX     -1,2                MOVE TO NEXT ADDRESS ITEM                    
+       BRU     CRF2                TRY IT                                       
+RFNF   CXA                         RETURN SEARCH ITEM TO A                      
+       LDX     =-1                 EXIT FALSE                                   
+       STX     C0                                                               
+       LDX     RFTMPX                                                           
+       BRR     CRFLST                                                           
+*      SET ON REFERENCE LIST                                                    
+SRFLST PZE                                                                      
+       SKN     REFTOP              IS IT OPENED YET
+       BRU     SRFL1               YES
+       CAB                                                                      
+       LDA     DEFBOT              NO, OPEN IT BELOW DEF                        
+       STA     REFTOP                                                           
+       SUB     =1                                                               
+       STA     REFBOT                                                           
+       CBA                                                                      
+SRFL1  STX     RFTMPX              SAVE X                                       
+       LDX     REFBOT                                                           
+       XXA                                                                      
+       SUB     =4                  FOUR ELEMENTS TO START HERE                  
+       SKG     ADRTOP                                                           
+       BRM     MEMOV                                                            
+       STA     REFBOT              NEW LIST BOTTOM                              
+       XXA                                                                      
+       CLB                                                                      
+       STB     1,2                                                              
+       LDB     C3                                                               
+       STB     2,2                                                              
+       LDB     C1                                                               
+       STB     3,2                                                              
+       LDB     C2                                                               
+       STB     4,2                                                              
+       LDX     RFTMPX                                                           
+       BRR     SRFLST                                                           
+*      FIRST REFERENCE OPEN TAIL                                                
+FRFOT  PZE                                                                      
+       LDB     $-1                                                              
+       STB     NRFOT                                                            
+       LDB     REFTOP              TOP OF LIST                                  
+       STB     LRFOT               LAST REFERENCE OPEN TAIL                     
+       BRU     $+2
+NRFOT  PZE                                                                      
+       STX     RFTMPX                                                           
+       LDA     =-1                                                              
+       LDX     LRFOT                                                            
+       LDB     =0337777                                                         
+RFOT1  XXA                                                                      
+       SUB     =4                                                               
+       SKG     REFBOT                                                           
+       BRU     OTNF                EXIT FALSE                                   
+       STA     C0                                                               
+       XXA                                                                      
+RFOT3  SKB     0,2                 IS IT AN END                                 
+       BRU     RFOT2               NO                                           
+       SKA     0,2                 ITS AN END, IS IT OPEN                       
+       BRU     RFOT1               NO                                           
+       STX     LRFOT               SAVE POINTER FOR NEXT SEARCH ITEM
+       CXA                         YES, SAVE POINTER                            
+       XMA     C0                  GET POINTER TO LABEL                         
+       LDB     1,2                 PICK UP LINK WORD                            
+       STB     C3                                                               
+       RCH     0410                CBA, CAX                                     
+       LDB     2,2                                                              
+       STB     C1                                                               
+       LDB     3,2                                                              
+       STB     C2                                                               
+       MIN     NRFOT               EXIT TRUE                                    
+       LDX     RFTMPX                                                           
+       BRR     NRFOT                                                            
+RFOT2  EQU     $                                                                
+       EAX     -1,2                TRY NEXT ELEMENT OF SUBLIST                  
+       BRU     RFOT3                                                            
+OTNF   LDX     =-1                 OPEN TAIL NOT FOUND
+       STX     LRFOT                                                            
+       STX     C0                                                               
+       LDX     RFTMPX                                                           
+       BRR     NRFOT                                                            
+*      INSERT ONTO REFERENCE LIST ASSUMES LRFOT HAS TAIL TO WHICH WE            
+*              SHOULD TAG                                                       
+IRFLST PZE                                                                      
+       SKA     =0337777            IS ELEMENT A TAIL                            
+       BRU     IRFL1               NO                                           
+       STA     *LRFOT              YES, CLOSE THIS LIST                         
+       BRR     IRFLST              A SIMPLE INSERTION DONE                      
+IRFL1  STX     RFTMPX                                                           
+       CAB                                                                      
+       LDA     REFBOT                                                           
+       SUB     =1                  WERE ADDING ONE ITEM                         
+       SKG     ADRTOP              DOES IT FIT
+       BRM     MEMOV               SO SORRY                                     
+       STA     REFBOT                                                           
+       SUB     LRFOT                                                            
+       ADD     =1                                                               
+       CAX                                                                      
+       LDA     LRFOT                                                            
+       ADD     =027600001                                                       
+       STA     IRFL2                                                            
+       LDA     LRFOT                                                            
+       ADD     =023500000                                                       
+       STA     IRFL3                                                            
+IRFL2  LDA                         (LRFOT)+1,2                                  
+IRFL3  STA                         (LRFOT),2                                    
+       BRX     $-2                 MOVE THE LIST DOWN 1                         
+       STB     *LRFOT              STOW THE NEW ENTRY                           
+       SKR     LRFOT               MOVE FOR NEXT SEARCH
+       CBA                                                                      
+       LDX     RFTMPX                                                           
+       BRR     IRFLST                                                           
+CDFLST PZE                         SEARCH FOR ITEM ON EXTERNAL DEF LIST         
+       STX     C0                                                               
+       LDB     =0337777                                                         
+       LDX     DEFTOP                                                           
+CDF1   XXA                                                                      
+       SUB     =3                                                               
+       SKG     DEFBOT                                                           
+       BRU     DFNF                EXIT FALSE                                   
+       XXA                                                                      
+       SKM     0,2                                                              
+       BRU     CDF1                NOT THIS, TRY NEXT                           
+       LDB     2,2                 FOUND IT, MOVE TO CENTRAL                    
+       STB     C2
+       LDB     1,2                                                              
+       STB     C1                                                               
+       LDB     0,2                                                              
+       STB     C3                                                               
+       XXA                         SAVE A IN X, POINTER TO A                    
+       XMA     C0                  PICK UP OLD X, SAVE POINTER IN C0            
+       XXA                         A AND X SAFE                                 
+       MIN     CDFLST              EXIT TRUE                                    
+       BRR     CDFLST                                                           
+DFNF   LDA     =-1                                                              
+       XMA     C0                  SET C0 NEGATIVE, GET INDEX                   
+       XXA                         REPLACES X AND A                             
+       BRR     CDFLST                                                           
+SDFLST PZE                                                                      
+       SKN     REFTOP              IS REFERENCE LIST OPEN                       
+       BRM     MEMOV               YES, FAILURE
+       STX     DFTMPX                                                           
+       LDX     DEFBOT                                                           
+       XXA                                                                      
+       SUB     =3                                                               
+       SKG     ADRTOP                                                           
+       BRM     MEMOV               MEMORY OVERFLOW                              
+       STA     DEFBOT                                                           
+       XXA                                                                      
+       LDB     C3                                                               
+       STB     1,2                                                              
+       LDB     C1                                                               
+       STB     2,2                                                              
+       LDB     C2                                                               
+       STB     3,2                                                              
+       LDX     DFTMPX                                                           
+       BRR     SDFLST
+*      ROUTINE TO PICK UP THE ADDRESS OF REFERENCED INSTRUCTION                 
+GADR   PZE                                                                      
+       STX     GATMPX                                                           
+       SUB     PROGP               GET WORD NO. OF RECORD                       
+       STA     GATMPA              SAVE IT                                      
+       ADD     =2                  INDEX POINTER TO THIS WORD AND BUFF          
+       RCH     0401                CAX, CLA                                     
+       LDB     =1*/23                                                           
+       RSH     *GATMPA                                                          
+       LDA     BUFF,2              PICK UP THE WORD                             
+       ETR     =037777             ADDRESS ONLY                                 
+       MRG     =020000000          REFERNCE FLAG                                
+       SKB     COMR                IS IT COMMONED                               
+       MRG     =0200000            YES, SET COMMON FLAG                         
+       SKB     RELOC               IS IT RELOCATABLE                            
+       MRG     =0100000            YES  SET RELOC FLAG
+       LDX     GATMPX                                                           
+       BRR     GADR                                                             
+SORTAD PZE                         SORT ADDRESS LIST                            
+       LDA     ADRBOT                                                           
+       SUB     ADRTOP                                                           
+       ADD     =1                                                               
+       STA     SORTX                                                            
+       LDA     ADRTOP                                                           
+       ETR     =037777                                                          
+       MRG     =020000000                                                       
+       STA     SORTOP                                                           
+       LDX     SORTX                                                            
+       LDA     *SORTOP             DELETE REFERENCE FLAGS                       
+       ETR     =0337777            MODE AND ADDRESS ONLY                        
+       STA     *SORTOP
+       BRX     $-3
+       LDX     SORTX               PICK UP POINTER 1                            
+SORTA1 STX     SORTX2              PUT LIST IN INCREASING ORDER                 
+       STX     SORTX                                                            
+       LDA     *SORTOP                                                          
+       BRX     $+2                                                              
+       BRU     SORTA2                                                           
+SORTA3 SKG     *SORTOP                                                          
+       BRU     SORTA4                                                           
+       LDA     *SORTOP             GET SMALLER ITEM                             
+       STX     SORTX2              SAVE IT LOCATION                             
+SORTA4 BRX     SORTA3                                                           
+       LDX     SORTX                                                            
+       XMA     *SORTOP                                                          
+       LDX     SORTX2                                                           
+       STA     *SORTOP                                                          
+       LDX     SORTX                                                            
+       BRX     SORTA1              MUST ALWAYS BE TRUE                          
+       HLT                         DEBUG                                        
+SORTA2 LDA     =0337777            FLAG END OF LIST                             
+       STA     *ADRTOP                                                          
+*      BREAK ADDRESS LIST INTO 3 LISTS                                          
+       LDX     ADRBOT                                                           
+       LDA     =0300000            COMMON OR RELOC                              
+       SKA     1,2                 SKIP IF ABSOLUTE                             
+       BRU     $+3                                                              
+       EAX     1,2                                                              
+       BRU     $-3                                                              
+       STX     AADTOP              TOP OF ABSOLUTE ADDRESS LIST                 
+       LDA     =0200000            COMMON                                       
+       SKA     1,2                 SKIP IF NOT COMMON                           
+       BRU     $+3
+       EAX     1,2                                                              
+       BRU     $-3                                                              
+       STX     RADTOP              TOP OF RELOCATABLE LIST                      
+       LDA     =0100000            RELOCATABLE                                  
+       SKA     1,2                 SKIP IF NOT RELOCATABLE                      
+       BRU     $+3                                                              
+       EAX     1,2                                                              
+       BRU     $-3                                                              
+       STX     CADTOP                                                           
+*      SET UP LIST BEGINNINGS                                                   
+       LDA     RADTOP                                                           
+       STA     CADBOT              BOTTOM OF COMMON ADDRESS LIST                
+       ADD     =1                                                               
+       STA     CADNXT              NEXT COMMON ADDRESS                          
+       SKG     CADTOP                                                           
+       BRU     $+3                 NOT EMPTY
+       LDA     =-1                 FLAG EMPTY                                   
+       STA     CADTOP                                                           
+       LDA     AADTOP                                                           
+       STA     RADBOT                                                           
+       ADD     =1                                                               
+       STA     RADNXT                                                           
+       SKG     RADTOP                                                           
+       BRU     $+3                 NOT EMPTY                                    
+       LDA     =-1                 FLAG IT IMPTY                                
+       STA     RADTOP                                                           
+       LDA     ADRBOT                                                           
+       STA     AADBOT                                                           
+       ADD     =1                                                               
+       STA     AADNXT                                                           
+       SKG     AADTOP                                                           
+       BRU     $+3                 NOT EMPTY
+       LDA     =-1                                                              
+       STA     AADTOP                                                           
+       BRR     SORTAD                                                           
+*      ROUTINE TO MODIFY BLOCK LISTS TO INCLUDE ALL DEFINITIONS                 
+*              AND RELOCATABLE REFERENCES                                       
+BLKSET PZE                                                                      
+       LDA     BLKNXT                                                           
+       STA     BLKTOP              MOVE TOP OF LIST TO TRUE TOP                 
+       LDA     =-1                                                              
+       STA     *BLKTOP                                                          
+       BRM     DEFSPN              FIND SPAN OF DEFINITIONS                     
+       LDB     =0300000            MODE BITS MASK                               
+       LDA     *RADNXT             FIRST RELATIVE ADDRESS                       
+       SKM     =0100000            IS IT INDEED A RELOC ADDRESS                 
+       BRU     BLKS1               NO                                           
+       SKG     BUFF+2
+       STA     BUFF+2              MINIMUM RELOCATABLE ADDRESS                  
+       LDA     *RADTOP                                                          
+       SKG     BUFF+3                                                           
+       BRU     $+2                                                              
+       STA     BUFF+3              MAXIMUM RELOCATABLE ADDRESS                  
+BLKS1  LDA     *CADNXT                                                          
+       SKM     =0200000            IS IT INDEED A COMMON                        
+       BRU     BLKS2               NO                                           
+       SKG     BUFF+4                                                           
+       STA     BUFF+4              MINIMUM COMMON ADDRESS                       
+       LDA     *CADTOP                                                          
+       SKG     BUFF+5                                                           
+       BRU     $+2                                                              
+       STA     BUFF+5              MAXIMUM COMMON ADDRESS                       
+BLKS2  SKR     BLKNXT              MOVE BACKWARDS THRU BLOCK LIST               
+       LDA     *BLKNXT
+       SKE     =0300000            BEGINNING OF PROGRAM                         
+       BRU     $+2                                                              
+       BRU     BLKS3                                                            
+       RSH     14                  TYPE X 2                                     
+       ETR     =06                 GET TYPE ONLY                                
+       CAX                                                                      
+       LDA     BUFF+1,2            MAXIMUM TYPE ADDRESS                         
+       SKG     *BLKNXT                                                          
+       BRU     $+2                 ADDRESSING IS NOT ABOVE BUFFER               
+       STA     *BLKNXT             EXTEND BLOCK TO INCLUDE ADDRESSING           
+       SKR     BLKNXT              MOVE TO START OF BLOCK                       
+       LDA     *BLKNXT                                                          
+       SKA     =037777             SKIP IF ADDRESS ZERO                         
+       SUB     =1                  ONE BELOW THIS BLOCK                         
+       SKG     BUFF+1,2            IS IT ABOVE TOP OF REFERENCING               
+       BRU     $+2                 NO
+       STA     BUFF+1,2            YES CUT REFERENCING BACK                     
+       BRU     BLKS2               GO DO NEXT BLOCK                             
+BLKS3  LDB     =0300000            MODE MASK                                    
+       LDA     BUFF+1                                                           
+       SKG     BUFF                IS THERE AN UNSPANNED ABSOLUTE AREA          
+       BRU     BLKS4               NO                                           
+BLKS5  MIN     BLKNXT                                                           
+       SKN     *BLKNXT             IS THIS ENDED                                
+       BRU     $+2                                                              
+       HLT                         DEBUG                                        
+       LDA     *BLKNXT                                                          
+       SKA     =0300000            SKIP IF ABSOLUTE                             
+       BRU     BLKS5                                                            
+       LDA     BUFF                LOWEST ASKED ABSOLUTE ADDRESS                
+       SKG     *BLKNXT                                                          
+       STA     *BLKNXT
+BLKS4  LDA     BLKBOT                                                           
+       STA     BLKNXT                                                           
+       LDA     BUFF+3                                                           
+       SKG     BUFF+2              IS THERE AN UNSPANNED RELOC AREA             
+       BRU     BLKS6               NO                                           
+BLKS7  MIN     BLKNXT              MODE MASK                                    
+       SKN     *BLKNXT             IS THIS ENDED                                
+       BRU     $+2                                                              
+       HLT                         DEBUG                                        
+       LDA     *BLKNXT                                                          
+       SKM     =0100000            SKIP IF RELOC                                
+       BRU     BLKS7                                                            
+       LDA     BUFF+2                                                           
+       SKG     *BLKNXT                                                          
+       STA     *BLKNXT                                                          
+       LDA     BLKBOT
+       STA     BLKNXT                                                           
+BLKS6  LDA     BUFF+5                                                           
+       SKG     BUFF+4              IS THERE AN UNSPANNED COMMON AREA            
+       BRU     BLKS8               NO                                           
+BLKS9  MIN     BLKNXT                                                           
+       SKN     *BLKNXT             IS THIS DONE                                 
+       BRU     $+2                 NO                                           
+       HLT                         DEBUG                                        
+       LDA     *BLKNXT                                                          
+       SKM     =0200000            SKIP IF COMMON                               
+       BRU     BLKS9                                                            
+       LDA     BUFF+4                                                           
+       SKG     *BLKNXT                                                          
+       STA     *BLKNXT                                                          
+       LDA     BLKBOT                                                           
+       STA     BLKNXT
+*      AUGMENTATION OF BLOCK LIST COMPLETE, SET SPAN OF ABSOLUTE ADDRE          
+BLKS8  LDA     =-1                                                              
+       STA     MXAAD               MAXIMUM ABSOLUTE ADDRESS                     
+       LDA     =037777                                                          
+       STA     MNAAD               MINIMUM ABSOLUTE ADDRESS                     
+BLKS10 MIN     BLKNXT                                                           
+       SKN     *BLKNXT             ARE WE DONE                                  
+       BRU     $+2                                                              
+       BRU     BLKS11              YES                                          
+       LDA     *BLKNXT             GET STARTER WORD                             
+       MIN     BLKNXT              MOVE TO END WORD                             
+       SKA     =0300000            SKIP IF ABSOLUTE                             
+       BRU     BLKS10              TEST NEXT PAIR                               
+       SKG     MNAAD                                                            
+       STA     MNAAD               SET MINIMUM ABSOLUTE ADDRESS
+       LDA     *BLKNXT             END WORD
+       SKG     MXAAD                                                            
+       BRU     BLKS10              TRY NEXT PAIR                                
+       STA     MXAAD               SET MAXIMUM ABSOLUTE ADDRESS                 
+       BRU     BLKS10                                                           
+BLKS11 LDA     BLKBOT                                                           
+       STA     BLKNXT              BLOCK POINTER TO BOTTOM                      
+       LDA     *BLKNXT                                                          
+       STA     PROGP                                                            
+       BRR     BLKSET                                                           
+*      ROUTINE TO PICK UP THE SPAN OF EXT DEFINITION                            
+DEFSPN PZE                                                                      
+       LDA     =0337777                                                         
+       STA     BUFF                MINIMUM ABSOLUTE DEFINITION                  
+       STA     BUFF+2              MINIMUM REL. DEFINITION                      
+       STA     BUFF+4              MINIMUM COM. DEFINITION                      
+       LDA     =-1                                                              
+       STA     BUFF+1              MAXIMUM ABSOLUTE DEFINITION                  
+       STA     BUFF+3                                                           
+       STA     BUFF+5                                                           
+       LDA     DEFTOP                                                           
+DFSP1  SUB     =3                                                               
+       SKG     DEFBOT              IS LIST EMPTIED                              
+       BRU     DFSP2               YES                                          
+       CAX                                                                      
+       LDA     0,2                 WANT ADDRESS WORD ONLY                       
+       RSH     14                  GET TYPE *2                                  
+       ETR     =06                                                              
+       CAB                                                                      
+       LDA     0,2                                                              
+       ETR     =0337777            MODE + ADDRESS ONLY                          
+       XXB
+       SKG     BUFF,2                                                           
+       STA     BUFF,2              MINIMUM TYPE ADDRESS                         
+       SKG     BUFF+1,2                                                         
+       BRU     $+2                                                              
+       STA     BUFF+1,2            MAXIMUM TYPE ADDRESS                         
+       CBA                         MOVE LIST POINTER TO A                       
+       BRU     DFSP1               GO FOR NEXT ITEM                             
+DFSP2  BRR     DEFSPN                                                           
+*      ROUTINE TO MAKE ADDRESS LABEL                                            
+MAKLAB PZE                                                                      
+       STA     MKTA                                                             
+       ETR     =0337777            TAKE MODE AND ADDRESS ONLY                   
+       STA     C3                  INTERNAL LABEL                               
+       STX     MKTX                                                             
+       SKA     =0300000            IS IT RELOCATABLE                            
+       BRU     MKLBB               YES
+       SKG     MXAAD               NO IS IT WITHIN THE PROGRAM                  
+       SKG     MNAAD                                                            
+       BRU     $+2                 NO, GO OCTAL                                 
+       BRU     MKLBB                                                            
+       OCT     5                                                                
+       LDA     C1                                                               
+       MRG     =060600000          TOP 2 CHARACTERS ARE BLANK                   
+       LDB     C2                                                               
+       LCY     12                  LEFT JUSTIFY                                 
+       STA     C1                                                               
+       STB     C2                                                               
+       LDA     MKTA                                                             
+       BRR     MAKLAB                                                           
+MKLBB  EQU     $                   BUILD A HXADECIMAL LABEL                     
+       ETR     =037777             TAKE ADDRESS ONLY                            
+       STA     MKTMP
+       LDA     ='    '                                                          
+       STA     C1                                                               
+       STA     C2                                                               
+       LDA     MKTMP                                                            
+MKLBC  ETR     =017                                                             
+       CAX                                                                      
+       LDA     HEXTAB,2            PICK UP NEXT CHARACTER                       
+       LDB     C1                  MOVE IT IN                                   
+       RSH     6                                                                
+       LDA     C1                                                               
+       STB     C1                                                               
+       LDB     C2                                                               
+       RSH     6                                                                
+       STB     C2                                                               
+       LDA     MKTMP                                                            
+       RSH     4                   PEEL OFF THE USED BITS
+       STA     MKTMP                                                            
+       SKA     =037777                                                          
+       BRU     MKLBC                                                            
+       LDA     ='  A9'                                                          
+       LDB     MKTA                                                             
+       SKB     =0100000            IS IT LOAD RELOCATABLE                       
+       LDA     ='  R9'             YES                                          
+       SKB     =0200000            IS IT COMMON RELOCATABLE                     
+       LDA     ='  C9'             YES                                          
+       LDB     C1                  MOVE THE IDENTIFIERS ON                      
+       RSH     12                                                               
+       LDA     C1                                                               
+       STB     C1                                                               
+       LDB     C2                                                               
+       RSH     12                                                               
+       STB     C2                  LABEL COMPLETE
+       LDA     MKTA                                                             
+       LDX     MKTX                                                             
+       BRR     MAKLAB                                                           
+HEXTAB EQU     $                                                                
+       DATA    '   Z'              0    HEXADECIMAL ADDRESS TABLE               
+       DATA    '   I'              1                                            
+       DATA    '   J'              2                                            
+       DATA    '   K'              3                                            
+       DATA    '   L'              4                                            
+       DATA    '   M'              5                                            
+       DATA    '   N'              6                                            
+       DATA    '   Q'              7                                            
+       DATA    '   R'              10                                           
+       DATA    '   S'              11                                           
+       DATA    '   T'              12                                           
+       DATA    '   U'              13
+       DATA    '   V'              14                                           
+       DATA    '   W'              15                                           
+       DATA    '   X'              16                                           
+       DATA    '   Y'              =15 (017)                                    
+*      ROUTINES TO ASSIST BUILDING OF LINE IMAGE                                
+ADRESS PZE                         BUILD ADDRESS OF LIST OUTPUT                 
+       LDA     ='    '                                                          
+       STA     LINE                                                             
+       LDA     PROGP                                                            
+       OCT     5                                                                
+       LDA     C1                                                               
+       MRG     ='   0'             BLANKS TO TOP 3                              
+       LDB     C2                                                               
+       LCY     12                                                               
+       STA     LINE+1                                                           
+       STB     LINE+2
+       BRR     ADRESS                                                           
+BLNKOP PZE                         BLANK OPERATIONS CODE                        
+       LDA     ='    '                                                          
+       STA     LINE+3                                                           
+       STA     LINE+4                                                           
+       STA     LINE+5                                                           
+       BRR     BLNKOP                                                           
+BLNKLN PZE                                                                      
+*      BLANK REMAINDER OF PRINT LINE                                            
+       STX     PACKX                                                            
+       LDA     ='    '                                                          
+       LDB     =077                                                             
+       LDX     =0200000-13                                                      
+       SKM     LINE+26,2           FIND FIRST WORD WITH BLANK END               
+       BRX     $-1                                                              
+       BRU     $+2
+       STA     LINE+26,2           BLANK REMAINDER OF IMAGE                     
+       BRX     $-1                                                              
+       LDX     PACKX                                                            
+       BRR     BLNKLN                                                           
+*      SUBROUTINE TO PACK C1, C2, C3 ONTO REFERENCED PART OF LINE               
+PACK   PZE                                                                      
+       STA     DOLFLG              NEG IF FIRST BLANK TO BE SUPPRESSED          
+       ETR     =03                 NO OF CCTRS BEFORE FIRST BLANK TEST          
+       STA     PACKA                                                            
+       STX     PACKX                                                            
+PACK3  LDX     =-4                                                              
+       LDB     *PACKX                                                           
+PACK2  LCY     6                                                                
+       SKR     PACKA                                                            
+       BRX     $-2                 CYCLE TILL IGNORABLES ARE PAST               
+       STB     PACKB
+       LDB     =077                                                             
+       SKM     ='    '                                                          
+       BRU     PACK1                                                            
+       SKN     DOLFLG              SKIP IF BLAND SUPPRESS                       
+       BRU     $+3                                                              
+       RSH     6                   MOVE BLANK CCTR OUT                          
+       EAX     -1,2                                                             
+       LDB     PACKX                                                            
+       STB     PACKB                                                            
+       STX     PACKA                                                            
+       LDB     C1                                                               
+       BRM     PACKSF                                                           
+       LDA     C1                                                               
+       LDB     C2                                                               
+       BRM     PACKSF
+       LDA     C2
+       LDB     C3                                                               
+       BRM     PACKSF                                                           
+       LDA     C3                                                               
+       LDB     ='    '                                                          
+       BRM     PACKSF                                                           
+       LDX     PACKB               GET WORD                                     
+       LDA     PACKA               GET NO.OF CHARACTERS THIS LINE PASSED        
+       ADD     =6                  POINT TO FIRST CCTR SET ON                   
+       SKA     =014                IS WORD OVERFLOWED                           
+       EAX     1,2                 YES, MOVE WORD UP                            
+       ETR     =03                 AT MOST 3 CCTR                               
+       MRG     =040000000          SET CONCAATTEENNATE FLAG                     
+       BRR     PACK                                                             
+PACK1  LDB     PACKB               PICK UP REST OF WORD                         
+       BRX     PACK2               TRY NEXT CHARACTER                           
+       MIN     PACKX               NONE HERE TRY NEXT WORD                      
+       BRU     PACK3                                                            
+PACKSF PZE                                                                      
+       LDX     PACKA                                                            
+       BRX     $+2                                                              
+       BRU     $+3                                                              
+       LCY     6                   SHIFT UNITL WORD ORIENTED ON LINE            
+       BRU     $-3                                                              
+       STA     *PACKX                                                           
+       MIN     PACKX                                                            
+       BRR     PACKSF                                                           
+LABCRD PZE                                                                      
+       BRM     NXCRD                                                            
+       LCY    12                                                                
+       STA     LINE+6                                                           
+       STB     LINE+7
+       LDA     =-1                                                              
+       LDB     C3                  LABEL RESIDES IN C1, 2,3                     
+       SKB     =060000000          IS IT EXTERNAL                               
+       CLA                                                                      
+       STA     DOLFLG                                                           
+       LDA     ='   $'                                                          
+       LDB     C1                                                               
+       SKN     DOLFLG                                                           
+       RSH     6                                                                
+       STB     LINE+8                                                           
+       LDA     C1                                                               
+       LDB     C2                                                               
+       SKN     DOLFLG                                                           
+       RSH     6                                                                
+       STB     LINE+9                                                           
+       LDA    C2
+       LDB     ='    '                                                          
+       SKN     DOLFLG                                                           
+       RSH     6                                                                
+       STB     LINE+10                                                          
+       BRR     LABCRD                                                           
+*      BCD COUNTER ROUTINE FOR CARDS                                            
+NXCRD  PZE                                                                      
+       LDA     =7                                                               
+       STA     NXCY                                                             
+       LDA     CARD2                                                            
+       LDB     CARD1                                                            
+NXLOP  ADD     =1                                                               
+       ETR     =077777717                                                       
+       STA     NXTMP                                                            
+       ETR     =077                                                             
+       SKG     =011
+       BRU     NXFIN                                                            
+       LDA     NXTMP                                                            
+       ETR     =077777700                                                       
+       RCY     6                                                                
+       SKR     NXCY                                                             
+       BRU     NXLOP                                                            
+NXIT   XAB                                                                      
+       ETR     =07777              TAKE AT MOST 6 DIGITS                        
+       MRG     =060600000          BLANK TOP TWO                                
+       STA     CARD1                                                            
+       STB     CARD2                                                            
+       BRR     NXCRD                                                            
+NXFIN  LDA     NXTMP                                                            
+       RCY     6                                                                
+       SKR     NXCY                                                             
+       BRU     $-2
+       BRU     NXIT                                                             
+NXTMP  RES     1                                                                
+NXCY   RES     1                                                                
+CARD1  RES     1                                                                
+CARD2  RES     1                                                                
+OUTPUT PZE                                                                      
+       SKN     LOFLG                                                            
+       BRU     OUTSO                                                            
+       LDA     =28                 RESTORE ADDRESS AND COUNTS                   
+       STA     CNTLO                                                            
+       LDA     ADRLIN                                                           
+       STA     ADRLO                                                            
+       EXU     CALLLO                                                           
+       SKS     FDTLO                                                            
+       LDA     FDTLO                                                            
+       SKA     =1*/22
+       BRM     LOERR               SKIP IF NO ERROR                             
+OUTSO  SKN     SOFLG                                                            
+       BRR     OUTPUT                                                           
+       EXU     CALLSO                                                           
+       SKS     FDTSO                                                            
+       LDA     FDTSO                                                            
+       SKA     =1*/22                                                           
+       BRM     SOERR                                                            
+       BRR     OUTPUT                                                           
+FINISH PZE                                                                      
+*      ROUTINE TO OUTPUT  EXTERNAL LISTING END ENDFILE SO                       
+       SKN     LOFLG               IS LISTING REWUESTED                         
+       BRU     SOFIN               NO                                           
+       LDA     =5                                                               
+       STA     CNTLO                                                            
+       LDA     ADRLIN
+       STA     ADRLO                                                            
+       LDX     REFTOP              FLUSH EXTERNAL REFERENCES                    
+FIN1   CXA                                                                      
+       SUB     =3                                                               
+       CAX                                                                      
+       SKG     REFBOT                                                           
+       BRU     FIN2                                                             
+       LDA     0,2                                                              
+       STA     PROGP                                                            
+       BRM     ADRESS                                                           
+       LDA     1,2                                                              
+       STA     LINE+3                                                           
+       LDA     2,2                                                              
+       STA     LINE+4                                                           
+       EXU     CALLLO                                                           
+       SKS     FDTLO
+       LDA     FDTLO                                                            
+       SKA     =1*/22              SKIP IF NO ERROR                             
+       BRM     LOERR                                                            
+       EAX     -1,2                MOVE POINTER DOWN ONE                        
+       LDA     0,2                 PICK UP ADDRESS ITEDM                        
+       SKA     =0337777            IS THIS END OF CHAIN                         
+       BRU     $-3                 NO                                           
+       BRU     FIN1                YES GET NEXT ITEM                            
+FIN2   LDA     CALP                                                             
+       SKE     CALLLO              IS LO ON PRINTER                             
+       BRU     SOFIN               NO                                           
+       LDA     =1                                                               
+       STA     CNTLO                                                            
+       LDA     =(='_EOF')                                                       
+       STA     ADRLO                                                            
+SVN    OPD     0700000
+       BRM     PRINT               CALL THE PRINT HANDLER DIRECTLY              
+       SVN     FDTLO                                                            
+       LDA     FDTLO                                                            
+       SKA     =1*/22              SKIP IF NO ERROR                             
+       BRM     LOERR                                                            
+SOFIN  SKN     SOFLG                                                            
+       BRR     FINISH              SO NONEXISTEND WE'RE DONE                    
+       LDA     CALM                                                             
+       SKE     CALLSO              IS SO ON MAGTAPE                             
+       BRR     FINISH              NO                                           
+       EXU     CALLSO                                                           
+       BRU     FDTSO               WRITE EOF                                    
+       LDA     FDTSO                                                            
+       SKA     =1*/22                                                           
+       BRM     SOERR                                                            
+       BRR     FINISH
+LOERR  PZE                                                                      
+       TYPE    LOEM,5                                                           
+       BRR     LOERR                                                            
+LOEM   BCD     <LIST OUTPUT ERROR  !>                                           
+SOERR  PZE                                                                      
+       TYPE    SOEM,6                                                           
+       HLT                                                                      
+       BRR     SOERR                                                            
+       BRU     OUTSO               TRY AGAIN                                    
+SOEM   BCD     <SYMBOLIC OUTPUT ERROR  !>                                       
+FDTSO  PZE                                                                      
+       PZE     LINE+8                                                           
+       DATA    20                                                               
+EOMSO  WTD     0,0,4                                                            
+CALLSO BRM     MTAPE
+SOFLG  RES     1
+FDTLO  PZE                                                                      
+ADRLO  PZE     LINE                                                             
+CNTLO  DATA    28                                                               
+EOMLO  PLP     0,1,4                                                            
+CALLLO BRM     PRTR                                                             
+LOFLG  RES     1                                                                
+ADRLIN PZE     LINE                                                             
+*      PSEUDO PRINT ROUTINE THAT HANDLES COMPATIBLE OPS TO OTHER SDS I          
+PRTR   PZE                                                                      
+       MIN     PRTR                MOVE TO OP CODE                              
+       LDA     *PRTR                                                            
+       SKG     =03777777           IS IT OUTPUT                                 
+       BRR     PRTR                NO                                           
+       EOR     =04000000                                                        
+       SKA     =01000000                                                        
+       EOR     =05000000                                                        
+       STA     PRNTOP                                                           
+       BRM     PRINT                                                            
+PRNTOP HLT                                                                      
+       BRR     PRTR                                                             
+*      PSEUDO PTYIO ROUTINE                                                     
+PAPR   PZE                                                                      
+*      000 IS STANDARD BINARY IN/005 IS PTYIO BINARY + MOVE TO GAP              
+*      040 IS STANDARD BINARY OUT/041 IS PTYIO BINARY OUT                       
+       MIN     PAPR                MOVE TO OP CODE                              
+       LDA     *PAPR                                                            
+       MRG     =0100000            BINARY MODE FLAG                             
+       SKA     =04000000           IS IT OUTPUT                                 
+       BRU     $+2                 YES                                          
+       MRG     =0400000            SET MOVE TO GAP FLAG                         
+       STA     PAPROP
+       BRM     PTYIO                                                            
+PAPROP HLT                                                                      
+       BRR     PAPR                                                             
+MEMOV  PZE                         ROUTINE ON MEMORY TOO SMALL                  
+       TYPE    MEMMSG,4                                                         
+       HLT                                                                      
+       NOP     *037777,6                                                        
+       BRU     1                                                                
+       BRR     MEMOV                                                            
+MEMMSG BCD     <PROGRAM TOO BIG!>                                               
+*      ROUTINE TO FORM OCTAL VERSION OF A IN C1, C2                             
+AXC    OPD     04600401                                                         
+BINOCT PZE                                                                      
+       STX     BOTX                                                             
+       LDB     =3                                                               
+       STB     BOTC
+       RSH     3                                                                
+       AXC                                                                      
+       RSH     3                                                                
+       CXA                                                                      
+       SKR     BOTC                                                             
+       BRU     $-5                                                              
+       STB     C2                                                               
+       LDB     =3                                                               
+       STB     BOTC                                                             
+       RSH     3                                                                
+       AXC                                                                      
+       RSH     3                                                                
+       CXA                                                                      
+       SKR     BOTC                                                             
+       BRU     $-5                                                              
+       STB     C1
+       LDX     BOTX                                                             
+       BRR     BINOCT                                                           
+BOTC   RES     1                                                                
+BOTX   RES     1                                                                
+BOOTM  BCD     < BOOTSTRAP >
+UIRM   BCD     <  UNIDENTIFIED RECORD  >                                        
+CSMSG  BCD     <  CHECKSUM ERROR>                                               
+OVMSG  BCD     <  MEMORY OVERFLOW   >                                           
+*      BUFFERS AND FORMALLY DEFINED CELLS                                       
+BUFF   RES     400                 FOR RTM BLOCKED RECORDS                      
+LINE   EQU     BUFF+400-26                                                      
+       BCD     <REGEN   >          RECORD LABEL                                 
+C0     RES     1                   CENTRAL DATA TRANSFER CELLS                  
+C1     RES     1                                                                
+C2     RES     1                                                                
+C3     RES     1
+END    RES     1                   END RECORD FLAG NEG FOR TRUE                 
+CNT    RES     1                   RECORD WORD COUNT                            
+PASS   RES     1                   PASS FLAG NEG FOR 1                          
+WDCNT  RES     1                   PHYSICAL RECORD WORD COUNT                   
+BEGMEM RES     1                   START OF LIST AREA                           
+ENDMEM RES     1                   END OF LIST AREA                             
+CSCNT  RES     1                   CNT AS USED BY CKSUM                         
+RDCNT  RES     1                   CNT AS USED BY READ                          
+CSX    RES     1                   TEMPX FOR CKSUM                              
+ENDTX  RES     1                   TEMPX FOR ENDREC                             
+RELOC  RES     1                   RELOCATION FLAGS                             
+IOREL  RES     1                                                                
+POPR   RES     1                                                                
+COMR   RES     1                                                                
+PROGP  RES     1                   POINTER TO $ 'HERE'                          
+ADRP   RES     1                   ADDRESS POINTED TO BY INSTRUCTION
+DNTX   RES     1                   TEMPX FOR DATA READING                       
+INS1   RES     1                   TRANSFER CELLS FOR DECOMPOSED INSTRUC        
+INS2   RES     1                                                                
+INS3   RES     1                                                                
+STAR   RES     1                   INDIRECT ADDRESSING FLAG NEG=FALSE           
+TAG    RES     1                   TAG FIELD OF INSTRUCTION                     
+ANS    RES     1                   ANSWER FLAG FOR INSTEST                      
+LINCC  RES     1                   LINE POINTERS FOR EXTENDED PACKING           
+LINXP  RES     1                                                                
+DTX    RES     1                   DATA TEMPX                                   
+RDTX   RES     1                   TEMPX FOR BACKWARDS READING                  
+*                          0 9   ''      H   H                   6       H      H
+PSBTA  RES     1                   TEMPA FOR PSETB                              
+PSBTX  RES     1                   TEMPX FOR PSETB                              
+PSTMPA RES     1                   TEMPA FOR PSET                               
+ADTMPX RES     1                   TEMPX FOR ADDRESS LIST
+ADRTOP RES     1                   TOP OF ADDRESS LIST                          
+ADRBOT RES     1                   BOTTOM OF ADDRESS LIST                       
+RFTMPX RES     1                   TEMPX FOR REFERENCE LIST                     
+REFTOP RES     1                   TOP OF REFERENCE LIST                        
+REFBOT RES     1                   BOTTOM OF REFERENCE LIST                     
+LRFOT  RES     1                   LAST REFERENCED OPEN TAIL                    
+DEFBOT RES     1                   BOTTOM OF DEF LIST                           
+DEFTOP RES     1                   TOP OF DEF LIST                              
+DFTMPX RES     1                   TEMPX FOR DEFLIST                            
+GATMPX RES     1                   TEMPX FOR GADR                               
+GATMPA RES     1                   TEMPA FOR GADR                               
+SORTX  RES     1                   INDEX FOR ADRESS LIST SORTING                
+SORTOP RES     1                   LIST TOP FOR ADDRESS LIST SORTING            
+SORTX2 RES     1                   TEMP SORTX                                   
+AADTOP RES     1                   TYPED ADDRESS LISTS, TOP + BOTTOM            
+RADTOP RES     1            
+                                                    
+CADTOP RES     1                                                                
+AADBOT RES     1                                                                
+RADBOT RES     1                                                                
+CADBOT RES     1                                                                
+AADNXT RES     1                                                                
+RADNXT RES     1                                                                
+CADNXT RES     1                                                                
+LSTBOT EQU     $                   BLOKLIST TOP + NEXT + BOTTOM                 
+BLKBOT RES     1                                                                
+LSTNXT EQU     $                                                                
+BLKNXT RES     1                                                                
+LSTTOP EQU     $                                                                
+BLKTOP RES     1                                                                
+MNAAD  RES     1                   MINIMUM ABSOLUTE ADDRESS                     
+MXAAD  RES     1                   MAXIMUM ABSOLUTE ADDRESS                     
+MKTA   RES     1                   TEMPA FOR MAKLAB                             
+MKTX   RES     1                   TEMPX FOR MAKLAB                             
+PACKX  RES     1                   TEMPX FOR LINE BUILDING PACK ROUTINE         
+PACKA  RES     1                   TEMPA FOR LINE PACKER                        
+PACKB  RES     1                   TEMPB FOR LINE PACKER                        
+DOLFLG RES     1                   EXTERNAL LABEL FLAG -LABEL MAKER             
+PROGP1 RES     1                                                                
+PROGP2 RES     1                                                                
+ITA    RES     1                                                                
+ITX    RES     1                                                                
+MKTMP  RES     1                                                                
+       END      REGEN
+
