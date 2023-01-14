@@ -14,11 +14,13 @@ program and a program to retieve files from a PAL library file.
 
 The SDS programs in the kit are files copied from a
 9-track tape that was created by the SDS PAL library back in 1982.
-This file is from the bitsaver.org archives, M300-19820128.tap.
+This file is from the bitsaver.org archives at http://www.bitsavers.org/bits/SDS/9xx/masterLibrary/M300_19820128.tap.gz
 
 The SDS basic paper tape loader program, 850644, is included in the kit as 
 an example to experiment with the SDS recon and Symbol assembler 
-programs.  The work to put this kit together was done on a Mac.  I don't know what 
+programs.  
+
+The work to put this kit together was done on a Mac.  I don't know what 
 will happen using this stuff on other platforms
 
 
@@ -44,6 +46,8 @@ tools  | Possibly useful tools
 ## PAL and Program Identification
 
 The SDS/Xerox Program Availability List (PAL) manual contains a list of all available Xerox software products, user programs and programming manuals. The systems that control the distribution and ensure the updating of the items listed are also described. 
+
+A copy of a PAL manual may be found at http://www.bitsavers.org/pdf/sds/Xerox_Program_Availability_List_May75.pdf
 
 All available Xerox (SDS) software is identified by a unique six-digit number which is referred to as a program catalog number. This catalog number may encompass a series of programs if these programs are ordinarily ordered as a group (e.g., Sigma 2/3 Numerical Subroutine Package, Catalog No. 705546). When this group is made available as a package, only a single "cover number" is used to identify it.
 Every program catalog number has a two-digit number appended to it which is referred to as a program element. It is in the form "xy" where x usually refers to the form (source, binary, etc.) and y usually refers to the media (printed, magnetic tape, etc.) of the program. For example, a "-11" is a printed description of the program and a "-84" is absolute binary cards. The descriptions of these di:gits are summarized below:
