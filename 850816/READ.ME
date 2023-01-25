@@ -7,7 +7,29 @@ SOURCE LANGUAGE: META-SYMBOL. CONFIGURATION: 910/925 COMPUTER WITH AT LEAST 4K M
 TYPEWRITER AND PAPER TAPE I/0. SEE MANUAL NO. 900699.
 
 
-This file 850816-44 has 4 ^ type control cards preceeding the encoded deck.
+850816-44 is compressed source code and has 4 ^ type control cards preceeding the encoded deck.
+The algol.si, .bo and .lo files were obtained by uncompressing and assembling this -44 file.
+The original source code has TOPW 1 which caused an assmembly error. It was changed to TOPW.
+There is no transfer address on the END card so the loader will halt after loading.
 
+The algol.ini configuration file allows one to do a compile and produce a listing on TTO and an
+object deck on CP. Refer to this for Breakpoint settings and the compile procedure.
+
+Regardless of what the PAL Manual says, 850816-44 is only the Algol Compiler.  
+I can't find any product to load or execute the object program.
+
+The prime.si file is copied from the example in the Algol Reference Manual.  The prime file is
+a Hollerith card deck that can be attached to the CR device as compiler input.
+
+The PAL manual describes 850690 as an ALGOL line printer library routine. Both the -24 (binary) 
+and -34 (source) files are included here.  This seems to be a part of the Runtime Library and there
+is not comments in the code mentioning Algol.
+
+850690 900-SERIES ALGOL 60 EXT'D UNBUF LINE PRT. LIB ROUT.
+AUTHOR: XEROX
+ABSTRACT:
+TO ALLOW USE OF UNBUFFERED LINE PRINTER IN ALGOL SYSTEM. THIIS LIBRARY PROGRAM IS LOADED WHEN OUTPUT TO THE LINE PRINTER IS CALLED FOR IN AN ALGOL PROGRAM. OUTPUT TO THE LINE PRINTER IS
+COMMENTS:
+SOURCE LANGUAGE:METASYMBOL COMPUTER CONFIGURATION: ANY XDS 900 SERIES COMPUTER WITH AN UNBUFFERED PRINTER (XDS MODEL NO. 9372).
 850690-34  line printer library routine, source cards
 850690-24  line printer library routine, binary
