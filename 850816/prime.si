@@ -1,0 +1,37 @@
+'COMMENT' PRIME FACTORIZATION.
+INPUT = 7DIGITS,OUTPUT = FACTORS (ASCENDING ORDER);
+'BOOLEAN' 'PROCEDURE' PRIME (N);
+   'VALUE' N;'INTEGER' N;
+   'BEGIN'
+     'EXTERNAL' NEXT;
+     'INTEGER' Q;
+       Q:= 2;
+       PRIME1:'IF' Q*Q>N 'THEN' PRIME:='TRUE'
+         'ELSE' 'IF' N\Q*Q = N
+            'THEN' PRIME := 'FALSE'
+            'ELSE 'BEGIN' NEXT (Q); 'GO TO' I PRIME 1 'END'
+   'END' PRIME;
+
+'PROCEDURE' NEXT (X);
+   'BEGIN'
+      'BOOLEAN' 'EXTERNAL' PRIME;
+         A:X := X + 1;
+           'IF' 'NOT' PRIME (X) 'THEN' 'GO TO' A
+  'END' NEXT;
+
+BEGIN:='BEGIN'
+  'INTEGER' M, P, TYPEWRITER;
+     'PROCEDURE' OUT (X);
+        'BEGIN' OUTPUT (TYPEWRITER, 17); 10 (X); ENDIO 'END';
+  'EXTERNAL' NEXT;
+     TYPEWRITER := 1;
+17:'FORMAT' "17";
+   INPUT (TYPEWRITER, 17); IO (M); ENDIO;
+   P:= 2;
+   PRIME3: 'IF' P*P>M
+      'THEN' 'BEGIN' OUT (M); 'GO TO' BEGIN 'END'
+      'ELSE' 'IF' M\P*P=M
+        'THEN' 'BEGIN' OUT (P); M := M/P 'END'
+        'ELSE' NEXT (P);
+   'GO TO' PRIME3;
+'END' FACTORIZATION
