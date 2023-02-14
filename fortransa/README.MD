@@ -1,5 +1,4 @@
-#
-Stand Alone Fortran II
+# Stand Alone Fortran II
 
 ## PAL Abstract
 850957 9-SERIES 920/930 FORTRAN II SYSTEM (STAND ALONE) 
