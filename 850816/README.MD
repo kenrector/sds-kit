@@ -26,9 +26,13 @@ There is no transfer address on the END card so the loader will halt after loadi
 
 ## Usage
 bpt1 1	down, use card reader
-bpt2 1	down, use card punch 
-bpt3 1  down, type source 
+
+bpt2 1	down, use card punch
+
+bpt3 1  down, type source
+
 bpt4 0  down, call objty before codout? Don't set this
+
 
 The algol.ini configuration file allows one to do a compile and produce a listing on TTO and an
 object deck on CP.
