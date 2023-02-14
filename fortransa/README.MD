@@ -1,4 +1,4 @@
-850957 9-SERIES 920/930 FORTRAN II SYSTEM (STAND ALONE) 
+# 850957 9-SERIES 920/930 FORTRAN II SYSTEM (STAND ALONE) 
 AUTHOR: XEROX
 ABSTRACT:
 THIS IS THE STAND-ALONE 920/930 FORTRAN-II PACKAGE CONSISTING OF COMPILER, LOADER
@@ -11,7 +11,7 @@ CONFIGURATION: ANY 920/930 COMPUTER.
 
 
 
-
+## Introduction
 This directory contains material having to do with the Stand Alone Fortran II system from the M300_19820128.tap file, catalog number 850957-84.
 
 You may obtain the four parts of the Fortran II (Stand Alone) System, the Compiler (fort), Loader (fldr),  Library (flib) and Runtime (frun), by splitting the
@@ -25,13 +25,14 @@ The 850957-84 file is composed of four sections delimited by Standard Binary Obj
 
 Consult the Fortran II Operations Manual, 900587, for operating instructions for compiling and loading programs.
 
-
+## Problems
 There are two problems with the 850957-84 file extracted from both the M300_19820128.tap and M400_19820305.tap files.   
 
 1, Three of the library files have out of order records.  I used xxd and vi to edit the files to straighten things out and the fld file in this repository is correct and loads ok.  It appears that these problems occured when copying the original card decks to tape, perhaps cards were dropped and then put back into the deck incorrectly as some were in reverse order.  A corrected version of the library was saved as flib_corrected and the original, uncorrected version of the library is found in flib_original.
 
 2, The runtime program is missing the last several data records and the end record.  The missing end record was corrected but I could not find the missing data records.  This file was saved as runtime_ldr.  A version of a runtime program based on the source code in the Fortran II Technical Reference Manual, (900065) is included as frun.si, frun.bo and frun.lo for experimenting.  This is notably different than the corrupted runtime program on the PAL trap but it will load and begin execution of the simple.si example.
 
+## Examples
 There are three command files for use with the Fortran II SA System.  Use the fort or fort_ascii command files to run the compiler with either Hollerith or ASCII format input, and save the binary object deck output from the attached cp device.
 
 Use the fortran_run command file to load and run a binary object deck loaded with files from the flib and the frun.bo runtime.  Since frun.bo is not preceeded by a loader the command file includes ldr_2crd preceeding frun.bo in the input deck. 
