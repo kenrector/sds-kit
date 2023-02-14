@@ -39,7 +39,7 @@ object deck on CP.
 
 Modify the paths in the .ini file to suit your configuration.
 
-Algol requires three loaders to start the compiler.  Two onecard loader followed by the Universal 
+Algol requires three loaders to start the compiler.  Two one card loaders followed by the Universal 
 linking loader.  All this followed by the compiler .bo file.
 
 The prime.si file is copied from the example in the Algol Reference Manual.  The prime file is
