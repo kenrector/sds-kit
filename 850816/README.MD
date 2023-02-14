@@ -25,10 +25,10 @@ The original source code has TOPW 1 which caused an assmembly error. It was chan
 There is no transfer address on the END card so the loader will halt after loading.
 
 ## Usage
-# dep bpt1 1	down, use card reader
-# dep bpt2 1	down, use card punch 
-# dep bpt3 1  down, type source 
-# dep bpt4 0  down, call objty before codout? Don't set this
+bpt1 1	down, use card reader
+bpt2 1	down, use card punch 
+bpt3 1  down, type source 
+bpt4 0  down, call objty before codout? Don't set this
 
 The algol.ini configuration file allows one to do a compile and produce a listing on TTO and an
 object deck on CP.
