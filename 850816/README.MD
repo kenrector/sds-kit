@@ -37,11 +37,18 @@ bpt4 0  down, call objty before codout? Don't set this
 The algol.ini configuration file allows one to do a compile and produce a listing on TTO and an
 object deck on CP.
 
+Modify the paths in the .ini file to suit your configuration.
+
+Algol requires three loaders to start the compiler.  Two onecard loader followed by the Universal 
+linking loader.  All this followed by the compiler .bo file.
+
 The prime.si file is copied from the example in the Algol Reference Manual.  The prime file is
 a Hollerith card deck that can be attached to the CR device as compiler input.
 
+The sieve.si file is an example Algol program.
+
 The PAL manual describes 850690 as an ALGOL line printer library routine. Both the -24 (binary) 
-and -34 (source) files are included here.  This seems to be a part of the Runtime Library and there
+and -34 (source) files are included here.  This may be a part of the Runtime Library.  There
 are no comments in the code mentioning Algol.
 
 850690 900-SERIES ALGOL 60 EXT'D UNBUF LINE PRT. LIB ROUT.
