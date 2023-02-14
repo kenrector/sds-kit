@@ -1,6 +1,17 @@
-This directory includes some programs that may be helpful to users of the
-simh SDS simulator.
+# Uitlity Programs
 
+##files
+File | Description
+--|--
+sds_9pal | Extract file or list contents of an SDS Pal Library 9 track tape.
+sds_nm | List external defs from SDS Standard Binary Object files.
+sds_bindmp | Dump SDS Standard Binary Object file to stdout.
+sds_listtape | List contents of simh mag tape.
+sds_libsplt | Split a Fortran library file composed of binary object files
+sds_libmk | Create a Fortran Library file from files in the current directory.
+mkdeck |  Convert file from ascii to Hollerith format.
+
+## Usage
 sds_9pal - Extract file or list contents of an SDS Pal Library 9 track tape.
 
     Usage:  sds_pal  -l | -x nnnn-tt tapefile outfile [>stdout]
